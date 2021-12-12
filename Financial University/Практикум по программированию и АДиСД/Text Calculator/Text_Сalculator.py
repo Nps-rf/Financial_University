@@ -17,7 +17,7 @@ class Calc:
         self.ok = True
         self.show = False
 
-    def run(self, string=''):
+    def run(self, string: str = '') -> float or int or None:
         if string == '':
             self.show = True
         self.ok = True
@@ -31,15 +31,15 @@ class Calc:
         else:
             return None
 
-    def _input(self, string):
+    def _input(self, string) -> None:
         self.string = input('Ввод: ').lower() if string == '' else string.lower()
 
     @staticmethod
-    def load(path='words.csv', encoding='utf-8'):
+    def load(path: str = 'words.csv', encoding: str = 'utf-8') -> dict:
         with open(path, 'r', encoding=encoding) as words:
             return dict(csv.reader(words))
 
-    def convert(self):
+    def convert(self) -> None:
         self.string = list(self.string)
         for v in range(len(self.string) - 2):
             if (self.string[v] == ' ' or self.string[v] == '') and (self.string[v + 1] + self.string[v + 2] == 'ты'):
@@ -69,7 +69,9 @@ class Calc:
                 self.string[i] = '+'
         self.string = ''.join(self.string).replace('на', '')
 
-    def calculate(self):
+    # noinspection PyBroadException
+    # Because i'm too lazy
+    def calculate(self) -> None:
         try:
             self.result = eval(self.string)
             if int(self.result) == self.result:
@@ -80,7 +82,11 @@ class Calc:
             self.ok = False
             self.show = False
 
-    def reconvert(self):
+    def reconvert(self) -> str:
+        """
+        n2w -> Number to words package
+        must be installed :(
+        """
         return n2w(self.result, lang="ru").capitalize()
 
 
@@ -88,7 +94,8 @@ if __name__ == '__main__':
     while True:
         Calculator = Calc()
         Calculator.run()
-        'BETA'
+else:
+    exit('WORK IN PROGRESS')
 
 
 class TestStrToText(unittest.TestCase):

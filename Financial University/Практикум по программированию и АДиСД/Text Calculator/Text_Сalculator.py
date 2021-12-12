@@ -88,6 +88,7 @@ if __name__ == '__main__':
     while True:
         Calculator = Calc()
         Calculator.run()
+        'BETA'
 
 
 class TestStrToText(unittest.TestCase):

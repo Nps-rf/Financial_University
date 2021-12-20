@@ -75,9 +75,7 @@ class Util:
             ◈ get_column_types
             ◈ set_column_types
             ◈ get_values
-            ◈ get_value
             ◈ set_values
-            ◈ set_value
             ◈ print_table
         """
         @staticmethod

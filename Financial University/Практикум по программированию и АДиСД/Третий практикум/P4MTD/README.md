@@ -40,7 +40,7 @@ ____
 * `column` = `index`
 ____
 ## Examples
-#### Table
+### Table
 > #### Header
 > >`header=['user', 'password', 'email']`  
 > 
@@ -49,9 +49,9 @@ ____
 > > 2)`{'password': '123456787', 'user': 'Nikola', 'email': 'Soft@ya.ru'}`  
 > > 3)`{'password': '42342671', 'user': 'Alex'}`  
 > > 4)`{'password': 'QWERTY21', 'user': 'Смит'}`  
-#### Call
+### Call
 >`Util.Operations.print_table(new_table)`  
-#### Result
+### Result
 >`◈  user  password  email  ◈`  
 `◈ Nikolai, 5965478, ya.pikus@gmail.com, ◈`  
 `◈ Nikola, 123456787, Soft@ya.ru, ◈`  

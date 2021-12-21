@@ -1,3 +1,5 @@
+<img src="https://cdn2.iconfinder.com/data/icons/cat-power/256/cat_walk.png" align="right"/>  
+
 Package For Manipulating Tabular Data
 =====================================
 ____
@@ -67,4 +69,3 @@ ____________
 * **Expand the possibilities of working with tabular data**
 * **Add support for JSON, XML, EXCEL**  
 
-![Stock](https://cdn2.iconfinder.com/data/icons/product-1/200/THANK-YOU-2--THANK-YOU-PRODUCT-THANKFUL-WOMAN-PUBLIC-GRATITUDE-HAPPY-WINK-BANNER-WOMAN-256.png)

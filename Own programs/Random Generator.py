@@ -1,3 +1,7 @@
+# noinspection SpellCheckingInspection
+"""
+Copyright (c) 2021 Nikolai Pikalov
+"""
 from kivy.app import App
 from kivy.uix.button import Button
 from kivy.uix.boxlayout import BoxLayout

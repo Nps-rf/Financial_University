@@ -45,7 +45,7 @@ ____
 > >`header=['user', 'password', 'email']`  
 > 
 > #### Field
-> > 1)`{'password': '5965478', 'user': 'Nikolai', 'email': 'ya.pikus@gmail.com'}`
+> > 1)`{'password': '5965478', 'user': 'Nikolai', 'email': 'ya.pikus@gmail.com'}`  
 > > 2)`{'password': '123456787', 'user': 'Nikola', 'email': 'Soft@ya.ru'}`  
 > > 3)`{'password': '42342671', 'user': 'Alex'}`  
 > > 4)`{'password': 'QWERTY21', 'user': 'Смит'}`  

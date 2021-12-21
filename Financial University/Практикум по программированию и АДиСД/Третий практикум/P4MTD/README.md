@@ -7,7 +7,6 @@ ____
 ![https://img.shields.io/badge/Status-WIP-red](https://img.shields.io/badge/Status-WIP-red)
 * This is a third task of the programming workshop
 * The module is designed to work with tabular data using the csv library
-
 ## Basics
 | Name | Arguments | Description |
 |----:|:----:|:-----

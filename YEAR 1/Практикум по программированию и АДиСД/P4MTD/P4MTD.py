@@ -277,3 +277,18 @@ class Util:
                         print('None' + ',', end=' ')
                 print('◈')
 
+
+if __name__ == '__main__':
+    '''
+    Improvised debug :)
+    '''
+    new_table = Table(header=['user', 'password', 'email'])
+    new_table.append(field={'password': '5965478', 'user': 'Nikolai', 'email': 'ya.pikus@gmail.com'})
+    new_table.append(field={'password': '123456787', 'user': 'Nikola', 'email': 'Soft@ya.ru'})
+    new_table.append(field={'password': '42342671', 'user': 'Alex'})
+    new_table.append(field={'password': 'QWERTY21', 'user': 'Смит'})
+    Util.Operations.print_table(new_table)
+
+
+if __name__ == '__init__':
+    pass

@@ -1,0 +1,3 @@
+"""
+Creating structure of program
+"""

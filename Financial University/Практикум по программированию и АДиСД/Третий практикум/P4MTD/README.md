@@ -4,7 +4,7 @@ Package For Manipulating Tabular Data
 =====================================
 ____
 ![https://img.shields.io/badge/Python-3.8-blue](https://img.shields.io/badge/Python-3.8-blue)
-![https://img.shields.io/badge/Status-WIP-red](https://img.shields.io/badge/Status-WIP-red)
+![https://img.shields.io/badge/Status-DONE-green](https://img.shields.io/badge/Status-DONE-success)
 * This is a third task of the programming workshop
 * The module is designed to work with tabular data using the csv library
 ## Basics

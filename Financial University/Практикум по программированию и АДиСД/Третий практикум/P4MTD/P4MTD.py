@@ -252,14 +252,16 @@ class Util:
             return ret_table
 
         @staticmethod
-        def set_values(table: Table, values, column=0):
+        def set_values(table: Table, value, column=0):
             """
 
             :param table:
-            :param values:
+            :param value:
             :param column:
             """
-            raise WorkInProgress()
+            column = table.header[column]
+            for field in range(len(table.fields)):
+                table.fields[field][column] = value
 
         @staticmethod
         def print_table(table: Table):

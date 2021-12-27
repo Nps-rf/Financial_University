@@ -24,7 +24,7 @@ ____
 |`get_column_types`| `table`, `by_number`, `index`| Getting a dictionary like >>> (Column name: [data types])|
 |`set_column_types`| `table`, `index`, `types`, `by_number`| Changing the data type for a specific column |
 |`get_values`| `table`, `column`, `by_number`| Getting a list of table values by column|
-|`set_values`| `table`, `values`, `column`| Sets a single value for a column|
+|`set_values`| `table`, `value`, `column`| Sets a single value for a column|
 |`print_table`|`table`|Outputs a Table object in a readable form|
 
 ## Legend

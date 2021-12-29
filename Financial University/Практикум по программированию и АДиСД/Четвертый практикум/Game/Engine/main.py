@@ -1,4 +1,5 @@
 import pygame
+import os
 
 
 class Engine:
@@ -16,29 +17,37 @@ class Engine:
         ◈ N -> Knight (Конь)
         ◈ P -> Pawn (Пешка)
     """
-    class Main:
-        def __init__(self):
-            self.ratio = {512, 512}
-            self.screen = pygame.display.set_mode
-            self.clock = pygame.time.Clock
-            self.images = Engine.Build.load_images()
+    def __init__(self):
+        self.ratio = (1024, 768)
+        self.images = Engine.load_images()
+        self.square_colors = ('grey', 'dark-grey')
+        self.square_ratio = (64, 64)
 
-        def prepare(self):
+    @staticmethod
+    def _is_playing_():
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                exit()
+
+    def prepare(self):
+        while True:
             pygame.init()
-            self.screen = self.screen(self.ratio)
-            self.clock = self.clock()
-            self.screen.fill(pygame.Color('white'))
+            self._is_playing_()
+            pygame.display.set_mode(self.ratio)
+            self.clock = pygame.time.Clock()
             pass
 
-    class Build:
-        @staticmethod
-        def load_images():
-            images = dict()
-            pieces = ['wK', 'wQ', 'wN', 'wR', 'wB', 'wp', 'bK', 'bQ', 'bN', 'bR', 'bB', 'bp']
-            for piece in pieces:
-                images[piece] = pygame.image.load('Pieces/' + piece + '.png')
-            return images
+    @staticmethod
+    def load_images():
+        images = dict()
+        pieces = ['wK', 'wQ', 'wN', 'wR', 'wB', 'wp', 'bK', 'bQ', 'bN', 'bR', 'bB', 'bp']
+        os.chdir(r'C:\Users\Николай\PycharmProjects\pythonProject2\Financial University\Практикум по программированию '
+                 r'и АДиСД\Четвертый практикум\Game')
+        for piece in pieces:
+            images[piece] = pygame.image.load('Pieces/' + piece + '.png')
+        return images
 
 
 if __name__ == '__main__':
     Chess = Engine()
+    Chess.prepare()

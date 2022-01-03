@@ -2,6 +2,7 @@ import pygame
 from Board import Table
 from Engine import Engine
 from Build import Build
+Table = Table()
 
 
 class Main(Engine):
@@ -10,21 +11,20 @@ class Main(Engine):
     """
     def __init__(self):
         super().__init__()
-    FPS = 24
+
     images = Build.load_images()
     running = True
+    FPS = 30
 
     @classmethod
     def _prepare_(cls):
         """
         Function that prepares an application for launch
-        :return:
         """
         pygame.init()
         pygame.mixer.init()
         cls.screen = pygame.display.set_mode(cls.RATIO)
         pygame.display.set_caption('Chess')
-        cls.clock = pygame.time.Clock()
         pass
 
     @classmethod
@@ -36,20 +36,9 @@ class Main(Engine):
         """
         while cls.running:
             cls._prepare_()
-            Support.is_running()
             Graphics.create_board()
-            pygame.display.flip()  # Updates a screen
-
-
-class Support(Main):
-    @staticmethod
-    def is_running() -> None:
-        """
-        Checks whether the user clicked on the cross
-        """
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                Main.running = False
+            Controls.run_controls()
+            pygame.display.update()  # Updates a screen
 
 
 class Graphics(Main):
@@ -85,7 +74,7 @@ class Graphics(Main):
         """
         Put a pieces on board
         """
-        board = Table().field
+        board = Table.field
         for row in range(cls.DIMENSIONS):
             for col in range(cls.DIMENSIONS):
                 piece = board[row][col]
@@ -98,6 +87,53 @@ class Graphics(Main):
                             cls.SQUARE_SIZE,  # Size of square
                             cls.SQUARE_SIZE)  # Size of square
                                     )
+
+
+class Controls(Main):
+    chose = False
+    piece = ('--', [-1, -1])
+
+    @classmethod
+    def run_controls(cls):
+        cls._look4click_()
+
+    @classmethod
+    def _look4click_(cls):
+        """
+                Checks whether the user clicked on the cross (or other place)
+                """
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                Main.running = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+
+                x = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
+                y = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
+
+                if Table.field[y][x] != '--':
+                    print(True, Table.field[y][x])
+                    cls.chose = True
+                    cls.piece = (Table.field[y][x], [y, x])
+
+                if Table.field[y][x] == '--' and cls.chose:
+                    print(Table.field[y][x])
+                    Table.field[y][x] = cls.piece[0]
+                    Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
+                    cls.chose = False
+
+                print(f'x = {x}, y = {y}')
+
+
+class Rules:
+    @staticmethod
+    def pawn(p_x, p_y):
+        """
+        :param p_x: Horizontal coordinate of piece
+        :param p_y: Vertical coordinate of piece
+        :return:
+        """
+        pass
 
 
 if __name__ == '__main__':

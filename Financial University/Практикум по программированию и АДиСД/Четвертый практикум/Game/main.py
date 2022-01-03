@@ -58,6 +58,7 @@ class Main(Engine):
             cls._prepare_()
             Support.is_running()
             Graphics.create_board()
+            pygame.display.flip()
 
 
 class Support(Main):
@@ -68,14 +69,26 @@ class Support(Main):
                 Main.running = False
 
 
-class Graphics:
+class Graphics(Main):
     @classmethod
     def create_board(cls):  # whole process in couple
         cls._board_()
 
-    @staticmethod
-    def _board_():  # squares
-        pass
+    @classmethod
+    def _board_(cls):  # squares
+        colors = [pygame.Color('white'), pygame.Color('dark gray')]
+        for row in range(cls.DIMENSIONS):
+            for col in range(cls.DIMENSIONS):
+                color = colors[((row + col) % 2)]
+                pygame.draw.rect(
+                    super().screen,
+                    color,
+                    pygame.Rect(
+                        col * cls.SQUARE_SIZE,
+                        row * cls.SQUARE_SIZE,
+                        cls.SQUARE_SIZE,
+                        cls.SQUARE_SIZE)
+                                )
 
     @staticmethod
     def _pieces_():  # pieces

@@ -1,6 +1,6 @@
 class Build:
     """
-    Class for external operations
+    Class for external operations for application
     """
     @staticmethod
     def load_images():

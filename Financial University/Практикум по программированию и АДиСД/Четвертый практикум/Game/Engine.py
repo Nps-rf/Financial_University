@@ -1,8 +1,8 @@
 class Engine:
     """
-    Abbreviations scheme
-    ◈ First letter -> color of piece
-    ◈ Second letter -> exact piece
+    Abbreviations scheme:
+        ◈ First letter -> color of piece
+        ◈ Second letter -> exact piece
     Example:
         ◈ wK -> White King
     Pieces:

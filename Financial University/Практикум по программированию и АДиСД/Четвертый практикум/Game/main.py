@@ -32,7 +32,7 @@ class Main(Engine):
         """
         The main function for launching the application
         :param kwargs:
-        :return: PYGAME APP
+        :return: pygame application
         """
         while cls.running:
             cls._prepare_()

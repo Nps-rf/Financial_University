@@ -1,4 +1,5 @@
 import pygame
+from Board import Table
 
 
 class Build:
@@ -73,6 +74,7 @@ class Graphics(Main):
     @classmethod
     def create_board(cls):  # whole process in couple
         cls._board_()
+        cls._pieces_()
 
     @classmethod
     def _board_(cls):  # squares
@@ -90,9 +92,22 @@ class Graphics(Main):
                         cls.SQUARE_SIZE)
                                 )
 
-    @staticmethod
-    def _pieces_():  # pieces
-        pass
+    @classmethod
+    def _pieces_(cls):  # pieces
+        board = Table().field
+        for row in range(cls.DIMENSIONS):
+            for col in range(cls.DIMENSIONS):
+                piece = board[row][col]
+                if piece != '--':  # if not empty square
+                    super().screen.blit(
+                        cls.images[piece],
+                        pygame.Rect(
+                            col * cls.SQUARE_SIZE + 12,
+                            row * cls.SQUARE_SIZE + 12,
+                            cls.SQUARE_SIZE,
+                            cls.SQUARE_SIZE)
+                                    )
+
 
 
 if __name__ == '__main__':

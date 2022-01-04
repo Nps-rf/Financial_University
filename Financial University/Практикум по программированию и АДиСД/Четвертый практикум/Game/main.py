@@ -5,6 +5,12 @@ from Build import Build
 Table = Table()
 
 
+class Player:
+    def __init__(self, letter='w'):
+        self.score = 0
+        self.letter = letter
+
+
 class Main(Engine):
     """
     Creates an application
@@ -15,6 +21,8 @@ class Main(Engine):
     images = Build.load_images()
     running = True
     FPS = 30
+    WHITE = Player()
+    BLACK = Player(letter='b')
 
     @classmethod
     def _prepare_(cls):
@@ -90,8 +98,11 @@ class Graphics(Main):
 
 
 class Controls(Main):
+    current_player = Main.WHITE
     chose = False
     piece = ('--', [-1, -1])
+    x = None
+    y = None
 
     @classmethod
     def run_controls(cls):
@@ -107,22 +118,35 @@ class Controls(Main):
                 Main.running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-
                 x = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
                 y = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
 
                 if Table.field[y][x] != '--':
-                    print(True, Table.field[y][x])
                     cls.chose = True
-                    cls.piece = (Table.field[y][x], [y, x])
+                    coordinates = [cls.y, cls.x] = y, x
+                    cls.piece = (Table.field[y][x], coordinates)
 
                 if Table.field[y][x] == '--' and cls.chose:
-                    print(Table.field[y][x])
-                    Table.field[y][x] = cls.piece[0]
-                    Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
-                    cls.chose = False
 
-                print(f'x = {x}, y = {y}')
+                    available = Rules.pawn(cls.x, cls.y)
+
+                    if x in available[0] and y in available[1] and cls.current_player.letter == cls.piece[0][0]:
+
+                        Table.field[y][x] = cls.piece[0]
+
+                        Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
+
+                        cls.chose = False
+
+                        if cls.current_player.letter == 'w':
+                            print(False)
+                            cls.current_player = super().BLACK
+
+                        elif cls.current_player.letter == 'b':
+                            print(True)
+                            cls.current_player = super().WHITE
+
+                print(f'x = {x}, y = {y}', cls.current_player.letter)
 
 
 class Rules:
@@ -131,7 +155,58 @@ class Rules:
         """
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
-        :return:
+        :return: coordinates available
+        """
+        if Table.field[p_y][p_x][0] == 'b':
+            if p_y == 1:
+                return [p_x], [p_y + 1, p_y + 2]
+            return [p_x], [p_y + 1]
+        if p_y == 6:
+            return [p_x], [p_y - 1, p_y - 2]
+        return [p_x], [p_y - 1]
+
+    @staticmethod
+    def knight(p_x, p_y):
+        """
+        :param p_x: Horizontal coordinate of piece
+        :param p_y: Vertical coordinate of piece
+        :return: coordinates available
+        """
+        pass
+
+    @staticmethod
+    def bishop(p_x, p_y):
+        """
+        :param p_x: Horizontal coordinate of piece
+        :param p_y: Vertical coordinate of piece
+        :return: coordinates available
+        """
+        pass
+
+    @staticmethod
+    def rook(p_x, p_y):
+        """
+        :param p_x: Horizontal coordinate of piece
+        :param p_y: Vertical coordinate of piece
+        :return: coordinates available
+        """
+        pass
+
+    @staticmethod
+    def queen(p_x, p_y):
+        """
+        :param p_x: Horizontal coordinate of piece
+        :param p_y: Vertical coordinate of piece
+        :return: coordinates available
+        """
+        pass
+
+    @staticmethod
+    def king(p_x, p_y):
+        """
+        :param p_x: Horizontal coordinate of piece
+        :param p_y: Vertical coordinate of piece
+        :return: coordinates available
         """
         pass
 

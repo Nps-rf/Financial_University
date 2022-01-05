@@ -222,7 +222,7 @@ class Rules:
                         x_available.remove(p_x)
             except IndexError:
                 pass
-        # Black Beat section
+        # Black Beat section?
         if Table.field[p_y][p_x][0] == 'b':
             try:
                 if Table.field[p_y + 1][p_x - 1][0] == 'w':

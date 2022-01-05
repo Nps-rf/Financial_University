@@ -30,8 +30,8 @@ class Main(Engine):
         """
         Function that prepares an application for launch
         """
+        pygame.mixer.pre_init(44100, -16, 1, 512)
         pygame.init()
-        pygame.mixer.init()
         cls.screen = pygame.display.set_mode(cls.RATIO)
         pygame.display.set_caption('Chess')
         pass
@@ -45,9 +45,18 @@ class Main(Engine):
         """
         while cls.running:
             cls._prepare_()
+            Sound.init()
             Graphics.create_board()
             Controls.run_controls()
             pygame.display.update()  # Updates a screen
+
+
+class Sound:
+    @classmethod
+    def init(cls):
+        pygame.mixer.init()
+        cls.move_sound = pygame.mixer.Sound('Sound/move of piece.ogg')
+        cls.beat_sound = pygame.mixer.Sound('Sound/peace beaten.ogg')
 
 
 class Graphics(Main):
@@ -98,7 +107,7 @@ class Graphics(Main):
                                     )
 
 
-class Controls(Main):
+class Controls(Main, Sound):
     current_player = Main.WHITE
     chose = False
     piece = ('--', [-1, -1])
@@ -144,6 +153,10 @@ class Controls(Main):
                         print(available)
                         if x in available[0] and y in available[1] and p_letter == cls.piece[0][0]:  # movement of piece
                             print('PASSED')
+                            if Table.field[y][x] == '--':
+                                super().move_sound.play()
+                            else:
+                                super().beat_sound.play()
                             Table.field[y][x] = cls.piece[0]
 
                             Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
@@ -151,25 +164,6 @@ class Controls(Main):
                             cls.chose = False
                             cls.current_player = super().BLACK if p_letter == 'w' else super().WHITE
                         print(Table.field[y][x][0], cls.current_player.opposite)
-                        if Table.field[y][x][0] == cls.current_player.opposite == cls.piece[0][0]:
-                            if x in available[0] and y in available[1]:
-                                Table.field[y][x] = cls.piece[0]
-
-                                Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
-
-                                cls.chose = False
-                                cls.current_player = super().BLACK if p_letter == 'w' else super().WHITE
-
-                        # beat
-                        if Table.field[y][x][0] == cls.current_player.opposite:
-                            if x in available[0] and y in available[1]:
-                                print(True)
-                                Table.field[y][x] = cls.piece[0]
-
-                                Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
-
-                                cls.chose = False
-                                cls.current_player = super().BLACK if p_letter == 'w' else super().WHITE
 
                 print(f'x = {x}, y = {y}')
 

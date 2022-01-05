@@ -2,6 +2,7 @@ import pygame
 from Board import Table
 from Engine import Engine
 from Build import Build
+from Button import Button
 Table = Table()
 
 
@@ -18,7 +19,6 @@ class Main(Engine):
     Creates an application
     """
     pos = None
-    output_error = 700
     screen = pygame.display
     font = pygame.font.Font
     images = Build.load_images()
@@ -49,7 +49,7 @@ class Main(Engine):
                 cls.RATIO[0],  # Size of square
                 cls.RATIO[0])  # Size of square
         )
-        cls.font = pygame.font.Font('Font/Leto Text Sans Defect.otf', 24)
+        cls.font = pygame.font.Font('Font/Leto Text Sans Defect.otf', 20)
         pygame.display.set_caption('Chess')
 
     @classmethod
@@ -64,7 +64,10 @@ class Main(Engine):
             Sound.init()
             Graphics.create_board()
             Controls.run_controls()
-            pygame.display.update()  # Updates a screen
+            Graphics.print_info()
+            for b in Graphics.get_button_list():
+                b.draw(cls.screen)
+            pygame.display.update()
 
 
 class Sound:
@@ -73,12 +76,28 @@ class Sound:
         pygame.mixer.init()
         cls.move_sound = pygame.mixer.Sound('Sound/move of piece.ogg')
         cls.beat_sound = pygame.mixer.Sound('Sound/peace beaten.ogg')
+        cls.Knight_move = pygame.mixer.Sound('Sound/Knight movement.ogg')
 
 
 class Graphics(Main):
     """
     The class responsible for the graphical component of the application
     """
+    button_list = list()
+    button2 = None
+    button1 = None
+    output_error = 725
+    strings = []
+
+    @classmethod
+    def get_button_list(cls):
+        def cancel_turn():
+            print('Turn canceled')
+        cls.button2 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel_turn, 'Отменить ход')
+
+        cls.button_list = [cls.button2]
+        return cls.button_list
+
     @classmethod
     def create_board(cls):  # whole process in couple
         """
@@ -123,16 +142,36 @@ class Graphics(Main):
                                     )
 
     # noinspection PyArgumentList
+    @staticmethod
+    def info_gainer(piece):
+        pieces = {
+            'K': 'Король',
+            'Q': 'Ферзь',
+            'R': 'Ладья',
+            'B': 'Слон',
+            'N': 'Конь',
+            'p': 'Пешка'
+        }
+        string = f'{pieces[piece[1]]} {"белых" if piece[0] == "w" else "черных"}' \
+                 f' {"повержена" if piece[1] == "p" or piece[1] == "R" else "повержен"}!'
+        return string
+
     @classmethod
-    def print_info(cls, string='None'):
-        cls.output_error -= 25
-        cls.output = cls.font.render(string, 2, pygame.Color('red'))
-        cls.pos = cls.output.get_rect(center=
-                                      (super().RATIO[0] + 100, super().RATIO[1] - cls.output_error))
-        cls.screen.blit(cls.output, cls.pos)
+    def print_info(cls):
+        error = cls.output_error
+        for string in cls.strings:
+            error -= 35
+            # noinspection PyArgumentList
+            cls.output = cls.font.render(string, 2, pygame.Color('red'))
+            cls.pos = cls.output.get_rect(center=(super().RATIO[0] + 140, super().RATIO[1] - error))
+            cls.screen.blit(cls.output, cls.pos)
 
 
 class Controls(Main, Sound):
+    old_piece = '--'
+    p_letter = 'w' or 'b'
+    any_y = None
+    any_x = None
     current_player = Main.WHITE
     chose = False
     piece = ('--', [-1, -1])
@@ -154,11 +193,24 @@ class Controls(Main, Sound):
                 Main.running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                x = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
-                y = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
-                if x > 7 or y > 7:
+                if event.button == 1:
+                    pos = pygame.mouse.get_pos()
+                    if cls.any_x is not None:
+                        for b in Graphics.get_button_list():
+                            if cls.any_x > 7 or cls.any_y > 7:
+                                break
+                            if b.rect.collidepoint(pos):
+                                Table.field[cls.any_y][cls.any_x] = cls.old_piece
+                                Table.field[cls.y][cls.x] = cls.piece[0]
+                                cls.current_player = super().BLACK if cls.p_letter == 'b' else super().WHITE
+                                cls.chose = True
+
+                cls.any_x = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
+                cls.any_y = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
+
+                if cls.any_x > 7 or cls.any_y > 7:
                     break
-                p_letter = cls.current_player.letter
+                cls.p_letter = cls.current_player.letter
                 movements = {
                     'p': Rules.pawn,
                     'N': Rules.knight,
@@ -168,31 +220,37 @@ class Controls(Main, Sound):
                     'K': Rules.king
                 }
 
-                if Table.field[y][x] != '--' and Table.field[y][x][0] != cls.current_player.opposite:
+                if Table.field[cls.any_y][cls.any_x] != '--' \
+                        and Table.field[cls.any_y][cls.any_x][0] != cls.current_player.opposite:
                     cls.chose = True
-                    coordinates = [cls.y, cls.x] = y, x
-                    cls.piece = (Table.field[y][x], coordinates)
+                    coordinates = [cls.y, cls.x] = cls.any_y, cls.any_x
+                    cls.piece = (Table.field[cls.any_y][cls.any_x], coordinates)
                 if cls.x or cls.y is not None:
                     available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
 
                     if cls.chose:  # figure chosen
                         print(available)
-                        if [x, y] in available and p_letter == cls.piece[0][0]:  # movement of piece
+                        if [cls.any_x, cls.any_y] in available and cls.p_letter == cls.piece[0][0]:  # movement of piece
                             print('PASSED')
-                            if Table.field[y][x] == '--':
-                                super().move_sound.play()
-                            else:
+                            print(cls.piece[0][1])
+                            if Table.field[cls.any_y][cls.any_x][0] == cls.current_player.opposite:
                                 super().beat_sound.play()
-                            Table.field[y][x] = cls.piece[0]
+                                Graphics.strings.append(Graphics.info_gainer(Table.field[cls.any_y][cls.any_x]))
+                            elif cls.piece[0][1] == 'N':
+                                super().Knight_move.play()
+                            elif Table.field[cls.any_y][cls.any_x] == '--':
+                                super().move_sound.play()
+                            cls.old_piece = Table.field[cls.any_y][cls.any_x]
+                            Table.field[cls.any_y][cls.any_x] = cls.piece[0]
 
                             Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
 
                             cls.chose = False
-                            cls.current_player = super().BLACK if p_letter == 'w' else super().WHITE
+                            cls.current_player = super().BLACK if cls.p_letter == 'w' else super().WHITE
                             # Graphics.print_info(f"{cls.current_player.name}'s turn")
-                        print(Table.field[y][x][0], cls.current_player.opposite)
+                        print(Table.field[cls.any_y][cls.any_x][0], cls.current_player.opposite)
 
-                print(f'x = {x}, y = {y}')
+                print(f'x = {cls.any_x}, y = {cls.any_y}')
 
 
 class Rules:
@@ -209,13 +267,13 @@ class Rules:
             if p_y == 1:
                 available.append([p_x, p_y + 2])
                 available.append([p_x, p_y + 1])
-            else:
+            elif Table.field[p_y][p_x][0] == 'b':
                 available.append([p_x, p_y + 1])
         if Table.field[p_y - 1][p_x] == '--':
             if p_y == 6:
                 available.append([p_x, p_y - 1])
                 available.append([p_x, p_y - 2])
-            else:
+            elif Table.field[p_y][p_x][0] == 'w':
                 available.append([p_x, p_y - 1])
         # White Beat section
         if Table.field[p_y][p_x][0] == 'w':
@@ -306,14 +364,50 @@ class Rules:
         return available
 
     @staticmethod
-    def bishop(p_x, p_y, *_):
+    def bishop(p_x, p_y, player):
         """
+        :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
+        available = []
 
-        pass
+        def solve_side(upper=True, left=True):
+            no_way = False
+            for x, y in zip(range(1, 8 + 1), range(1, 8 + 1)):
+                if not upper:
+                    y = -y
+                if not left:
+                    x = -x
+                if no_way:
+                    break
+                try:
+                    if Table.field[p_y - y][p_x - x][0] == player.opposite:
+                        available.append([p_x - x, p_y - y])
+                        no_way = True
+                        break
+                    if Table.field[p_y - y][p_x - x][0] != player.letter:
+                        print(Table.field[p_y - y][p_x - x])
+                        available.append([p_x - x, p_y - y])
+                    elif Table.field[p_y - y][p_x - x][0] == player.letter:
+                        no_way = True
+                        break
+                except IndexError:
+                    pass
+        # upper left
+        solve_side()
+
+        # lower left
+        solve_side(upper=False)
+
+        # upper right
+        solve_side(left=False)
+
+        # lower right
+        solve_side(left=False, upper=False)
+
+        return available
 
     @staticmethod
     def rook(p_x, p_y, *_):

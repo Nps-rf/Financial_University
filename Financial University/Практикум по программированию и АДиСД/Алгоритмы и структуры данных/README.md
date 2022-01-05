@@ -1,0 +1,1 @@
+![Financial University](https://i.absurdopedia.net/c/cb/Bd-15.jpg)

@@ -6,9 +6,10 @@ Table = Table()
 
 
 class Player:
-    def __init__(self, letter='w'):
+    def __init__(self, letter='w', opposite='b'):
         self.score = 0
         self.letter = letter
+        self.opposite = opposite
 
 
 class Main(Engine):
@@ -22,7 +23,7 @@ class Main(Engine):
     running = True
     FPS = 30
     WHITE = Player()
-    BLACK = Player(letter='b')
+    BLACK = Player(letter='b', opposite='w')
 
     @classmethod
     def _prepare_(cls):
@@ -111,8 +112,9 @@ class Controls(Main):
     @classmethod
     def _look4click_(cls):
         """
-                Checks whether the user clicked on the cross (or other place)
-                """
+        Checks whether the user clicked on the cross (or other place)
+        It's the biggest trash i've ever made
+        """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 Main.running = False
@@ -120,33 +122,56 @@ class Controls(Main):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
                 y = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
+                p_letter = cls.current_player.letter
+                # movements = {
+                #     'p': Rules.pawn,
+                #     'N': Rules.knight,
+                #     'B': Rules.bishop,
+                #     'R': Rules.rook,
+                #     'Q': Rules.queen,
+                #     'K': Rules.king
+                # }
 
-                if Table.field[y][x] != '--':
+                if Table.field[y][x] != '--' and Table.field[y][x][0] != cls.current_player.opposite:
                     cls.chose = True
                     coordinates = [cls.y, cls.x] = y, x
                     cls.piece = (Table.field[y][x], coordinates)
-
-                if Table.field[y][x] == '--' and cls.chose:
-
+                if cls.x or cls.y is not None:
+                    # available = movements[cls.piece[0][1]](cls.x, cls.y)
                     available = Rules.pawn(cls.x, cls.y)
 
-                    if x in available[0] and y in available[1] and cls.current_player.letter == cls.piece[0][0]:
+                    if cls.chose:  # figure chosed
+                        print(available)
+                        if x in available[0] and y in available[1] and p_letter == cls.piece[0][0]:  # movement of piece
+                            print('PASSED')
+                            Table.field[y][x] = cls.piece[0]
 
-                        Table.field[y][x] = cls.piece[0]
+                            Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
 
-                        Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
+                            cls.chose = False
+                            cls.current_player = super().BLACK if p_letter == 'w' else super().WHITE
+                        print(Table.field[y][x][0], cls.current_player.opposite)
+                        if Table.field[y][x][0] == cls.current_player.opposite == cls.piece[0][0]:
+                            if x in available[0] and y in available[1]:
+                                Table.field[y][x] = cls.piece[0]
 
-                        cls.chose = False
+                                Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
 
-                        if cls.current_player.letter == 'w':
-                            print(False)
-                            cls.current_player = super().BLACK
+                                cls.chose = False
+                                cls.current_player = super().BLACK if p_letter == 'w' else super().WHITE
 
-                        elif cls.current_player.letter == 'b':
-                            print(True)
-                            cls.current_player = super().WHITE
+                        # beat
+                        if Table.field[y][x][0] == cls.current_player.opposite:
+                            if x in available[0] and y in available[1]:
+                                print(True)
+                                Table.field[y][x] = cls.piece[0]
 
-                print(f'x = {x}, y = {y}', cls.current_player.letter)
+                                Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
+
+                                cls.chose = False
+                                cls.current_player = super().BLACK if p_letter == 'w' else super().WHITE
+
+                print(f'x = {x}, y = {y}')
 
 
 class Rules:
@@ -157,13 +182,70 @@ class Rules:
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
+        # Movement section
+        x_available = []
+        y_available = []
         if Table.field[p_y][p_x][0] == 'b':
             if p_y == 1:
-                return [p_x], [p_y + 1, p_y + 2]
-            return [p_x], [p_y + 1]
+                x_available.append(p_x)
+                y_available.append(p_y + 2)
+                y_available.append(p_y + 1)
+            else:
+                x_available.append(p_x)
+                y_available.append(p_y + 1)
         if p_y == 6:
-            return [p_x], [p_y - 1, p_y - 2]
-        return [p_x], [p_y - 1]
+            x_available.append(p_x)
+            y_available.append(p_y - 1)
+            y_available.append(p_y - 2)
+        else:
+            x_available.append(p_x)
+            y_available.append(p_y - 1)
+        # White Beat section
+        if Table.field[p_y][p_x][0] == 'w':
+            try:
+                if Table.field[p_y - 1][p_x - 1][0] == 'b':
+                    x_available.append(p_x - 1)
+                    y_available.append(p_y - 1)
+            except IndexError:
+                pass
+
+            try:
+                if Table.field[p_y - 1][p_x + 1][0] == 'b':
+                    x_available.append(p_x + 1)
+                    y_available.append(p_y - 1)
+            except IndexError:
+                pass
+
+            try:
+                if Table.field[p_y - 1][p_x][0] == 'b':
+                    while p_x in x_available:
+                        x_available.remove(p_x)
+            except IndexError:
+                pass
+        # Black Beat section
+        if Table.field[p_y][p_x][0] == 'b':
+            try:
+                if Table.field[p_y + 1][p_x - 1][0] == 'w':
+                    x_available.append(p_x - 1)
+                    y_available.append(p_y + 1)
+            except IndexError:
+                pass
+
+            try:
+                if Table.field[p_y + 1][p_x + 1][0] == 'w':
+                    x_available.append(p_x + 1)
+                    y_available.append(p_y + 1)
+            except IndexError:
+                pass
+
+            try:
+                if Table.field[p_y + 1][p_x][0] == 'w':
+                    while p_x in x_available:
+                        x_available.remove(p_x)
+            except IndexError:
+                pass
+
+        return x_available, y_available
 
     @staticmethod
     def knight(p_x, p_y):

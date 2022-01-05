@@ -132,26 +132,25 @@ class Controls(Main, Sound):
                 x = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
                 y = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
                 p_letter = cls.current_player.letter
-                # movements = {
-                #     'p': Rules.pawn,
-                #     'N': Rules.knight,
-                #     'B': Rules.bishop,
-                #     'R': Rules.rook,
-                #     'Q': Rules.queen,
-                #     'K': Rules.king
-                # }
+                movements = {
+                    'p': Rules.pawn,
+                    'N': Rules.knight,
+                    'B': Rules.bishop,
+                    'R': Rules.rook,
+                    'Q': Rules.queen,
+                    'K': Rules.king
+                }
 
                 if Table.field[y][x] != '--' and Table.field[y][x][0] != cls.current_player.opposite:
                     cls.chose = True
                     coordinates = [cls.y, cls.x] = y, x
                     cls.piece = (Table.field[y][x], coordinates)
                 if cls.x or cls.y is not None:
-                    # available = movements[cls.piece[0][1]](cls.x, cls.y)
-                    available = Rules.pawn(cls.x, cls.y)
+                    available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
 
-                    if cls.chose:  # figure chosed
+                    if cls.chose:  # figure chosen
                         print(available)
-                        if x in available[0] and y in available[1] and p_letter == cls.piece[0][0]:  # movement of piece
+                        if [x, y] in available and p_letter == cls.piece[0][0]:  # movement of piece
                             print('PASSED')
                             if Table.field[y][x] == '--':
                                 super().move_sound.play()
@@ -170,79 +169,125 @@ class Controls(Main, Sound):
 
 class Rules:
     @staticmethod
-    def pawn(p_x, p_y):
+    def pawn(p_x, p_y, *_):
         """
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
         # Movement section
-        x_available = []
-        y_available = []
-        if Table.field[p_y][p_x][0] == 'b':
+        available = []
+        if Table.field[p_y + 1][p_x] == '--':
             if p_y == 1:
-                x_available.append(p_x)
-                y_available.append(p_y + 2)
-                y_available.append(p_y + 1)
+                available.append([p_x, p_y + 2])
+                available.append([p_x, p_y + 1])
             else:
-                x_available.append(p_x)
-                y_available.append(p_y + 1)
-        if p_y == 6:
-            x_available.append(p_x)
-            y_available.append(p_y - 1)
-            y_available.append(p_y - 2)
-        else:
-            x_available.append(p_x)
-            y_available.append(p_y - 1)
+                available.append([p_x, p_y + 1])
+        if Table.field[p_y - 1][p_x] == '--':
+            if p_y == 6:
+                available.append([p_x, p_y - 1])
+                available.append([p_x, p_y - 2])
+            else:
+                available.append([p_x, p_y - 1])
         # White Beat section
         if Table.field[p_y][p_x][0] == 'w':
             try:
                 if Table.field[p_y - 1][p_x - 1][0] == 'b':
-                    x_available.append(p_x - 1)
-                    y_available.append(p_y - 1)
+                    available.append([p_x - 1, p_y - 1])
             except IndexError:
                 pass
 
             try:
                 if Table.field[p_y - 1][p_x + 1][0] == 'b':
-                    x_available.append(p_x + 1)
-                    y_available.append(p_y - 1)
+                    available.append([p_x + 1, p_y - 1])
             except IndexError:
                 pass
 
-            try:
-                if Table.field[p_y - 1][p_x][0] == 'b':
-                    while p_x in x_available:
-                        x_available.remove(p_x)
-            except IndexError:
-                pass
         # Black Beat section?
         if Table.field[p_y][p_x][0] == 'b':
             try:
                 if Table.field[p_y + 1][p_x - 1][0] == 'w':
-                    x_available.append(p_x - 1)
-                    y_available.append(p_y + 1)
+                    available.append([p_x - 1, p_y + 1])
             except IndexError:
                 pass
 
             try:
                 if Table.field[p_y + 1][p_x + 1][0] == 'w':
-                    x_available.append(p_x + 1)
-                    y_available.append(p_y + 1)
+                    available.append([p_x + 1, p_y + 1])
             except IndexError:
                 pass
 
-            try:
-                if Table.field[p_y + 1][p_x][0] == 'w':
-                    while p_x in x_available:
-                        x_available.remove(p_x)
-            except IndexError:
-                pass
-
-        return x_available, y_available
+        return available
 
     @staticmethod
-    def knight(p_x, p_y):
+    def knight(p_x, p_y, player):
+        """
+        :param p_x: Horizontal coordinate of piece
+        :param p_y: Vertical coordinate of piece
+        :return: coordinates available
+        """
+        table = Table.field
+        available = []
+
+        # leftward
+        try:
+            if table[p_y - 1][p_x - 2][0] != player.letter:
+                available.append([p_x - 2, p_y - 1])
+        except IndexError:
+            pass
+        try:
+            if table[p_y + 1][p_x - 2][0] != player.letter:
+                available.append([p_x - 2, p_y + 1])
+        except IndexError:
+            pass
+        # above
+        try:
+            if table[p_y - 2][p_x - 1][0] != player.letter:
+                available.append([p_x - 1, p_y - 2])
+        except IndexError:
+            pass
+        try:
+            if table[p_y - 2][p_x + 1][0] != player.letter:
+                available.append([p_x + 1, p_y - 2])
+        except IndexError:
+            pass
+
+        # on the right
+        try:
+            if table[p_y - 1][p_x + 2][0] != player.letter:
+                available.append([p_x + 2, p_y - 1])
+        except IndexError:
+            pass
+        try:
+            if table[p_y + 1][p_x + 2][0] != player.letter:
+                available.append([p_x + 2, p_y + 1])
+        except IndexError:
+            pass
+        # below
+        try:
+            if table[p_y + 2][p_x - 1][0] != player.letter:
+                available.append([p_x - 1, p_y + 2])
+        except IndexError:
+            pass
+        try:
+            if table[p_y + 2][p_x + 1][0] != player.letter:
+                available.append([p_x + 1, p_y + 2])
+        except IndexError:
+            pass
+        return available
+
+    @staticmethod
+    def bishop(p_x, p_y, *_):
+        """
+        :param p_x: Horizontal coordinate of piece
+        :param p_y: Vertical coordinate of piece
+        :return: coordinates available
+        """
+
+        pass
+
+    @staticmethod
+    def rook(p_x, p_y, *_):
         """
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
@@ -251,7 +296,7 @@ class Rules:
         pass
 
     @staticmethod
-    def bishop(p_x, p_y):
+    def queen(p_x, p_y, *_):
         """
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
@@ -260,25 +305,7 @@ class Rules:
         pass
 
     @staticmethod
-    def rook(p_x, p_y):
-        """
-        :param p_x: Horizontal coordinate of piece
-        :param p_y: Vertical coordinate of piece
-        :return: coordinates available
-        """
-        pass
-
-    @staticmethod
-    def queen(p_x, p_y):
-        """
-        :param p_x: Horizontal coordinate of piece
-        :param p_y: Vertical coordinate of piece
-        :return: coordinates available
-        """
-        pass
-
-    @staticmethod
-    def king(p_x, p_y):
+    def king(p_x, p_y, *_):
         """
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece

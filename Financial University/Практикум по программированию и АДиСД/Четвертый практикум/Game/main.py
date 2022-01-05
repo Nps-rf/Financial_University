@@ -6,8 +6,9 @@ Table = Table()
 
 
 class Player:
-    def __init__(self, letter='w', opposite='b'):
+    def __init__(self, letter='w', opposite='b', name='White'):
         self.score = 0
+        self.name = name
         self.letter = letter
         self.opposite = opposite
 
@@ -16,14 +17,19 @@ class Main(Engine):
     """
     Creates an application
     """
-    def __init__(self):
-        super().__init__()
-
+    pos = None
+    output_error = 700
+    screen = pygame.display
+    font = pygame.font.Font
     images = Build.load_images()
     running = True
     FPS = 30
     WHITE = Player()
-    BLACK = Player(letter='b', opposite='w')
+    BLACK = Player(letter='b', opposite='w', name='Black')
+    output = pygame.font.Font.render
+
+    def __init__(self):
+        super().__init__()
 
     @classmethod
     def _prepare_(cls):
@@ -32,9 +38,19 @@ class Main(Engine):
         """
         pygame.mixer.pre_init(44100, -16, 1, 512)
         pygame.init()
-        cls.screen = pygame.display.set_mode(cls.RATIO)
+        cls.screen = pygame.display.set_mode((cls.RATIO[0] + (cls.RATIO[0] // 3 + 50), cls.RATIO[1]))
+        cls.screen.fill('white')
+        pygame.draw.rect(
+            cls.screen,
+            pygame.Color('dark grey'),
+            pygame.Rect(
+                5,  # Horizontal coordinate
+                0,  # Vertical coordinate
+                cls.RATIO[0],  # Size of square
+                cls.RATIO[0])  # Size of square
+        )
+        cls.font = pygame.font.Font('Font/Leto Text Sans Defect.otf', 24)
         pygame.display.set_caption('Chess')
-        pass
 
     @classmethod
     def run(cls, **kwargs):
@@ -106,6 +122,15 @@ class Graphics(Main):
                             cls.SQUARE_SIZE)  # Size of square
                                     )
 
+    # noinspection PyArgumentList
+    @classmethod
+    def print_info(cls, string='None'):
+        cls.output_error -= 25
+        cls.output = cls.font.render(string, 2, pygame.Color('red'))
+        cls.pos = cls.output.get_rect(center=
+                                      (super().RATIO[0] + 100, super().RATIO[1] - cls.output_error))
+        cls.screen.blit(cls.output, cls.pos)
+
 
 class Controls(Main, Sound):
     current_player = Main.WHITE
@@ -131,6 +156,8 @@ class Controls(Main, Sound):
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
                 y = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
+                if x > 7 or y > 7:
+                    break
                 p_letter = cls.current_player.letter
                 movements = {
                     'p': Rules.pawn,
@@ -162,6 +189,7 @@ class Controls(Main, Sound):
 
                             cls.chose = False
                             cls.current_player = super().BLACK if p_letter == 'w' else super().WHITE
+                            # Graphics.print_info(f"{cls.current_player.name}'s turn")
                         print(Table.field[y][x][0], cls.current_player.opposite)
 
                 print(f'x = {x}, y = {y}')
@@ -222,6 +250,7 @@ class Rules:
     @staticmethod
     def knight(p_x, p_y, player):
         """
+        :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available

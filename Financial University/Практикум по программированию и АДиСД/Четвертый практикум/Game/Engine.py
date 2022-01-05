@@ -5,7 +5,7 @@ class Engine:
         ◈ Second letter -> exact piece
     Example:
         ◈ wK -> White King
-    Pieces:
+    images:
         ◈ K -> King (Король)
         ◈ Q -> Queen (Ферзь)
         ◈ R -> Rook (Ладья)

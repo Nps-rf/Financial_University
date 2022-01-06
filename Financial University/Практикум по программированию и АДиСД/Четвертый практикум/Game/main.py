@@ -102,8 +102,7 @@ class Graphics(Main):
     The class responsible for the graphical component of the application
     """
     button_list = list()
-    button2 = None
-    button1 = None
+    button1 = Button
     output_error = 670
     strings = []
 
@@ -111,9 +110,9 @@ class Graphics(Main):
     def get_button_list(cls):
         def cancel_turn():
             print('Turn canceled')
-        cls.button2 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel_turn, 'Отменить ход')
+        cls.button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel_turn, 'Отменить ход')
 
-        cls.button_list = [cls.button2]
+        cls.button_list = [cls.button1]
         return cls.button_list
 
     @classmethod
@@ -187,11 +186,7 @@ class Graphics(Main):
 
 class Controls(Main, Sound):
     history = []
-    x4return = None
-    y4return = None
-    already_returned = False
     old_piece = '--'
-    p_letter = 'w' or 'b'
     row = None
     column = None
     current_player = Main.WHITE
@@ -226,7 +221,8 @@ class Controls(Main, Sound):
                                 Table.field[y_return][x_return] = turn[2]
                                 Table.field[turn[1][1]][turn[1][0]] = turn[3]
                                 super().move_sound.play()
-                                cls.current_player = super().BLACK if cls.p_letter == 'b' else super().WHITE
+                                print(turn[4])
+                                cls.current_player = super().BLACK if turn[4] == 'b' else super().WHITE
                                 cls.chose = True
                                 cls.already_returned = True
                                 del cls.history[-1]
@@ -258,22 +254,25 @@ class Controls(Main, Sound):
                     'K': super().King.play
                 }
 
+                # get coordinates and misc
                 if Table.field[cls.row][cls.column] != '--' \
                         and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
                     cls.chose = True
                     coordinates = [cls.y, cls.x] = cls.row, cls.column
                     cls.piece = (Table.field[cls.row][cls.column], coordinates)
-                    cls.p_letter = cls.current_player.letter
 
+                # play sound of chosen piece and look for all squares available to move
                 if cls.x or cls.y is not None:
                     available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
                     if Table.field[cls.row][cls.column][1] in sounds.keys() \
                             and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
                         sounds[Table.field[cls.row][cls.column][1]]()
 
-                    if cls.chose:  # figure chosen
-                        print(available)
-                        if [cls.column, cls.row] in available and cls.p_letter == cls.piece[0][0]:  # movement of piece
+                    if cls.chose:  # figure chosen and can move
+                        print('Squares you can move -> ', *available)
+                        # movement of piece
+                        if [cls.column, cls.row] in available \
+                                and cls.current_player.letter == cls.piece[0][0]:
 
                             if Table.field[cls.row][cls.column][0] == cls.current_player.opposite:
                                 super().beat_sound.play()
@@ -286,20 +285,25 @@ class Controls(Main, Sound):
                                 super().move_sound.play()
 
                             cls.old_x_y = [cls.column, cls.row]
-                            cls.old_piece = Table.field[cls.row][cls.column] if Table.field[cls.row][cls.column] == '--' else '--'
+
+                            cls.old_piece = Table.field[cls.row][cls.column] \
+                                if Table.field[cls.row][cls.column] == '--' else '--'
+
                             cls.history.append([[cls.piece[1][1], cls.piece[1][0]],  # from
                                                 [cls.column, cls.row],  # to
                                                 cls.piece[0],  # who moves
-                                                Table.field[cls.row][cls.column]])  # from-old
+                                                Table.field[cls.row][cls.column],  # from-old
+                                                cls.current_player.letter])  # Who moved
+
                             Table.field[cls.row][cls.column] = cls.piece[0]
 
                             Table.field[cls.piece[1][0]][cls.piece[1][1]] = cls.old_piece
+                            ############################################################################################
                             cls.chose = False
-                            cls.current_player = super().BLACK if cls.p_letter == 'w' else super().WHITE
-                            cls.already_returned = False
+                            cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
                             cls.x4return = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
                             cls.y4return = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
-                            # Graphics.print_info(f"{cls.current_player.name}'s turn")
+                            ############################################################################################
 
                 print(f'x = {cls.column}, y = {cls.row}')
 
@@ -314,18 +318,24 @@ class Rules:
         """
         # Movement section
         available = []
-        if Table.field[p_y + 1][p_x] == '--':
-            if p_y == 1:
-                available.append([p_x, p_y + 2])
-                available.append([p_x, p_y + 1])
-            elif Table.field[p_y][p_x][0] == 'b':
-                available.append([p_x, p_y + 1])
-        if Table.field[p_y - 1][p_x] == '--':
-            if p_y == 6:
-                available.append([p_x, p_y - 1])
-                available.append([p_x, p_y - 2])
-            elif Table.field[p_y][p_x][0] == 'w':
-                available.append([p_x, p_y - 1])
+        try:
+            if Table.field[p_y + 1][p_x] == '--':
+                if p_y == 1:
+                    available.append([p_x, p_y + 2])
+                    available.append([p_x, p_y + 1])
+                elif Table.field[p_y][p_x][0] == 'b':
+                    available.append([p_x, p_y + 1])
+        except IndexError:
+            pass
+        try:
+            if Table.field[p_y - 1][p_x] == '--':
+                if p_y == 6:
+                    available.append([p_x, p_y - 1])
+                    available.append([p_x, p_y - 2])
+                elif Table.field[p_y][p_x][0] == 'w':
+                    available.append([p_x, p_y - 1])
+        except IndexError:
+            pass
         # White Beat section
         if Table.field[p_y][p_x][0] == 'w':
             try:

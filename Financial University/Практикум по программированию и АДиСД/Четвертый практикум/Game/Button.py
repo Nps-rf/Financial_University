@@ -1,5 +1,7 @@
 class Button:
-
+    """
+    This is just a class for a buttons
+    """
     def __init__(self, position, size, clr=None, change_color=None, func=None, text='Hello', font="Segoe Print",
                  font_size=16, font_clr=None):
         if font_clr is None:

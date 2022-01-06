@@ -2,7 +2,7 @@ class Button:
 
     def __init__(self, position, size, clr=None, change_color=None, func=None, text='Hello', font="Segoe Print",
                  font_size=16, font_clr=None):
-        if font_clr is None :
+        if font_clr is None:
             font_clr = [0, 0, 0]
         if clr is None:
             clr = [100, 100, 100]
@@ -16,7 +16,7 @@ class Button:
 
         if change_color:
             self.change_color = change_color
-        else :
+        else:
             self.change_color = clr
 
         if len(clr) == 4:
@@ -28,7 +28,7 @@ class Button:
         self.txt_surf = self.font.render(self.txt, 1, self.font_clr)
         self.txt_rect = self.txt_surf.get_rect(center=[wh // 2 for wh in self.size])
 
-    def draw(self, screen) :
+    def draw(self, screen):
         self.mouseover()
 
         self.surf.fill(self.cursor_color)

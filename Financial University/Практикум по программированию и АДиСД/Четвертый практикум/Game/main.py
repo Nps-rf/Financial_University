@@ -49,7 +49,7 @@ class Main(Engine):
                 cls.RATIO[0],  # Size of square
                 cls.RATIO[0])  # Size of square
         )
-        cls.font = pygame.font.Font('Font/Leto Text Sans Defect.otf', 20)
+        cls.font = pygame.font.Font(None, 22)
         pygame.display.set_caption('Chess')
 
     @classmethod

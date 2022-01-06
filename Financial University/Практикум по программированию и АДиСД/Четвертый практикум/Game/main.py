@@ -1,6 +1,5 @@
 import pygame
 from Board import Table
-from Engine import Engine
 from Build import Build
 from Button import Button
 Table = Table()
@@ -14,9 +13,21 @@ class Player:
         self.opposite = opposite
 
 
-class Main(Engine):
+class Main:
     """
     Creates an application
+    Abbreviations scheme:
+    ◈ First letter -> color of piece
+    ◈ Second letter -> exact piece
+    Example:
+        ◈ wK -> White King
+    images:
+        ◈ K -> King (Король)
+        ◈ Q -> Queen (Ферзь)
+        ◈ R -> Rook (Ладья)
+        ◈ B -> Bishop (Слон)
+        ◈ N -> Knight (Конь)
+        ◈ P -> Pawn (Пешка)
     """
     pos = None
     screen = pygame.display
@@ -27,9 +38,10 @@ class Main(Engine):
     WHITE = Player()
     BLACK = Player(letter='b', opposite='w', name='Black')
     output = pygame.font.Font.render
-
-    def __init__(self):
-        super().__init__()
+    RATIO = (WIDTH, HEIGHT) = (720, 720)
+    DIMENSIONS = 8
+    SQUARE_SIZE = WIDTH // DIMENSIONS
+    expand = 6 * 2  # The error for the screen resolution (so that the figures do not move out)
 
     @classmethod
     def _prepare_(cls):
@@ -49,14 +61,13 @@ class Main(Engine):
                 cls.RATIO[0],  # Size of square
                 cls.RATIO[0])  # Size of square
         )
-        cls.font = pygame.font.Font(None, 22)
+        cls.font = pygame.font.Font(None, 23)
         pygame.display.set_caption('Chess')
 
     @classmethod
-    def run(cls, **kwargs):
+    def run(cls):
         """
         The main function for launching the application
-        :param kwargs:
         :return: pygame application
         """
         while cls.running:
@@ -77,6 +88,13 @@ class Sound:
         cls.move_sound = pygame.mixer.Sound('Sound/move of piece.ogg')
         cls.beat_sound = pygame.mixer.Sound('Sound/peace beaten.ogg')
         cls.Knight_move = pygame.mixer.Sound('Sound/Knight movement.ogg')
+        cls.Pawn = pygame.mixer.Sound('Sound/Pawn.ogg')
+        cls.Rook = pygame.mixer.Sound('Sound/Rook.ogg')
+        cls.Knight = pygame.mixer.Sound('Sound/Knight.ogg')
+        cls.Queen = pygame.mixer.Sound('Sound/Queen.ogg')
+        cls.Castle = pygame.mixer.Sound('Sound/Castle.ogg')
+        cls.Bishop = pygame.mixer.Sound('Sound/Bishop.ogg')
+        cls.King = pygame.mixer.Sound('Sound/King.ogg')
 
 
 class Graphics(Main):
@@ -86,7 +104,7 @@ class Graphics(Main):
     button_list = list()
     button2 = None
     button1 = None
-    output_error = 725
+    output_error = 670
     strings = []
 
     @classmethod
@@ -162,16 +180,20 @@ class Graphics(Main):
         for string in cls.strings:
             error -= 35
             # noinspection PyArgumentList
-            cls.output = cls.font.render(string, 2, pygame.Color('red'))
+            cls.output = cls.font.render(string, 1, pygame.Color('red'))
             cls.pos = cls.output.get_rect(center=(super().RATIO[0] + 140, super().RATIO[1] - error))
             cls.screen.blit(cls.output, cls.pos)
 
 
 class Controls(Main, Sound):
+    history = []
+    x4return = None
+    y4return = None
+    already_returned = False
     old_piece = '--'
     p_letter = 'w' or 'b'
-    any_y = None
-    any_x = None
+    row = None
+    column = None
     current_player = Main.WHITE
     chose = False
     piece = ('--', [-1, -1])
@@ -193,24 +215,32 @@ class Controls(Main, Sound):
                 Main.running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                # return section
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    if cls.any_x is not None:
-                        for b in Graphics.get_button_list():
-                            if cls.any_x > 7 or cls.any_y > 7:
-                                break
-                            if b.rect.collidepoint(pos):
-                                Table.field[cls.any_y][cls.any_x] = cls.old_piece
-                                Table.field[cls.y][cls.x] = cls.piece[0]
+                    for b in Graphics.get_button_list():
+                        if b.rect.collidepoint(pos):
+                            for number, turn in enumerate(cls.history[::-1]):
+                                x_return = turn[0][0]
+                                y_return = turn[0][1]
+                                Table.field[y_return][x_return] = turn[2]
+                                Table.field[turn[1][1]][turn[1][0]] = turn[3]
+                                super().move_sound.play()
                                 cls.current_player = super().BLACK if cls.p_letter == 'b' else super().WHITE
                                 cls.chose = True
+                                cls.already_returned = True
+                                del cls.history[-1]
+                                break
+                # move&beat section
+                cls.column = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
+                cls.row = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
 
-                cls.any_x = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
-                cls.any_y = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
-
-                if cls.any_x > 7 or cls.any_y > 7:
+                if event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS) > 7 or \
+                        event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS) > 7:
                     break
-                cls.p_letter = cls.current_player.letter
+                else:
+                    cls.column = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
+                    cls.row = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
                 movements = {
                     'p': Rules.pawn,
                     'N': Rules.knight,
@@ -219,38 +249,59 @@ class Controls(Main, Sound):
                     'Q': Rules.queen,
                     'K': Rules.king
                 }
+                sounds = {
+                    'p': super().Pawn.play,
+                    'N': super().Knight.play,
+                    'B': super().Bishop.play,
+                    'R': super().Rook.play,
+                    'Q': super().Queen.play,
+                    'K': super().King.play
+                }
 
-                if Table.field[cls.any_y][cls.any_x] != '--' \
-                        and Table.field[cls.any_y][cls.any_x][0] != cls.current_player.opposite:
+                if Table.field[cls.row][cls.column] != '--' \
+                        and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
                     cls.chose = True
-                    coordinates = [cls.y, cls.x] = cls.any_y, cls.any_x
-                    cls.piece = (Table.field[cls.any_y][cls.any_x], coordinates)
+                    coordinates = [cls.y, cls.x] = cls.row, cls.column
+                    cls.piece = (Table.field[cls.row][cls.column], coordinates)
+                    cls.p_letter = cls.current_player.letter
+
                 if cls.x or cls.y is not None:
                     available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
+                    if Table.field[cls.row][cls.column][1] in sounds.keys() \
+                            and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
+                        sounds[Table.field[cls.row][cls.column][1]]()
 
                     if cls.chose:  # figure chosen
                         print(available)
-                        if [cls.any_x, cls.any_y] in available and cls.p_letter == cls.piece[0][0]:  # movement of piece
-                            print('PASSED')
-                            print(cls.piece[0][1])
-                            if Table.field[cls.any_y][cls.any_x][0] == cls.current_player.opposite:
+                        if [cls.column, cls.row] in available and cls.p_letter == cls.piece[0][0]:  # movement of piece
+
+                            if Table.field[cls.row][cls.column][0] == cls.current_player.opposite:
                                 super().beat_sound.play()
-                                Graphics.strings.append(Graphics.info_gainer(Table.field[cls.any_y][cls.any_x]))
+                                Graphics.strings.append(Graphics.info_gainer(Table.field[cls.row][cls.column]))
+
                             elif cls.piece[0][1] == 'N':
                                 super().Knight_move.play()
-                            elif Table.field[cls.any_y][cls.any_x] == '--':
+
+                            elif Table.field[cls.row][cls.column] == '--':
                                 super().move_sound.play()
-                            cls.old_piece = Table.field[cls.any_y][cls.any_x]
-                            Table.field[cls.any_y][cls.any_x] = cls.piece[0]
 
-                            Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
+                            cls.old_x_y = [cls.column, cls.row]
+                            cls.old_piece = Table.field[cls.row][cls.column] if Table.field[cls.row][cls.column] == '--' else '--'
+                            cls.history.append([[cls.piece[1][1], cls.piece[1][0]],  # from
+                                                [cls.column, cls.row],  # to
+                                                cls.piece[0],  # who moves
+                                                Table.field[cls.row][cls.column]])  # from-old
+                            Table.field[cls.row][cls.column] = cls.piece[0]
 
+                            Table.field[cls.piece[1][0]][cls.piece[1][1]] = cls.old_piece
                             cls.chose = False
                             cls.current_player = super().BLACK if cls.p_letter == 'w' else super().WHITE
+                            cls.already_returned = False
+                            cls.x4return = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
+                            cls.y4return = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
                             # Graphics.print_info(f"{cls.current_player.name}'s turn")
-                        print(Table.field[cls.any_y][cls.any_x][0], cls.current_player.opposite)
 
-                print(f'x = {cls.any_x}, y = {cls.any_y}')
+                print(f'x = {cls.column}, y = {cls.row}')
 
 
 class Rules:
@@ -388,7 +439,6 @@ class Rules:
                         no_way = True
                         break
                     if Table.field[p_y - y][p_x - x][0] != player.letter:
-                        print(Table.field[p_y - y][p_x - x])
                         available.append([p_x - x, p_y - y])
                     elif Table.field[p_y - y][p_x - x][0] == player.letter:
                         no_way = True
@@ -438,5 +488,5 @@ class Rules:
 
 
 if __name__ == '__main__':
-    CHESS_GAME = Engine()
-    CHESS_GAME.run(size='medium')
+    CHESS_GAME = Main()
+    CHESS_GAME.run()

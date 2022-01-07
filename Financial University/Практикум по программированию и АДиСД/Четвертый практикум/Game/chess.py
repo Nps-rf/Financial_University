@@ -13,7 +13,7 @@ class Player:
         self.opposite = opposite
 
 
-class Main:
+class Chess:
     """
     Creates an application
     Abbreviations scheme:
@@ -95,9 +95,10 @@ class Sound:
         cls.Castle = pygame.mixer.Sound('Sound/Castle.ogg')
         cls.Bishop = pygame.mixer.Sound('Sound/Bishop.ogg')
         cls.King = pygame.mixer.Sound('Sound/King.ogg')
+        cls.checkmate = pygame.mixer.Sound('Sound/Check Mate.ogg')
 
 
-class Graphics(Main):
+class Graphics(Chess):
     """
     The class responsible for the graphical component of the application
     """
@@ -203,12 +204,13 @@ class Graphics(Main):
             cls.screen.blit(cls.output, cls.pos)
 
 
-class Controls(Main, Sound):
+class Controls(Chess, Sound):
+    available = list()
     history = []
     old_piece = '--'
     row = None
     column = None
-    current_player = Main.WHITE
+    current_player = Chess.WHITE
     chose = False
     piece = ('--', [-1, -1])
     x = None
@@ -226,7 +228,7 @@ class Controls(Main, Sound):
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                Main.running = False
+                Chess.running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 # return section
@@ -240,16 +242,19 @@ class Controls(Main, Sound):
                                 Table.field[y_return][x_return] = turn[2]
                                 Table.field[turn[1][1]][turn[1][0]] = turn[3]
                                 super().move_sound.play()
-                                print(turn[4])
+                                ########################################################################################
                                 cls.current_player = super().BLACK if turn[4] == 'b' else super().WHITE
                                 cls.chose = True
-                                cls.already_returned = True
+                                Graphics.available_moves.clear()
+                                cls.available.clear()
+                                cls.x, cls.y = None, None
+                                ########################################################################################
                                 del cls.history[-1]
                                 break
+                                ########################################################################################
+                if event.pos is None:
+                    return None
                 # move&beat section
-                cls.column = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
-                cls.row = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
-
                 if event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS) > 7 or \
                         event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS) > 7:
                     break
@@ -282,18 +287,18 @@ class Controls(Main, Sound):
 
                 # play sound of chosen piece and look for all squares available to move
                 if cls.x or cls.y is not None:
-                    available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
+                    cls.available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
                     if Table.field[cls.row][cls.column][1] in sounds.keys() \
                             and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
                         if len(Graphics.available_moves) > 0:
                             Graphics.available_moves.clear()
                         sounds[Table.field[cls.row][cls.column][1]]()  # playing sound
-                        Graphics.available_moves += available  # show available moves
+                        Graphics.available_moves += cls.available  # show available moves
 
                     if cls.chose:  # figure chosen and can move
-                        print('Squares you can move -> ', *available)
+                        print('Squares you can move -> ', *cls.available)
                         # movement of piece
-                        if [cls.column, cls.row] in available \
+                        if [cls.column, cls.row] in cls.available \
                                 and cls.current_player.letter == cls.piece[0][0]:
 
                             if Table.field[cls.row][cls.column][0] == cls.current_player.opposite:
@@ -310,7 +315,6 @@ class Controls(Main, Sound):
 
                             cls.old_piece = Table.field[cls.row][cls.column] \
                                 if Table.field[cls.row][cls.column] == '--' else '--'
-
                             cls.history.append([[cls.piece[1][1], cls.piece[1][0]],  # from
                                                 [cls.column, cls.row],  # to
                                                 cls.piece[0],  # who moves
@@ -318,15 +322,13 @@ class Controls(Main, Sound):
                                                 cls.current_player.letter])  # Who moved
 
                             Table.field[cls.row][cls.column] = cls.piece[0]
+                            print(Table.field[cls.piece[1][0]][cls.piece[1][1]])
 
                             Table.field[cls.piece[1][0]][cls.piece[1][1]] = cls.old_piece
                             ############################################################################################
                             cls.chose = False
                             cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
-                            cls.x4return = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
-                            cls.y4return = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
-                            if len(Graphics.available_moves) > 0 :
-                                Graphics.available_moves.clear()
+                            Graphics.available_moves.clear()
                             ############################################################################################
 
                 print(f'x = {cls.column}, y = {cls.row}')
@@ -496,6 +498,7 @@ class Rules:
     @staticmethod
     def rook(p_x, p_y, player):
         """
+        :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
@@ -595,7 +598,10 @@ class Rules:
 
         return available
 
+    def checkmate(self):
+        pass
+
 
 if __name__ == '__main__':
-    CHESS_GAME = Main()
+    CHESS_GAME = Chess()
     CHESS_GAME.run()

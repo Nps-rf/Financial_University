@@ -61,7 +61,7 @@ ____
 * **Responsible for the sound operation in the program**
 
 #### Attributes
-* **This class does not have its own attributes, they are redefined in the chess class**
+* **This class does not have its own attributes, they are redefined in the `Chess` class**
 
 #### Methods
 * `init`: **Initializes the sound system and all sounds**
@@ -87,3 +87,36 @@ ____
 ### Class Controls
 * **Inherits the `Chess` and `Sound` classes**
 * **Responsible for user interaction with the program**
+
+#### Attributes
+* `available`: **List of available moves for chosen piece**
+* `history`: **Game history**
+* `old_piece`: **Piece that was chosen before**
+* `row`: **Calculated coordinate along the ordinate axis**
+* `column`: **Calculated coordinate along the abscissa axis**
+* `current_player`: **The player making the move**
+* `chose`: **Is the shape selected or not**
+* `piece`: **An array where the first value is the shape, and the second is its coordinates**
+* `x`: **The coordinate of the click on the abscissa axis**
+* `y`: **The coordinate of the click on the ordinate axis**
+
+#### Methods
+* `run_contols`: **Allow user to interact with program**
+* `_look4click_`: **Checks whether the user clicked on the cross (or other place) and interact with program.**
+
+### Class Rules
+* **Contain methods that find available moves for pieces, also looking for checkmate**
+
+#### Attributes
+* **This class does not have its own attributes**
+
+#### Methods
+* `pawn`: **Find available moves for pawn**
+* `knight`: **Find available moves for knight**
+* `bishop`: **Find available moves for bishop**
+* `rook`: **Find available moves for rook**
+* `queen`: **Find available moves for queen**
+* `king`: **Find available moves for king**
+
+## Illustrations
+

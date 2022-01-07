@@ -238,7 +238,6 @@ class Controls(Chess, Sound):
     def _look4click_(cls):
         """
         Checks whether the user clicked on the cross (or other place)
-        It's the biggest trash i've ever made
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -613,7 +612,7 @@ class Rules:
 
         return available
 
-    def checkmate(self):
+    def checkmate(self):  # TODO
         pass
 
 

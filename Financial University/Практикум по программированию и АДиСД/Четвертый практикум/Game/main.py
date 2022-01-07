@@ -73,7 +73,7 @@ class Main:
         while cls.running:
             cls._prepare_()
             Sound.init()
-            Graphics.create_board()
+            Graphics.board_graphics()
             Controls.run_controls()
             Graphics.print_info()
             for b in Graphics.get_button_list():
@@ -101,6 +101,7 @@ class Graphics(Main):
     """
     The class responsible for the graphical component of the application
     """
+    available_moves = list()
     button_list = list()
     button1 = Button
     output_error = 670
@@ -116,12 +117,14 @@ class Graphics(Main):
         return cls.button_list
 
     @classmethod
-    def create_board(cls):  # whole process in couple
+    def board_graphics(cls):  # whole process in couple
         """
         The main function for creating board and putting a pieces
         """
         cls._board_()
         cls._pieces_()
+        if len(cls.available_moves) > 0:
+            cls.show_available_moves()
 
     @classmethod
     def _board_(cls):
@@ -157,6 +160,22 @@ class Graphics(Main):
                             cls.SQUARE_SIZE,  # Size of square
                             cls.SQUARE_SIZE)  # Size of square
                                     )
+
+    @classmethod
+    def show_available_moves(cls):
+        for square in cls.available_moves:
+            color = (0, 150, 0, 120) if Table.field[square[1]][square[0]] == '--' else (150, 0, 0, 120)
+            available_move = pygame.Surface((cls.RATIO[0], cls.RATIO[0]), pygame.SRCALPHA)
+            pygame.draw.rect(
+                available_move,
+                color,
+                pygame.Rect(
+                    square[0] * cls.SQUARE_SIZE,  # Horizontal coordinate
+                    square[1] * cls.SQUARE_SIZE,  # Vertical coordinate
+                    cls.SQUARE_SIZE,  # Size of square
+                    cls.SQUARE_SIZE)  # Size of square
+            )
+            super().screen.blit(available_move, dest=(0, 0))
 
     # noinspection PyArgumentList
     @staticmethod
@@ -266,7 +285,10 @@ class Controls(Main, Sound):
                     available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
                     if Table.field[cls.row][cls.column][1] in sounds.keys() \
                             and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
-                        sounds[Table.field[cls.row][cls.column][1]]()
+                        if len(Graphics.available_moves) > 0:
+                            Graphics.available_moves.clear()
+                        sounds[Table.field[cls.row][cls.column][1]]()  # playing sound
+                        Graphics.available_moves += available  # show available moves
 
                     if cls.chose:  # figure chosen and can move
                         print('Squares you can move -> ', *available)
@@ -303,6 +325,8 @@ class Controls(Main, Sound):
                             cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
                             cls.x4return = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
                             cls.y4return = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
+                            if len(Graphics.available_moves) > 0 :
+                                Graphics.available_moves.clear()
                             ############################################################################################
 
                 print(f'x = {cls.column}, y = {cls.row}')

@@ -494,13 +494,42 @@ class Rules:
         return available
 
     @staticmethod
-    def rook(p_x, p_y, *_):
+    def rook(p_x, p_y, player):
         """
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
-        pass
+        available = []
+
+        def solve_side(vertical=False, invert=False):
+            no_way = False
+            for x in range(1, 8):
+                y = x if vertical else 0
+                x = 0 if vertical else x
+                x = -x if invert else x
+                y = -y if invert else y
+                if no_way:
+                    break
+                try:
+                    if Table.field[p_y - y][p_x - x][0] == player.opposite:
+                        available.append([p_x - x, p_y - y])
+                        no_way = True
+                        break
+                    if Table.field[p_y - y][p_x - x][0] != player.letter:
+                        available.append([p_x - x, p_y - y])
+                    elif Table.field[p_y - y][p_x - x][0] == player.letter:
+                        no_way = True
+                        break
+                except IndexError:
+                    pass
+
+        solve_side()
+        solve_side(invert=True)
+        solve_side(vertical=True)
+        solve_side(vertical=True, invert=True)
+
+        return available
 
     @staticmethod
     def queen(p_x, p_y, *_):

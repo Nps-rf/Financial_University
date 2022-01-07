@@ -532,22 +532,68 @@ class Rules:
         return available
 
     @staticmethod
-    def queen(p_x, p_y, *_):
+    def queen(p_x, p_y, player):
         """
+        :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
-        pass
+        available = Rules.rook(p_x, p_y, player)
+        available += Rules.bishop(p_x, p_y, player)
+        return available
 
     @staticmethod
-    def king(p_x, p_y, *_):
+    def king(p_x, p_y, player):
         """
+        :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
-        pass
+        available = []
+        try:
+            if Table.field[p_y - 1][p_x][0] != player.letter:
+                available.append([p_x, p_y - 1])
+        except IndexError:
+            pass
+        try:
+            if Table.field[p_y + 1][p_x][0] != player.letter:
+                available.append([p_x, p_y + 1])
+        except IndexError:
+            pass
+        try:
+            if Table.field[p_y][p_x - 1][0] != player.letter:
+                available.append([p_x - 1, p_y])
+        except IndexError:
+            pass
+        try:
+            if Table.field[p_y][p_x + 1][0] != player.letter:
+                available.append([p_x + 1, p_y])
+        except IndexError:
+            pass
+        try:
+            if Table.field[p_y - 1][p_x - 1][0] != player.letter:
+                available.append([p_x - 1, p_y - 1])
+        except IndexError:
+            pass
+        try:
+            if Table.field[p_y - 1][p_x + 1][0] != player.letter:
+                available.append([p_x + 1, p_y - 1])
+        except IndexError:
+            pass
+        try:
+            if Table.field[p_y + 1][p_x + 1][0] != player.letter:
+                available.append([p_x + 1, p_y + 1])
+        except IndexError:
+            pass
+        try:
+            if Table.field[p_y + 1][p_x - 1][0] != player.letter:
+                available.append([p_x - 1, p_y + 1])
+        except IndexError:
+            pass
+
+        return available
 
 
 if __name__ == '__main__':

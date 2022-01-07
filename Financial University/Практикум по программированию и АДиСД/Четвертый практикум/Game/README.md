@@ -119,4 +119,11 @@ ____
 * `king`: **Find available moves for king**
 
 ## Illustrations
-
+### Move
+![](https://vk.com/doc43923203_624566353?hash=1a026bebeb90699a49&dl=1b90b588e93a26e5b7&wnd=1&module=im)
+### Beat
+![](https://psv4.userapi.com/c534536/u43923203/docs/d45/caf421d98839/fdhgdfh.gif?extra=MX0xt819aYvUBVO-SuvSUFPnGA0WOPBUZEjWLGED12fNkgH3Z6qaukazofKlA8FoD2byQ5QtmJHi7m1Vlx5kL3-6wZcgkCmhfl1B0xjI7GH1Ayrwvau8RxwRAu2ZPWJGEeCcMHtf8cE1e5FImbw)
+### Other figures
+![](https://vk.com/doc43923203_624567262?hash=e8716edb709a95788b&dl=a220c321b982a410ac&wnd=1&module=im)
+### Canceling moves
+![](https://vk.com/doc43923203_624567497?hash=4a3018d699dd179316&dl=2dbb59912af7a44162&wnd=1&module=im)

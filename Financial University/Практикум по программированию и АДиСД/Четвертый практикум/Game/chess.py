@@ -23,7 +23,7 @@ class Chess:
     ◈ Second letter -> exact piece
     Example:
         ◈ wK -> White King
-    images:
+    Pieces:
         ◈ K -> King (Король)
         ◈ Q -> Queen (Ферзь)
         ◈ R -> Rook (Ладья)
@@ -36,7 +36,6 @@ class Chess:
     font = pygame.font.Font
     images = Build.load_images()
     running = True
-    FPS = 30
     WHITE = Player()
     BLACK = Player(letter='b', opposite='w', name='Black')
     output = pygame.font.Font.render
@@ -84,6 +83,9 @@ class Chess:
 
 
 class Sound:
+    """
+    Responsible for the sound operation in the program
+    """
     @classmethod
     def init(cls):
         pygame.mixer.init()
@@ -106,22 +108,21 @@ class Graphics(Chess):
     """
     available_moves = list()
     button_list = list()
-    button1 = Button
     output_error = 670
     strings = []
 
     @classmethod
     def get_button_list(cls):
         cancel: Callable[[], None] = lambda: print('Turn canceled')
-        cls.button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Отменить ход')
+        button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Отменить ход')
 
-        cls.button_list = [cls.button1]
+        cls.button_list = [button1]
         return cls.button_list
 
     @classmethod
     def board_graphics(cls):  # whole process in couple
         """
-        The main function for creating board and putting a pieces
+        The main function for creating board and putting a pieces and showing available moves
         """
         cls._board_()
         cls._pieces_()
@@ -361,7 +362,7 @@ class Rules:
         try:
             if Table.field[p_y + 1][p_x] == '--':
                 if p_y == 1:
-                    available.append([p_x, p_y + 2])
+                    available.append([p_x, p_y + 2]) if Table.field[p_y + 2][p_x] == '--' else None
                     available.append([p_x, p_y + 1])
                 elif Table.field[p_y][p_x][0] == 'b':
                     available.append([p_x, p_y + 1])
@@ -371,7 +372,7 @@ class Rules:
             if Table.field[p_y - 1][p_x] == '--':
                 if p_y == 6:
                     available.append([p_x, p_y - 1])
-                    available.append([p_x, p_y - 2])
+                    available.append([p_x, p_y - 2]) if Table.field[p_y - 2][p_x] == '--' else None
                 elif Table.field[p_y][p_x][0] == 'w':
                     available.append([p_x, p_y - 1])
         except IndexError:

@@ -1,3 +1,5 @@
+from typing import Callable
+
 import pygame
 from Board import Table
 from Build import Build
@@ -7,7 +9,7 @@ Table = Table()
 
 class Player:
     def __init__(self, letter='w', opposite='b', name='White'):
-        self.score = 0
+        # self.score = 0  TODO
         self.name = name
         self.letter = letter
         self.opposite = opposite
@@ -61,7 +63,7 @@ class Chess:
                 cls.RATIO[0],  # Size of square
                 cls.RATIO[0])  # Size of square
         )
-        cls.font = pygame.font.Font(None, 23)
+        cls.font = pygame.font.Font(None, 24)
         pygame.display.set_caption('Chess')
 
     @classmethod
@@ -110,9 +112,8 @@ class Graphics(Chess):
 
     @classmethod
     def get_button_list(cls):
-        def cancel_turn():
-            print('Turn canceled')
-        cls.button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel_turn, 'Отменить ход')
+        cancel: Callable[[], None] = lambda: print('Turn canceled')
+        cls.button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Отменить ход')
 
         cls.button_list = [cls.button1]
         return cls.button_list
@@ -164,7 +165,19 @@ class Graphics(Chess):
 
     @classmethod
     def show_available_moves(cls):
-        for square in cls.available_moves:
+        color = (32, 64, 128, 128)
+        available_move = pygame.Surface((cls.RATIO[0], cls.RATIO[0]), pygame.SRCALPHA)
+        pygame.draw.rect(
+            available_move,
+            color,
+            pygame.Rect(
+                cls.available_moves[0][0] * cls.SQUARE_SIZE,  # Horizontal coordinate
+                cls.available_moves[0][1] * cls.SQUARE_SIZE,  # Vertical coordinate
+                cls.SQUARE_SIZE,  # Size of square
+                cls.SQUARE_SIZE)  # Size of square
+        )
+        super().screen.blit(available_move, dest=(0, 0))
+        for square in cls.available_moves[1::]:
             color = (0, 150, 0, 120) if Table.field[square[1]][square[0]] == '--' else (150, 0, 0, 120)
             available_move = pygame.Surface((cls.RATIO[0], cls.RATIO[0]), pygame.SRCALPHA)
             pygame.draw.rect(
@@ -293,6 +306,7 @@ class Controls(Chess, Sound):
                         if len(Graphics.available_moves) > 0:
                             Graphics.available_moves.clear()
                         sounds[Table.field[cls.row][cls.column][1]]()  # playing sound
+                        Graphics.available_moves.append([cls.x, cls.y])
                         Graphics.available_moves += cls.available  # show available moves
 
                     if cls.chose:  # figure chosen and can move

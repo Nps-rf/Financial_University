@@ -4,6 +4,7 @@ import pygame
 from Board import Table
 from Build import Build
 from Button import Button
+from Text import Text
 Table = Table()
 
 
@@ -358,10 +359,14 @@ class Controls(Chess, Sound):
                                     Graphics.strings.append('Шах белым!')
                                     super().check.play()
                                     cls.history[-1].append('check')
+                                    if Rules.naive_mate(cls.available, movements, cls.current_player):
+                                        Graphics.strings.append('Шах и мат белым!')
                                 elif move == 'bK':
                                     Graphics.strings.append('Шах черным!')
                                     super().check.play()
                                     cls.history[-1].append('check')
+                                    if Rules.naive_mate(cls.available, movements, cls.current_player):
+                                        Graphics.strings.append('Шах и мат черным!')
                             ############################################################################################
                             ############################################################################################
                             cls.chose = False
@@ -394,32 +399,32 @@ class Rules:
         available = []
         try:
             if Table.field[p_y + 1][p_x] == '--':
-                if p_y == 1 and Table.field[p_y][p_x][0] != 'w':
+                if p_y == 1 and Table.field[p_y][p_x][0] != 'w' and p_y + 1 < 8:
                     available.append([p_x, p_y + 2]) if Table.field[p_y + 2][p_x] == '--' else None
                     available.append([p_x, p_y + 1])
-                elif Table.field[p_y][p_x][0] == 'b':
+                elif Table.field[p_y][p_x][0] == 'b' and p_y + 1 < 8:
                     available.append([p_x, p_y + 1])
         except IndexError:
             pass
         try:
             if Table.field[p_y - 1][p_x] == '--':
-                if p_y == 6 and Table.field[p_y][p_x][0] != 'b':
+                if p_y == 6 and Table.field[p_y][p_x][0] != 'b' and p_y - 1 >= 0:
                     available.append([p_x, p_y - 1])
                     available.append([p_x, p_y - 2]) if Table.field[p_y - 2][p_x] == '--' else None
-                elif Table.field[p_y][p_x][0] == 'w':
+                elif Table.field[p_y][p_x][0] == 'w' and p_y - 1 >= 0:
                     available.append([p_x, p_y - 1])
         except IndexError:
             pass
         # White Beat section
         if Table.field[p_y][p_x][0] == 'w':
             try:
-                if Table.field[p_y - 1][p_x - 1][0] == 'b':
+                if Table.field[p_y - 1][p_x - 1][0] == 'b' and (p_y - 1 >= 0 and p_x - 1 >= 0):
                     available.append([p_x - 1, p_y - 1])
             except IndexError:
                 pass
 
             try:
-                if Table.field[p_y - 1][p_x + 1][0] == 'b':
+                if Table.field[p_y - 1][p_x + 1][0] == 'b' and (p_y - 1 >= 0 and p_x + 1 < 8):
                     available.append([p_x + 1, p_y - 1])
             except IndexError:
                 pass
@@ -453,46 +458,46 @@ class Rules:
 
         # leftward
         try:
-            if table[p_y - 1][p_x - 2][0] != player.letter:
+            if table[p_y - 1][p_x - 2][0] != player.letter and (p_x - 2 >= 0 and p_y - 1 >= 0):
                 available.append([p_x - 2, p_y - 1])
         except IndexError:
             pass
         try:
-            if table[p_y + 1][p_x - 2][0] != player.letter:
+            if table[p_y + 1][p_x - 2][0] != player.letter and (p_x - 2 >= 0 and p_y + 1 < 8):
                 available.append([p_x - 2, p_y + 1])
         except IndexError:
             pass
         # above
         try:
-            if table[p_y - 2][p_x - 1][0] != player.letter:
+            if table[p_y - 2][p_x - 1][0] != player.letter and (p_x - 1 >= 0 and p_y - 2 >= 0):
                 available.append([p_x - 1, p_y - 2])
         except IndexError:
             pass
         try:
-            if table[p_y - 2][p_x + 1][0] != player.letter:
+            if table[p_y - 2][p_x + 1][0] != player.letter and (p_x + 1 < 8 and p_y - 2 >= 0):
                 available.append([p_x + 1, p_y - 2])
         except IndexError:
             pass
 
         # on the right
         try:
-            if table[p_y - 1][p_x + 2][0] != player.letter:
+            if table[p_y - 1][p_x + 2][0] != player.letter and (p_x + 2 < 8 and p_y - 1 >= 0):
                 available.append([p_x + 2, p_y - 1])
         except IndexError:
             pass
         try:
-            if table[p_y + 1][p_x + 2][0] != player.letter:
+            if table[p_y + 1][p_x + 2][0] != player.letter and (p_x + 2 < 8 and p_y + 1 < 8):
                 available.append([p_x + 2, p_y + 1])
         except IndexError:
             pass
         # below
         try:
-            if table[p_y + 2][p_x - 1][0] != player.letter:
+            if table[p_y + 2][p_x - 1][0] != player.letter and (p_x - 1 >= 0 and p_y + 2 < 8):
                 available.append([p_x - 1, p_y + 2])
         except IndexError:
             pass
         try:
-            if table[p_y + 2][p_x + 1][0] != player.letter:
+            if table[p_y + 2][p_x + 1][0] != player.letter and (p_x + 1 < 8 and p_y + 2 < 8):
                 available.append([p_x + 1, p_y + 2])
         except IndexError:
             pass
@@ -517,18 +522,19 @@ class Rules:
                     x = -x
                 if no_way:
                     break
-                try:
-                    if Table.field[p_y - y][p_x - x][0] == player.opposite:
-                        available.append([p_x - x, p_y - y])
-                        no_way = True
-                        break
-                    if Table.field[p_y - y][p_x - x][0] != player.letter:
-                        available.append([p_x - x, p_y - y])
-                    elif Table.field[p_y - y][p_x - x][0] == player.letter:
-                        no_way = True
-                        break
-                except IndexError:
-                    pass
+                if 0 <= p_x - x < 8 and 0 <= p_y - y < 8:
+                    try:
+                        if Table.field[p_y - y][p_x - x][0] == player.opposite:
+                            available.append([p_x - x, p_y - y])
+                            no_way = True
+                            break
+                        if Table.field[p_y - y][p_x - x][0] != player.letter:
+                            available.append([p_x - x, p_y - y])
+                        elif Table.field[p_y - y][p_x - x][0] == player.letter:
+                            no_way = True
+                            break
+                    except IndexError:
+                        pass
         # upper left
         solve_side()
 
@@ -562,18 +568,19 @@ class Rules:
                 y = -y if invert else y
                 if no_way:
                     break
-                try:
-                    if Table.field[p_y - y][p_x - x][0] == player.opposite:
-                        available.append([p_x - x, p_y - y])
-                        no_way = True
-                        break
-                    if Table.field[p_y - y][p_x - x][0] != player.letter:
-                        available.append([p_x - x, p_y - y])
-                    elif Table.field[p_y - y][p_x - x][0] == player.letter:
-                        no_way = True
-                        break
-                except IndexError:
-                    pass
+                if 0 <= p_x - x < 8 and 0 <= p_y - y < 8:
+                    try:
+                        if Table.field[p_y - y][p_x - x][0] == player.opposite:
+                            available.append([p_x - x, p_y - y])
+                            no_way = True
+                            break
+                        if Table.field[p_y - y][p_x - x][0] != player.letter:
+                            available.append([p_x - x, p_y - y])
+                        elif Table.field[p_y - y][p_x - x][0] == player.letter:
+                            no_way = True
+                            break
+                    except IndexError:
+                        pass
 
         solve_side()
         solve_side(invert=True)
@@ -654,11 +661,22 @@ class Rules:
         return available
 
     @staticmethod
-    def naive_mate(p_x, p_y, movements, player):
-        available = []
-        for turn in movements[Table.field[p_y][p_x][1]](p_x, p_y, player):
-            available.append(Table.field[turn[1]][turn[0]])
-        return available
+    def naive_mate(enemy: 'Available turns of enemy piece', movements, player):  # TODO
+        Enemy = set(map(lambda elem: tuple(elem), enemy))
+        print(enemy)
+        side_available = set()
+        for x in range(8):
+            for y in range(8):
+                side_available.update(set(map(lambda elem: tuple(elem), movements[Table.field[y][x][1]](x, y, player)))) \
+                    if Table.field[y][x][0] == player.opposite and Table.field[y][x][1] != 'K' else None
+                if Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'w':
+                    white_king = (x, y)
+                elif Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'b':
+                    black_king = (x, y)
+        print('Enemy -> ', Enemy)
+        print('Side -> ', side_available)
+        print(Enemy.isdisjoint(side_available))
+        return Enemy.isdisjoint(side_available)  # if True -> Mate else check
 
 
 if __name__ == '__main__':

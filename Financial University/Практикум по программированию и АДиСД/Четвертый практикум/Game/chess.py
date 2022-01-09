@@ -42,7 +42,7 @@ class Chess:
     RATIO = (WIDTH, HEIGHT) = (720, 720)
     DIMENSIONS = 8
     SQUARE_SIZE = WIDTH // DIMENSIONS
-    expand = 6 * 2  # The error for the screen resolution (so that the figures do not move out)
+    expand = 12  # The error for the screen resolution (so that the figures do not move out)
 
     @classmethod
     def _prepare_(cls):
@@ -99,6 +99,7 @@ class Sound:
         cls.Castle = pygame.mixer.Sound('Sound/Castle.ogg')
         cls.Bishop = pygame.mixer.Sound('Sound/Bishop.ogg')
         cls.King = pygame.mixer.Sound('Sound/King.ogg')
+        cls.check = pygame.mixer.Sound('Sound/Check.ogg')
         cls.checkmate = pygame.mixer.Sound('Sound/Check Mate.ogg')
 
 
@@ -244,7 +245,7 @@ class Controls(Chess, Sound):
                 Chess.running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                # return section
+                # move return section section
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
                     for b in Graphics.get_button_list():
@@ -261,9 +262,7 @@ class Controls(Chess, Sound):
                                 Graphics.available_moves.clear()
                                 cls.available.clear()
                                 cls.x, cls.y = None, None
-                                ########################################################################################
                                 del cls.history[-1]
-                                print(turn)
                                 ########################################################################################
                                 if turn[5] == 'beat':
                                     del Graphics.strings[-1]
@@ -336,6 +335,7 @@ class Controls(Chess, Sound):
 
                             cls.old_piece = Table.field[cls.row][cls.column] \
                                 if Table.field[cls.row][cls.column] == '--' else '--'
+
                             cls.history.append([[cls.piece[1][1], cls.piece[1][0]],  # from
                                                 [cls.column, cls.row],  # to
                                                 cls.piece[0],  # who moves
@@ -348,12 +348,14 @@ class Controls(Chess, Sound):
 
                             Table.field[cls.piece[1][0]][cls.piece[1][1]] = cls.old_piece
                             ############################################################################################
-                            for move in Rules.basical_check(cls.column, cls.row, movements, cls.current_player):
+                            for move in Rules.basic_check(cls.column, cls.row, movements, cls.current_player):
                                 if move == 'wK':
                                     Graphics.strings.append('Шах белым!')
+                                    super().check.play()
                                     cls.history[-1].append('check')
                                 elif move == 'bK':
                                     Graphics.strings.append('Шах черным!')
+                                    super().check.play()
                                     cls.history[-1].append('check')
                             ############################################################################################
                             ############################################################################################
@@ -366,8 +368,11 @@ class Controls(Chess, Sound):
 
 
 class Rules:
+    """
+    Class responsible of pieces moving rules
+    """
     @staticmethod
-    def pawn(p_x, p_y, *player):
+    def pawn(p_x, p_y, *_):
         """
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
@@ -630,7 +635,7 @@ class Rules:
         return available
 
     @staticmethod
-    def basical_check(p_x, p_y, movements, player):  # TODO
+    def basic_check(p_x, p_y, movements, player):
         available = []
         for turn in movements[Table.field[p_y][p_x][1]](p_x, p_y, player):
             available.append(Table.field[turn[1]][turn[0]])

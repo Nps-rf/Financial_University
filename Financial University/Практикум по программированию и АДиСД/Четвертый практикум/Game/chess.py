@@ -116,8 +116,9 @@ class Graphics(Chess):
     def get_button_list(cls):
         cancel: Callable[[], None] = lambda: print('Turn canceled')
         button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Отменить ход')
+        button2 = Button((867, 675), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Настройки')
 
-        cls.button_list = [button1]
+        cls.button_list = [button1, button2]
         return cls.button_list
 
     @classmethod
@@ -248,29 +249,33 @@ class Controls(Chess, Sound):
                 # move return section section
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    for b in Graphics.get_button_list():
-                        if b.rect.collidepoint(pos):
-                            for number, turn in enumerate(cls.history[::-1]):
-                                x_return = turn[0][0]
-                                y_return = turn[0][1]
-                                Table.field[y_return][x_return] = turn[2]
-                                Table.field[turn[1][1]][turn[1][0]] = turn[3]
-                                super().move_sound.play()
-                                ########################################################################################
-                                cls.current_player = super().BLACK if turn[4] == 'b' else super().WHITE
-                                cls.chose = True
-                                Graphics.available_moves.clear()
-                                cls.available.clear()
-                                cls.x, cls.y = None, None
-                                del cls.history[-1]
-                                ########################################################################################
-                                if turn[5] == 'beat':
-                                    del Graphics.strings[-1]
-                                ########################################################################################
-                                if 'check' in turn:
-                                    del Graphics.strings[-1]
-                                break
-                                ########################################################################################
+                    b1 = Graphics.button_list[0]
+                    b2 = Graphics.button_list[1]
+                    if b1.rect.collidepoint(pos):
+                        for number, turn in enumerate(cls.history[::-1]):
+                            x_return = turn[0][0]
+                            y_return = turn[0][1]
+                            Table.field[y_return][x_return] = turn[2]
+                            Table.field[turn[1][1]][turn[1][0]] = turn[3]
+                            super().move_sound.play()
+                            ########################################################################################
+                            cls.current_player = super().BLACK if turn[4] == 'b' else super().WHITE
+                            cls.chose = True
+                            Graphics.available_moves.clear()
+                            cls.available.clear()
+                            cls.x, cls.y = None, None
+                            del cls.history[-1]
+                            ########################################################################################
+                            if turn[5] == 'beat':
+                                del Graphics.strings[-1]
+                            ########################################################################################
+                            if 'check' in turn:
+                                del Graphics.strings[-1]
+                            break
+                            ########################################################################################
+
+                    if b2.rect.collidepoint(pos) and False:  # TODO
+                        Controls.settings()
                 if event.pos is None:
                     return None
                 # move&beat section
@@ -365,6 +370,13 @@ class Controls(Chess, Sound):
                             ############################################################################################
 
                 print(f'x = {cls.column}, y = {cls.row}')
+
+    @classmethod
+    def settings(cls):  # TODO
+        color = pygame.Color('white')
+        menu = pygame.Surface((cls.RATIO[0], cls.RATIO[0]))
+        menu.fill(color)
+        super().screen.blit(menu, dest=(0, 0))
 
 
 class Rules:
@@ -636,6 +648,13 @@ class Rules:
 
     @staticmethod
     def basic_check(p_x, p_y, movements, player):
+        available = []
+        for turn in movements[Table.field[p_y][p_x][1]](p_x, p_y, player):
+            available.append(Table.field[turn[1]][turn[0]])
+        return available
+
+    @staticmethod
+    def naive_mate(p_x, p_y, movements, player):
         available = []
         for turn in movements[Table.field[p_y][p_x][1]](p_x, p_y, player):
             available.append(Table.field[turn[1]][turn[0]])

@@ -263,6 +263,13 @@ class Controls(Chess, Sound):
                                 cls.x, cls.y = None, None
                                 ########################################################################################
                                 del cls.history[-1]
+                                print(turn)
+                                ########################################################################################
+                                if turn[5] == 'beat':
+                                    del Graphics.strings[-1]
+                                ########################################################################################
+                                if 'check' in turn:
+                                    del Graphics.strings[-1]
                                 break
                                 ########################################################################################
                 if event.pos is None:
@@ -333,12 +340,22 @@ class Controls(Chess, Sound):
                                                 [cls.column, cls.row],  # to
                                                 cls.piece[0],  # who moves
                                                 Table.field[cls.row][cls.column],  # from-old
-                                                cls.current_player.letter])  # Who moved
+                                                cls.current_player.letter,  # Who moved
+                                                'beat' if Table.field[cls.row][cls.column][0] ==
+                                                cls.current_player.opposite else 'move'])  # move status
 
                             Table.field[cls.row][cls.column] = cls.piece[0]
-                            print(Table.field[cls.piece[1][0]][cls.piece[1][1]])
 
                             Table.field[cls.piece[1][0]][cls.piece[1][1]] = cls.old_piece
+                            ############################################################################################
+                            for move in Rules.basical_check(cls.column, cls.row, movements, cls.current_player):
+                                if move == 'wK':
+                                    Graphics.strings.append('Шах белым!')
+                                    cls.history[-1].append('check')
+                                elif move == 'bK':
+                                    Graphics.strings.append('Шах черным!')
+                                    cls.history[-1].append('check')
+                            ############################################################################################
                             ############################################################################################
                             cls.chose = False
                             cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
@@ -350,7 +367,7 @@ class Controls(Chess, Sound):
 
 class Rules:
     @staticmethod
-    def pawn(p_x, p_y, *_):
+    def pawn(p_x, p_y, *player):
         """
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
@@ -360,7 +377,7 @@ class Rules:
         available = []
         try:
             if Table.field[p_y + 1][p_x] == '--':
-                if p_y == 1:
+                if p_y == 1 and Table.field[p_y][p_x][0] != 'w':
                     available.append([p_x, p_y + 2]) if Table.field[p_y + 2][p_x] == '--' else None
                     available.append([p_x, p_y + 1])
                 elif Table.field[p_y][p_x][0] == 'b':
@@ -369,7 +386,7 @@ class Rules:
             pass
         try:
             if Table.field[p_y - 1][p_x] == '--':
-                if p_y == 6:
+                if p_y == 6 and Table.field[p_y][p_x][0] != 'b':
                     available.append([p_x, p_y - 1])
                     available.append([p_x, p_y - 2]) if Table.field[p_y - 2][p_x] == '--' else None
                 elif Table.field[p_y][p_x][0] == 'w':
@@ -612,8 +629,12 @@ class Rules:
 
         return available
 
-    def checkmate(self):  # TODO
-        pass
+    @staticmethod
+    def basical_check(p_x, p_y, movements, player):  # TODO
+        available = []
+        for turn in movements[Table.field[p_y][p_x][1]](p_x, p_y, player):
+            available.append(Table.field[turn[1]][turn[0]])
+        return available
 
 
 if __name__ == '__main__':

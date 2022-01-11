@@ -662,6 +662,7 @@ class Rules:
 
     @staticmethod
     def naive_mate(enemy: 'Available turns of enemy piece', movements, player):  # TODO
+        # I must find exact way, which allows enemy beat my king
         Enemy = set(map(lambda elem: tuple(elem), enemy))
         print(enemy)
         side_available = set()

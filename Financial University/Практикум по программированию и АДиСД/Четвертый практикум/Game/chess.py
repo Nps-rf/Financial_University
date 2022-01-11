@@ -37,6 +37,7 @@ class Chess:
     font = pygame.font.Font
     images = Build.load_images()
     running = True
+    responce = True
     WHITE = Player()
     BLACK = Player(letter='b', opposite='w', name='Black')
     output = pygame.font.Font.render
@@ -119,7 +120,8 @@ class Graphics(Chess):
         button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Отменить ход')
         button2 = Button((867, 675), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Настройки')
 
-        cls.button_list = [button1, button2]
+        cls.button_list.append(button1)
+        cls.button_list.append(button2)
         return cls.button_list
 
     @classmethod
@@ -246,7 +248,7 @@ class Controls(Chess, Sound):
             if event.type == pygame.QUIT:
                 Chess.running = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN and cls.responce:
                 # move return section section
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
@@ -361,12 +363,28 @@ class Controls(Chess, Sound):
                                     cls.history[-1].append('check')
                                     if Rules.naive_mate(cls.available, movements, cls.current_player):
                                         Graphics.strings.append('Шах и мат белым!')
+                                        cls.responce = False
+                                        Graphics.button_list.append(
+                                            Text(
+                                                msg='Шах и мат!',
+                                                position=(Chess.RATIO[0] // 2 - 222, Chess.RATIO[0] // 2 - 75),
+                                                clr=(255, 0, 0),
+                                                font_size=72)
+                                        )
                                 elif move == 'bK':
                                     Graphics.strings.append('Шах черным!')
                                     super().check.play()
                                     cls.history[-1].append('check')
                                     if Rules.naive_mate(cls.available, movements, cls.current_player):
                                         Graphics.strings.append('Шах и мат черным!')
+                                        cls.responce = False
+                                        Graphics.button_list.append(
+                                            Text(
+                                                msg='Шах и мат!',
+                                                position=(Chess.RATIO[0] // 2 - 222, Chess.RATIO[0] // 2 - 75),
+                                                clr=(255, 0, 0),
+                                                font_size=72)
+                                        )
                             ############################################################################################
                             ############################################################################################
                             cls.chose = False
@@ -668,12 +686,13 @@ class Rules:
         side_available = set()
         for x in range(8):
             for y in range(8):
-                side_available.update(set(map(lambda elem: tuple(elem), movements[Table.field[y][x][1]](x, y, player)))) \
+                side_available.update(set(map(lambda elem: tuple(elem),
+                                              movements[Table.field[y][x][1]](x, y, player)))) \
                     if Table.field[y][x][0] == player.opposite and Table.field[y][x][1] != 'K' else None
-                if Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'w':
-                    white_king = (x, y)
-                elif Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'b':
-                    black_king = (x, y)
+                # if Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'w':
+                #     white_king = (x, y)
+                # elif Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'b':
+                #     black_king = (x, y)
         print('Enemy -> ', Enemy)
         print('Side -> ', side_available)
         print(Enemy.isdisjoint(side_available))

@@ -174,7 +174,7 @@ class Graphics(Chess):
         color = (32, 64, 128, 128)
         available_move = pygame.Surface((cls.RATIO[0], cls.RATIO[0]), pygame.SRCALPHA)
         pygame.draw.rect(
-            available_move,
+            available_move,  # Square
             color,
             pygame.Rect(
                 cls.available_moves[0][0] * cls.SQUARE_SIZE,  # Horizontal coordinate
@@ -187,7 +187,7 @@ class Graphics(Chess):
             color = (0, 150, 0, 120) if Table.field[square[1]][square[0]] == '--' else (150, 0, 0, 120)
             available_move = pygame.Surface((cls.RATIO[0], cls.RATIO[0]), pygame.SRCALPHA)
             pygame.draw.rect(
-                available_move,
+                available_move,  # Square
                 color,
                 pygame.Rect(
                     square[0] * cls.SQUARE_SIZE,  # Horizontal coordinate
@@ -274,8 +274,8 @@ class Controls(Chess, Sound):
                             ########################################################################################
                             if 'check' in turn:
                                 del Graphics.strings[-1]
-                            break
                             ########################################################################################
+                            break
 
                     if b2.rect.collidepoint(pos) and False:  # TODO
                         Controls.settings()

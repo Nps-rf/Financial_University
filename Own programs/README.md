@@ -6,6 +6,7 @@
 ![C++ Version](https://img.shields.io/badge/C%2B%2B-17-brightgreen)
 ![OpenCV Version](https://img.shields.io/badge/OpenCV-4.x-blueviolet)
 ![Cmake Version](https://img.shields.io/badge/CMake-3.21-ff69b4)
+![Status](https://img.shields.io/badge/Status-WIP-red)
 
 ### Languages and Tools
 [<img align="left" width="30px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/python/python.png"/>][Python]

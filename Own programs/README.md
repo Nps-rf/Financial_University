@@ -2,6 +2,11 @@
 
 # FrucWrapper 
 
+![Python Version](https://img.shields.io/badge/Python-3.8-blue)
+![C++ Version](https://img.shields.io/badge/C%2B%2B-17-brightgreen)
+![OpenCV Version](https://img.shields.io/badge/OpenCV-4.x-blueviolet)
+![Cmake Version](https://img.shields.io/badge/CMake-3.21-ff69b4)
+
 ### Languages and Tools
 [<img align="left" width="30px" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/python/python.png"/>][Python]
 [<img align="left" width="40px" src="https://etu.ru/assets/cache/images/ru/povyshenie-kvalifikacii/programmy%20povysheniya%20kvalifikacii/1280x800-cplusplus.947.png"/>][C++]
@@ -10,7 +15,7 @@
 
 <br />
 
-### Build
+## Build
 ### If you use [OpenCV](https://github.com/opencv/opencv)
 * `git clone https://github.com/opencv/opencv`
   * `mkdir build`
@@ -27,9 +32,9 @@
 * `else: cmake ..`
 * `cmake --build`
 
-### Info
+## Info
 
-#### Beginning
+### Beginning
 
 **There is a wrapper manager that is responsible for creating and deleting objects from memory.**
 * `wrapper = FrucWrapperManager()`

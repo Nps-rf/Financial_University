@@ -45,6 +45,7 @@ class Chess:
     DIMENSIONS = 8
     SQUARE_SIZE = WIDTH // DIMENSIONS
     expand = 12  # The error for the screen resolution (so that the figures do not move out)
+    show_menu = False
 
     @classmethod
     def _prepare_(cls):
@@ -81,6 +82,12 @@ class Chess:
             Graphics.print_info()
             for b in Graphics.get_button_list():
                 b.draw(cls.screen)
+            if cls.show_menu:
+                drawings = Controls.settings()
+                cls.screen.blit(drawings[0], (-75, 0))
+                drawings[1].draw(cls.screen)
+                drawings[2].draw(cls.screen)
+
             pygame.display.update()
 
 
@@ -277,7 +284,7 @@ class Controls(Chess, Sound):
                             ########################################################################################
                             break
 
-                    if b2.rect.collidepoint(pos) and False:  # TODO
+                    if b2.rect.collidepoint(pos):  # TODO
                         Controls.settings()
                 if event.pos is None:
                     return None
@@ -396,10 +403,11 @@ class Controls(Chess, Sound):
 
     @classmethod
     def settings(cls):  # TODO
-        color = pygame.Color('white')
-        menu = pygame.Surface((cls.RATIO[0], cls.RATIO[0]))
-        menu.fill(color)
-        super().screen.blit(menu, dest=(0, 0))
+        Chess.show_menu = True
+        menu = pygame.image.load('Stock/menu.jpg')
+        button1 = Button((520, 255), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить подсветку ходов')
+        button2 = Button((520, 325), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить звук')
+        return menu, button1, button2
 
 
 class Rules:

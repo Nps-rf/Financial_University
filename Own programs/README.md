@@ -34,8 +34,6 @@
 
 ## Info
 
-### Beginning
-
 **There is a wrapper manager that is responsible for creating and deleting objects from memory.**
 * `wrapper = FrucWrapperManager()`
 

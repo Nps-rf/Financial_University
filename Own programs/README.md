@@ -11,7 +11,7 @@
 <br />
 
 ### Build
-#### If you use OpenCV
+### If you use [OpenCV](https://github.com/opencv/opencv)
 * `git clone https://github.com/opencv/opencv`
   * `mkdir build`
   * `cd build`
@@ -22,7 +22,7 @@
   * `mkdir build`
   * `cd build`
 
-#### ⚠ **If you will use [OpenCV](https://github.com/opencv/opencv)** ⚠
+#### ⚠ **Commands for [OpenCV](https://github.com/opencv/opencv)** ⚠
 * `cmake .. -DOPENCV_BUILD=ON -DOpenCV_DIR='opencv_build folder'`
 * `else: cmake ..`
 * `cmake --build`

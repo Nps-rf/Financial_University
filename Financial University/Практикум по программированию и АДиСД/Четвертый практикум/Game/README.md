@@ -3,8 +3,8 @@
 
 # ♛ Chess game ♛
 ____
-![https://img.shields.io/badge/Python-3.8-blue](https://img.shields.io/badge/Python-3.8-blue)
-![https://img.shields.io/badge/Status-WIP-red](https://img.shields.io/badge/Status-WIP-red)
+![Python version](https://img.shields.io/badge/Python-3.8-blue)
+![Project status](https://img.shields.io/badge/Status-WIP-red)
 
 ## About
 * **This is an implementation of fourth workshop**

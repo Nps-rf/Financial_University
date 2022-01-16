@@ -415,14 +415,16 @@ class Rules:
     Class responsible of pieces moving rules
     """
     @staticmethod
-    def pawn(p_x, p_y, *_):
+    def pawn(p_x, p_y, *_, only_beat=False):
         """
+        :param only_beat:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
         # Movement section
         available = []
+        beat = []
         try:
             if Table.field[p_y + 1][p_x] == '--':
                 if p_y == 1 and Table.field[p_y][p_x][0] != 'w' and p_y + 1 < 8:
@@ -455,11 +457,12 @@ class Rules:
             except IndexError:
                 pass
 
-        # Black Beat section?
+        # Black Beat section
         if Table.field[p_y][p_x][0] == 'b':
             try:
                 if Table.field[p_y + 1][p_x - 1][0] == 'w':
                     available.append([p_x - 1, p_y + 1])
+                    beat.append([p_x - 1, p_y + 1])
             except IndexError:
                 pass
 
@@ -469,11 +472,12 @@ class Rules:
             except IndexError:
                 pass
 
-        return available
+        return available if not only_beat else beat
 
     @staticmethod
-    def knight(p_x, p_y, player):
+    def knight(p_x, p_y, player, only_beat=False):
         """
+        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
@@ -481,11 +485,14 @@ class Rules:
         """
         table = Table.field
         available = []
+        beat = []
 
         # leftward
         try:
             if table[p_y - 1][p_x - 2][0] != player.letter and (p_x - 2 >= 0 and p_y - 1 >= 0):
                 available.append([p_x - 2, p_y - 1])
+                if table[p_y - 1][p_x - 2][0] == player.opposite:
+                    beat.append([p_x - 2, p_y - 1])
         except IndexError:
             pass
         try:
@@ -527,17 +534,19 @@ class Rules:
                 available.append([p_x + 1, p_y + 2])
         except IndexError:
             pass
-        return available
+        return available if not only_beat else beat
 
     @staticmethod
-    def bishop(p_x, p_y, player):
+    def bishop(p_x, p_y, player, only_beat=False):
         """
+        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
         available = []
+        beat = []
 
         def solve_side(upper=True, left=True):
             no_way = False
@@ -573,17 +582,19 @@ class Rules:
         # lower right
         solve_side(left=False, upper=False)
 
-        return available
+        return available if not only_beat else beat
 
     @staticmethod
-    def rook(p_x, p_y, player):
+    def rook(p_x, p_y, player, only_beat=False):
         """
+        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
         available = []
+        beat = []
 
         def solve_side(vertical=False, invert=False):
             no_way = False
@@ -613,29 +624,33 @@ class Rules:
         solve_side(vertical=True)
         solve_side(vertical=True, invert=True)
 
-        return available
+        return available if not only_beat else beat
 
     @staticmethod
-    def queen(p_x, p_y, player):
+    def queen(p_x, p_y, player, only_beat=False):
         """
+        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
+        beat = []
         available = Rules.rook(p_x, p_y, player)
         available += Rules.bishop(p_x, p_y, player)
-        return available
+        return available if not only_beat else beat
 
     @staticmethod
-    def king(p_x, p_y, player):
+    def king(p_x, p_y, player, only_beat=False):
         """
+        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
         available = []
+        beat = []
         try:
             if Table.field[p_y - 1][p_x][0] != player.letter:
                 available.append([p_x, p_y - 1])
@@ -677,7 +692,7 @@ class Rules:
         except IndexError:
             pass
 
-        return available
+        return available if not only_beat else beat
 
     @staticmethod
     def basic_check(p_x, p_y, movements, player):
@@ -697,10 +712,10 @@ class Rules:
                 side_available.update(set(map(lambda elem: tuple(elem),
                                               movements[Table.field[y][x][1]](x, y, player)))) \
                     if Table.field[y][x][0] == player.opposite and Table.field[y][x][1] != 'K' else None
-                # if Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'w':
-                #     white_king = (x, y)
-                # elif Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'b':
-                #     black_king = (x, y)
+                if Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'w':
+                    white_king = (x, y)
+                elif Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'b':
+                    black_king = (x, y)
         print('Enemy -> ', Enemy)
         print('Side -> ', side_available)
         print(Enemy.isdisjoint(side_available))

@@ -6,6 +6,7 @@
 ![C++ Version](https://img.shields.io/badge/C%2B%2B-17-brightgreen)
 ![OpenCV Version](https://img.shields.io/badge/OpenCV-4.x-blueviolet)
 ![Cmake Version](https://img.shields.io/badge/CMake-3.21-ff69b4)
+<br/>
 ![Status](https://img.shields.io/badge/Status-WIP-red)
 
 ### Languages and Tools
@@ -14,7 +15,7 @@
 [<img align="left" width="25px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/OpenCV_Logo_with_text_svg_version.svg/1200px-OpenCV_Logo_with_text_svg_version.svg.png"/>][OpenCV]
 [<img align="left" width="33px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Breezeicons-apps-48-cmake.svg/1200px-Breezeicons-apps-48-cmake.svg.png"/>][Cmake]
 
-<br />
+<br/>
 
 ## Build
 ### If you use [OpenCV](https://github.com/opencv/opencv)

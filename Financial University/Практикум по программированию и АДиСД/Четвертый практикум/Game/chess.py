@@ -5,6 +5,7 @@ from Board import Table
 from Build import Build
 from Button import Button
 from Text import Text
+from Sound import Sound
 Table = Table()
 
 
@@ -89,27 +90,6 @@ class Chess:
                 drawings[2].draw(cls.screen)
 
             pygame.display.update()
-
-
-class Sound:
-    """
-    Responsible for the sound operation in the program
-    """
-    @classmethod
-    def init(cls):
-        pygame.mixer.init()
-        cls.move_sound = pygame.mixer.Sound('Sound/move of piece.ogg')
-        cls.beat_sound = pygame.mixer.Sound('Sound/peace beaten.ogg')
-        cls.Knight_move = pygame.mixer.Sound('Sound/Knight movement.ogg')
-        cls.Pawn = pygame.mixer.Sound('Sound/Pawn.ogg')
-        cls.Rook = pygame.mixer.Sound('Sound/Rook.ogg')
-        cls.Knight = pygame.mixer.Sound('Sound/Knight.ogg')
-        cls.Queen = pygame.mixer.Sound('Sound/Queen.ogg')
-        cls.Castle = pygame.mixer.Sound('Sound/Castle.ogg')
-        cls.Bishop = pygame.mixer.Sound('Sound/Bishop.ogg')
-        cls.King = pygame.mixer.Sound('Sound/King.ogg')
-        cls.check = pygame.mixer.Sound('Sound/Check.ogg')
-        cls.checkmate = pygame.mixer.Sound('Sound/Check Mate.ogg')
 
 
 class Graphics(Chess):
@@ -247,6 +227,32 @@ class Controls(Chess, Sound):
         cls._look4click_()
 
     @classmethod
+    def _return_move_(cls, pos):
+        b1 = Graphics.button_list[0]
+        if b1.rect.collidepoint(pos):
+            for number, turn in enumerate(cls.history[::-1]):
+                x_return = turn[0][0]
+                y_return = turn[0][1]
+                Table.field[y_return][x_return] = turn[2]
+                Table.field[turn[1][1]][turn[1][0]] = turn[3]
+                super().move_sound.play()
+                ########################################################################################
+                cls.current_player = super().BLACK if turn[4] == 'b' else super().WHITE
+                cls.chose = True
+                Graphics.available_moves.clear()
+                cls.available.clear()
+                cls.x, cls.y = None, None
+                del cls.history[-1]
+                ########################################################################################
+                if turn[5] == 'beat':
+                    del Graphics.strings[-1]
+                ########################################################################################
+                if 'check' in turn:
+                    del Graphics.strings[-1]
+                ########################################################################################
+                break
+
+    @classmethod
     def _look4click_(cls):
         """
         Checks whether the user clicked on the cross (or other place)
@@ -259,33 +265,10 @@ class Controls(Chess, Sound):
                 # move return section section
                 if event.button == 1:
                     pos = pygame.mouse.get_pos()
-                    b1 = Graphics.button_list[0]
-                    b2 = Graphics.button_list[1]
-                    if b1.rect.collidepoint(pos):
-                        for number, turn in enumerate(cls.history[::-1]):
-                            x_return = turn[0][0]
-                            y_return = turn[0][1]
-                            Table.field[y_return][x_return] = turn[2]
-                            Table.field[turn[1][1]][turn[1][0]] = turn[3]
-                            super().move_sound.play()
-                            ########################################################################################
-                            cls.current_player = super().BLACK if turn[4] == 'b' else super().WHITE
-                            cls.chose = True
-                            Graphics.available_moves.clear()
-                            cls.available.clear()
-                            cls.x, cls.y = None, None
-                            del cls.history[-1]
-                            ########################################################################################
-                            if turn[5] == 'beat':
-                                del Graphics.strings[-1]
-                            ########################################################################################
-                            if 'check' in turn:
-                                del Graphics.strings[-1]
-                            ########################################################################################
-                            break
+                    cls._return_move_(pos=pos)
 
-                    if b2.rect.collidepoint(pos):  # TODO
-                        Controls.settings()
+                    # if b2.rect.collidepoint(pos):  # TODO
+                    #     Controls.settings()
                 if event.pos is None:
                     return None
                 # move&beat section
@@ -363,36 +346,7 @@ class Controls(Chess, Sound):
 
                             Table.field[cls.piece[1][0]][cls.piece[1][1]] = cls.old_piece
                             ############################################################################################
-                            for move in Rules.basic_check(cls.column, cls.row, movements, cls.current_player):
-                                if move == 'wK':
-                                    Graphics.strings.append('Шах белым!')
-                                    super().check.play()
-                                    cls.history[-1].append('check')
-                                    if Rules.naive_mate(cls.available, movements, cls.current_player):
-                                        Graphics.strings.append('Шах и мат белым!')
-                                        cls.responce = False
-                                        Graphics.button_list.append(
-                                            Text(
-                                                msg='Шах и мат!',
-                                                position=(Chess.RATIO[0] // 2 - 222, Chess.RATIO[0] // 2 - 75),
-                                                clr=(255, 0, 0),
-                                                font_size=72)
-                                        )
-                                elif move == 'bK':
-                                    Graphics.strings.append('Шах черным!')
-                                    super().check.play()
-                                    cls.history[-1].append('check')
-                                    if Rules.naive_mate(cls.available, movements, cls.current_player):
-                                        Graphics.strings.append('Шах и мат черным!')
-                                        cls.responce = False
-                                        Graphics.button_list.append(
-                                            Text(
-                                                msg='Шах и мат!',
-                                                position=(Chess.RATIO[0] // 2 - 222, Chess.RATIO[0] // 2 - 75),
-                                                clr=(255, 0, 0),
-                                                font_size=72)
-                                        )
-                            ############################################################################################
+                            cls._init_mate(movements)
                             ############################################################################################
                             cls.chose = False
                             cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
@@ -400,6 +354,38 @@ class Controls(Chess, Sound):
                             ############################################################################################
 
                 print(f'x = {cls.column}, y = {cls.row}')
+
+    @classmethod
+    def _init_mate(cls, movements):
+        for move in Rules.basic_check(cls.column, cls.row, movements, cls.current_player):
+            if move == 'wK':
+                Graphics.strings.append('Шах белым!')
+                super().check.play()
+                cls.history[-1].append('check')
+                if Rules.naive_mate(cls.available, movements, cls.current_player):
+                    Graphics.strings.append('Шах и мат белым!')
+                    cls.responce = False
+                    Graphics.button_list.append(
+                        Text(
+                            msg='Шах и мат!',
+                            position=(Chess.RATIO[0] // 2 - 222, Chess.RATIO[0] // 2 - 75),
+                            clr=(255, 0, 0),
+                            font_size=72)
+                    )
+            elif move == 'bK':
+                Graphics.strings.append('Шах черным!')
+                super().check.play()
+                cls.history[-1].append('check')
+                if Rules.naive_mate(cls.available, movements, cls.current_player):
+                    Graphics.strings.append('Шах и мат черным!')
+                    cls.responce = False
+                    Graphics.button_list.append(
+                        Text(
+                            msg='Шах и мат!',
+                            position=(Chess.RATIO[0] // 2 - 222, Chess.RATIO[0] // 2 - 75),
+                            clr=(255, 0, 0),
+                            font_size=72)
+                    )
 
     @classmethod
     def settings(cls):  # TODO

@@ -1,4 +1,4 @@
-class Table:
+class TableClass:
     def __init__(self):
         self.field = [
             ['bR', 'bN', 'bB', 'bQ', 'bK', 'bB', 'bN', 'bR'],
@@ -10,3 +10,6 @@ class Table:
             ['wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp'],
             ['wR', 'wN', 'wB', 'wQ', 'wK', 'wB', 'wN', 'wR'],
         ]
+
+
+Table = TableClass()

@@ -1,12 +1,4 @@
-from typing import Callable
-
-import pygame
-from Board import Table
-from Build import Build
-from Button import Button
-from Text import Text
-from Sound import Sound
-Table = Table()
+from init import *
 
 
 class Player:
@@ -42,7 +34,7 @@ class Chess:
     WHITE = Player()
     BLACK = Player(letter='b', opposite='w', name='Black')
     output = pygame.font.Font.render
-    RATIO = (WIDTH, HEIGHT) = (720, 720)
+    resolution = (WIDTH, HEIGHT) = (720, 720)
     DIMENSIONS = 8
     SQUARE_SIZE = WIDTH // DIMENSIONS
     expand = 12  # The error for the screen resolution (so that the figures do not move out)
@@ -55,7 +47,7 @@ class Chess:
         """
         pygame.mixer.pre_init(44100, -16, 1, 512)
         pygame.init()
-        cls.screen = pygame.display.set_mode((cls.RATIO[0] + (cls.RATIO[0] // 3 + 50), cls.RATIO[1]))
+        cls.screen = pygame.display.set_mode((cls.resolution[0] + (cls.resolution[0] // 3 + 50), cls.resolution[1]))
         cls.screen.fill('white')
         pygame.draw.rect(
             cls.screen,
@@ -63,8 +55,8 @@ class Chess:
             pygame.Rect(
                 5,  # Horizontal coordinate
                 0,  # Vertical coordinate
-                cls.RATIO[0],  # Size of square
-                cls.RATIO[0])  # Size of square
+                cls.resolution[0],  # Size of square
+                cls.resolution[0])  # Size of square
         )
         cls.font = pygame.font.Font(None, 24)
         pygame.display.set_caption('Chess')
@@ -159,7 +151,7 @@ class Graphics(Chess):
     @classmethod
     def show_available_moves(cls):
         color = (32, 64, 128, 128)
-        available_move = pygame.Surface((cls.RATIO[0], cls.RATIO[0]), pygame.SRCALPHA)
+        available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
         pygame.draw.rect(
             available_move,  # Square
             color,
@@ -172,7 +164,7 @@ class Graphics(Chess):
         super().screen.blit(available_move, dest=(0, 0))
         for square in cls.available_moves[1::]:
             color = (0, 150, 0, 120) if Table.field[square[1]][square[0]] == '--' else (150, 0, 0, 120)
-            available_move = pygame.Surface((cls.RATIO[0], cls.RATIO[0]), pygame.SRCALPHA)
+            available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
             pygame.draw.rect(
                 available_move,  # Square
                 color,
@@ -206,7 +198,7 @@ class Graphics(Chess):
             error -= 35
             # noinspection PyArgumentList
             cls.output = cls.font.render(string, 1, pygame.Color('red'))
-            cls.pos = cls.output.get_rect(center=(super().RATIO[0] + 140, super().RATIO[1] - error))
+            cls.pos = cls.output.get_rect(center=(super().resolution[0] + 140, super().resolution[1] - error))
             cls.screen.blit(cls.output, cls.pos)
 
 
@@ -271,12 +263,12 @@ class Controls(Chess, Sound):
                 if event.pos is None:
                     return None
                 # move&beat section
-                if event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS) > 7 or \
-                        event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS) > 7:
+                if event.pos[0] // (cls.resolution[0] // cls.DIMENSIONS) > 7 or \
+                        event.pos[1] // (cls.resolution[0] // cls.DIMENSIONS) > 7:
                     break
                 else:
-                    cls.column = event.pos[0] // (cls.RATIO[0] // cls.DIMENSIONS)
-                    cls.row = event.pos[1] // (cls.RATIO[0] // cls.DIMENSIONS)
+                    cls.column = event.pos[0] // (cls.resolution[0] // cls.DIMENSIONS)
+                    cls.row = event.pos[1] // (cls.resolution[0] // cls.DIMENSIONS)
                 movements = {
                     'p': Rules.pawn,
                     'N': Rules.knight,
@@ -379,7 +371,7 @@ class Controls(Chess, Sound):
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат!',
-                            position=(Chess.RATIO[0] // 2 - 222, Chess.RATIO[0] // 2 - 75),
+                            position=(Chess.resolution[0] // 2 - 222, Chess.resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
                             font_size=72)
                     )
@@ -393,7 +385,7 @@ class Controls(Chess, Sound):
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат!',
-                            position=(Chess.RATIO[0] // 2 - 222, Chess.RATIO[0] // 2 - 75),
+                            position=(Chess.resolution[0] // 2 - 222, Chess.resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
                             font_size=72)
                     )

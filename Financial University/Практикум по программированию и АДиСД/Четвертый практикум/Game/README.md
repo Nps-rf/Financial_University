@@ -4,6 +4,7 @@
 # ♛ Chess game ♛
 ____
 ![Python version](https://img.shields.io/badge/Python-3.8-blue)
+![Pygame version](https://img.shields.io/badge/Pygame-2.0.1-blueviolet)
 ![Project status](https://img.shields.io/badge/Status-WIP-red)
 
 ## About

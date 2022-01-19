@@ -261,14 +261,13 @@ class Controls(Chess, Sound):
             if event.type == pygame.QUIT:
                 Chess.running = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and cls.responce:
+            elif event.type == pygame.MOUSEBUTTONDOWN and cls.responce and event.button == 1:
                 # move return section section
-                if event.button == 1:
-                    pos = pygame.mouse.get_pos()
-                    cls._return_move_(pos=pos)
+                pos = pygame.mouse.get_pos()
+                cls._return_move_(pos=pos)
 
-                    # if b2.rect.collidepoint(pos):  # TODO
-                    #     Controls.settings()
+                # if b2.rect.collidepoint(pos):  # TODO
+                #     Controls.settings()
                 if event.pos is None:
                     return None
                 # move&beat section
@@ -305,6 +304,9 @@ class Controls(Chess, Sound):
                 # play sound of chosen piece and look for all squares available to move
                 if cls.x or cls.y is not None:
                     cls.available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
+                    if cls.piece[0][1] == 'K':
+                        cls.prevent_wrong_move(movements)
+
                     if Table.field[cls.row][cls.column][1] in sounds.keys() \
                             and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
                         if len(Graphics.available_moves) > 0:
@@ -314,6 +316,9 @@ class Controls(Chess, Sound):
                         Graphics.available_moves += cls.available  # show available moves
 
                     if cls.chose:  # figure chosen and can move
+                        if cls.piece[0][1] == 'K':
+                            # check for king and remove unavailable moves
+                            cls.prevent_wrong_move(movements)
                         print('Squares you can move -> ', *cls.available)
                         # movement of piece
                         if [cls.column, cls.row] in cls.available \
@@ -354,6 +359,12 @@ class Controls(Chess, Sound):
                             ############################################################################################
 
                 print(f'x = {cls.column}, y = {cls.row}')
+
+    @classmethod
+    def prevent_wrong_move(cls, movements):
+        for move in Rules.side_available(movements, cls.current_player, opposite_side=True):
+            while move in cls.available:
+                del cls.available[cls.available.index(move)]
 
     @classmethod
     def _init_mate(cls, movements):
@@ -411,34 +422,35 @@ class Rules:
         # Movement section
         available = []
         beat = []
-        try:
-            if Table.field[p_y + 1][p_x] == '--':
-                if p_y == 1 and Table.field[p_y][p_x][0] != 'w' and p_y + 1 < 8:
-                    available.append([p_x, p_y + 2]) if Table.field[p_y + 2][p_x] == '--' else None
-                    available.append([p_x, p_y + 1])
-                elif Table.field[p_y][p_x][0] == 'b' and p_y + 1 < 8:
-                    available.append([p_x, p_y + 1])
-        except IndexError:
-            pass
-        try:
-            if Table.field[p_y - 1][p_x] == '--':
-                if p_y == 6 and Table.field[p_y][p_x][0] != 'b' and p_y - 1 >= 0:
-                    available.append([p_x, p_y - 1])
-                    available.append([p_x, p_y - 2]) if Table.field[p_y - 2][p_x] == '--' else None
-                elif Table.field[p_y][p_x][0] == 'w' and p_y - 1 >= 0:
-                    available.append([p_x, p_y - 1])
-        except IndexError:
-            pass
+        if not only_beat:
+            try:
+                if Table.field[p_y + 1][p_x] == '--':
+                    if p_y == 1 and Table.field[p_y][p_x][0] != 'w' and p_y + 1 < 8:
+                        available.append([p_x, p_y + 2]) if Table.field[p_y + 2][p_x] == '--' else None
+                        available.append([p_x, p_y + 1])
+                    elif Table.field[p_y][p_x][0] == 'b' and p_y + 1 < 8:
+                        available.append([p_x, p_y + 1])
+            except IndexError:
+                pass
+            try:
+                if Table.field[p_y - 1][p_x] == '--':
+                    if p_y == 6 and Table.field[p_y][p_x][0] != 'b' and p_y - 1 >= 0:
+                        available.append([p_x, p_y - 1])
+                        available.append([p_x, p_y - 2]) if Table.field[p_y - 2][p_x] == '--' else None
+                    elif Table.field[p_y][p_x][0] == 'w' and p_y - 1 >= 0:
+                        available.append([p_x, p_y - 1])
+            except IndexError:
+                pass
         # White Beat section
         if Table.field[p_y][p_x][0] == 'w':
             try:
-                if Table.field[p_y - 1][p_x - 1][0] == 'b' and (p_y - 1 >= 0 and p_x - 1 >= 0):
+                if Table.field[p_y - 1][p_x - 1][0] == 'b' or only_beat:
                     available.append([p_x - 1, p_y - 1])
             except IndexError:
                 pass
 
             try:
-                if Table.field[p_y - 1][p_x + 1][0] == 'b' and (p_y - 1 >= 0 and p_x + 1 < 8):
+                if Table.field[p_y - 1][p_x + 1][0] == 'b' or only_beat:
                     available.append([p_x + 1, p_y - 1])
             except IndexError:
                 pass
@@ -446,19 +458,19 @@ class Rules:
         # Black Beat section
         if Table.field[p_y][p_x][0] == 'b':
             try:
-                if Table.field[p_y + 1][p_x - 1][0] == 'w':
+                if Table.field[p_y + 1][p_x - 1][0] == 'w' or only_beat:
                     available.append([p_x - 1, p_y + 1])
                     beat.append([p_x - 1, p_y + 1])
             except IndexError:
                 pass
 
             try:
-                if Table.field[p_y + 1][p_x + 1][0] == 'w':
+                if Table.field[p_y + 1][p_x + 1][0] == 'w' or only_beat:
                     available.append([p_x + 1, p_y + 1])
             except IndexError:
                 pass
 
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
     def knight(p_x, p_y, player, only_beat=False):
@@ -520,7 +532,7 @@ class Rules:
                 available.append([p_x + 1, p_y + 2])
         except IndexError:
             pass
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
     def bishop(p_x, p_y, player, only_beat=False):
@@ -568,7 +580,7 @@ class Rules:
         # lower right
         solve_side(left=False, upper=False)
 
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
     def rook(p_x, p_y, player, only_beat=False):
@@ -610,7 +622,7 @@ class Rules:
         solve_side(vertical=True)
         solve_side(vertical=True, invert=True)
 
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
     def queen(p_x, p_y, player, only_beat=False):
@@ -624,7 +636,7 @@ class Rules:
         beat = []
         available = Rules.rook(p_x, p_y, player)
         available += Rules.bishop(p_x, p_y, player)
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
     def king(p_x, p_y, player, only_beat=False):
@@ -678,7 +690,20 @@ class Rules:
         except IndexError:
             pass
 
-        return available if not only_beat else beat
+        return available
+
+    @staticmethod
+    def side_available(movements, player, opposite_side=False):
+        side_available = []
+        if opposite_side:
+            side = player.opposite
+        else:
+            side = player.letter
+        for x in range(8):
+            for y in range(8):
+                if Table.field[y][x][0] == side:
+                    side_available.extend(movements[Table.field[y][x][1]](x, y, player, only_beat=True))
+        return side_available
 
     @staticmethod
     def basic_check(p_x, p_y, movements, player):
@@ -691,20 +716,7 @@ class Rules:
     def naive_mate(enemy: 'Available turns of enemy piece', movements, player):
         # I must find exact way, which allows enemy beat my king
         Enemy = set(map(lambda elem: tuple(elem), enemy))
-        print(enemy)
-        side_available = set()
-        for x in range(8):
-            for y in range(8):
-                side_available.update(set(map(lambda elem: tuple(elem),
-                                              movements[Table.field[y][x][1]](x, y, player)))) \
-                    if Table.field[y][x][0] == player.opposite and Table.field[y][x][1] != 'K' else None
-                if Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'w':
-                    white_king = (x, y)
-                elif Table.field[y][x][1] == 'K' and Table.field[y][x][0] == 'b':
-                    black_king = (x, y)
-        print('Enemy -> ', Enemy)
-        print('Side -> ', side_available)
-        print(Enemy.isdisjoint(side_available))
+        side_available = set(map(tuple, Rules.side_available(movements, player)))
         return Enemy.isdisjoint(side_available)  # if True -> Mate else check
 
 

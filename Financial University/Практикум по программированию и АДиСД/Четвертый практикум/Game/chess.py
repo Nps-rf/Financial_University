@@ -71,15 +71,22 @@ class Chess:
             cls._prepare_()
             Sound.init()
             Graphics.board_graphics()
-            Controls.run_controls()
             Graphics.print_info()
             for b in Graphics.get_button_list():
                 b.draw(cls.screen)
+            if not cls.show_menu:
+                Controls.run_controls()
+            else:
+                Controls.maintenance_of_settings()
+                print(cls.show_menu)
             if cls.show_menu:
                 drawings = Controls.settings()
                 cls.screen.blit(drawings[0], (-75, 0))
                 drawings[1].draw(cls.screen)
                 drawings[2].draw(cls.screen)
+                drawings[3].draw(cls.screen)
+            else:
+                print(cls.show_menu)
 
             pygame.display.update()
 
@@ -359,10 +366,10 @@ class Controls(Chess, Sound):
                     cls.responce = False
                     Graphics.button_list.append(
                         Text(
-                            msg='Шах и мат!',
+                            msg='Шах и мат белым!',
                             position=(Chess.resolution[0] // 2 - 222, Chess.resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
-                            font_size=72)
+                            font_size=64)
                     )
                 else:
                     Graphics.strings.append('Шах белым!')
@@ -375,10 +382,10 @@ class Controls(Chess, Sound):
                     cls.responce = False
                     Graphics.button_list.append(
                         Text(
-                            msg='Шах и мат!',
+                            msg='Шах и мат черным!',
                             position=(Chess.resolution[0] // 2 - 222, Chess.resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
-                            font_size=72)
+                            font_size=64)
                     )
                 else:
                     Graphics.strings.append('Шах черным!')
@@ -389,17 +396,31 @@ class Controls(Chess, Sound):
     def call_settings(cls, pos):
         b2 = Graphics.button_list[1]
         if b2.rect.collidepoint(pos):
+            Chess.show_menu = True
             cls.settings(run_only=True)
 
     @classmethod
     def settings(cls, run_only=False):  # TODO
-        Chess.show_menu = True
-        cls.muted = True
         if not run_only:
             menu = pygame.image.load('Stock/menu.jpg')
+            button0 = Button((520, 185), (250, 50), (128, 220, 55), (128, 25, 64), text='Вернуться обратно')
             button1 = Button((520, 255), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить подсветку ходов')
             button2 = Button((520, 325), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить звук')
-            return menu, button1, button2
+            return menu, button1, button2, button0
+
+    @classmethod
+    def maintenance_of_settings(cls):
+        buttons = [b1, b2, b0] = cls.settings()[1:]
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                Chess.running = False
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                pos = pygame.mouse.get_pos()
+                if b0.rect.collidepoint(pos):
+                    Chess.show_menu = False
+                elif b2.rect.collidepoint(pos):
+                    cls.muted = not cls.muted
 
 
 class Rules:

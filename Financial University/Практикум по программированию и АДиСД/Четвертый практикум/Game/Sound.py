@@ -33,7 +33,7 @@ class Sound:
         cls.checkmate = Sound('Sound/Check Mate.ogg')
 
     @classmethod
-    def play_sound(cls, name, muted=False):
+    def play_sound(cls, name, muted):
         sounds = {
             'p': cls.Pawn.play,
             'N': cls.Knight.play,
@@ -49,6 +49,3 @@ class Sound:
         }
         if not muted and name in sounds:
             sounds[name]()
-
-
-

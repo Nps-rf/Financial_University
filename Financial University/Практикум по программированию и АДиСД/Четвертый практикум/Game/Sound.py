@@ -3,6 +3,18 @@ class Sound:
     Responsible for the sound operation in the program
     """
 
+    checkmate = None
+    Knight_move = None
+    check = None
+    beat_sound = None
+    move_sound = None
+    King = None
+    Queen = None
+    Rook = None
+    Bishop = None
+    Knight = None
+    Pawn = None
+
     @classmethod
     def init(cls):
         from pygame.mixer import init, Sound
@@ -19,3 +31,24 @@ class Sound:
         cls.King = Sound('Sound/King.ogg')
         cls.check = Sound('Sound/Check.ogg')
         cls.checkmate = Sound('Sound/Check Mate.ogg')
+
+    @classmethod
+    def play_sound(cls, name, muted=False):
+        sounds = {
+            'p': cls.Pawn.play,
+            'N': cls.Knight.play,
+            'B': cls.Bishop.play,
+            'R': cls.Rook.play,
+            'Q': cls.Queen.play,
+            'K': cls.King.play,
+            'move': cls.move_sound.play,
+            'beat': cls.beat_sound.play,
+            'check': cls.check.play,
+            'Knight_move': cls.Knight_move.play,
+            'checkmate': cls.checkmate.play
+        }
+        if not muted and name in sounds:
+            sounds[name]()
+
+
+

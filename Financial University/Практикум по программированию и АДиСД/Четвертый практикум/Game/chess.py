@@ -213,6 +213,7 @@ class Controls(Chess, Sound):
     piece = ('--', [-1, -1])
     x = None
     y = None
+    muted = False
 
     @classmethod
     def run_controls(cls):
@@ -227,7 +228,7 @@ class Controls(Chess, Sound):
                 y_return = turn[0][1]
                 Table.field[y_return][x_return] = turn[2]
                 Table.field[turn[1][1]][turn[1][0]] = turn[3]
-                super().move_sound.play()
+                Sound.play_sound(name='move', muted=cls.muted)
                 ########################################################################################
                 cls.current_player = super().BLACK if turn[4] == 'b' else super().WHITE
                 cls.chose = True
@@ -257,9 +258,7 @@ class Controls(Chess, Sound):
                 # move return section section
                 pos = pygame.mouse.get_pos()
                 cls._return_move_(pos=pos)
-
-                # if b2.rect.collidepoint(pos):  # TODO
-                #     Controls.settings()
+                cls.call_settings(pos=pos)
                 if event.pos is None:
                     return None
                 # move&beat section
@@ -277,14 +276,6 @@ class Controls(Chess, Sound):
                     'Q': Rules.queen,
                     'K': Rules.king
                 }
-                sounds = {
-                    'p': super().Pawn.play,
-                    'N': super().Knight.play,
-                    'B': super().Bishop.play,
-                    'R': super().Rook.play,
-                    'Q': super().Queen.play,
-                    'K': super().King.play
-                }
 
                 # get coordinates and misc
                 if Table.field[cls.row][cls.column] != '--' \
@@ -299,11 +290,11 @@ class Controls(Chess, Sound):
                     if cls.piece[0][1] == 'K':
                         cls.prevent_wrong_move(movements)
 
-                    if Table.field[cls.row][cls.column][1] in sounds.keys() \
-                            and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
+                    if Table.field[cls.row][cls.column][0] != cls.current_player.opposite \
+                            and Table.field[cls.row][cls.column] != '--':
                         if len(Graphics.available_moves) > 0:
                             Graphics.available_moves.clear()
-                        sounds[Table.field[cls.row][cls.column][1]]()  # playing sound
+                        Sound.play_sound(name=Table.field[cls.row][cls.column][1], muted=cls.muted)  # playing sound
                         Graphics.available_moves.append([cls.x, cls.y])
                         Graphics.available_moves += cls.available  # show available moves
 
@@ -317,14 +308,14 @@ class Controls(Chess, Sound):
                                 and cls.current_player.letter == cls.piece[0][0]:
 
                             if Table.field[cls.row][cls.column][0] == cls.current_player.opposite:
-                                super().beat_sound.play()
+                                Sound.play_sound(name='beat', muted=cls.muted)
                                 Graphics.strings.append(Graphics.info_gainer(Table.field[cls.row][cls.column]))
 
                             elif cls.piece[0][1] == 'N':
-                                super().Knight_move.play()
+                                Sound.play_sound(name='Knight_move', muted=cls.muted)
 
                             elif Table.field[cls.row][cls.column] == '--':
-                                super().move_sound.play()
+                                Sound.play_sound(name='move', muted=cls.muted)
 
                             cls.old_x_y = [cls.column, cls.row]
 
@@ -362,11 +353,9 @@ class Controls(Chess, Sound):
     def _init_mate(cls, movements):
         for move in Rules.basic_check(cls.column, cls.row, movements, cls.current_player):
             if move == 'wK':
-                Graphics.strings.append('Шах белым!')
-                super().check.play()
-                cls.history[-1].append('check')
                 if Rules.naive_mate(cls.available, movements, cls.current_player):
                     Graphics.strings.append('Шах и мат белым!')
+                    Sound.play_sound(name='checkmate', muted=cls.muted)
                     cls.responce = False
                     Graphics.button_list.append(
                         Text(
@@ -375,12 +364,14 @@ class Controls(Chess, Sound):
                             clr=(255, 0, 0),
                             font_size=72)
                     )
+                else:
+                    Graphics.strings.append('Шах белым!')
+                    Sound.play_sound(name='check', muted=cls.muted)
+                    cls.history[-1].append('check')
             elif move == 'bK':
-                Graphics.strings.append('Шах черным!')
-                super().check.play()
-                cls.history[-1].append('check')
                 if Rules.naive_mate(cls.available, movements, cls.current_player):
                     Graphics.strings.append('Шах и мат черным!')
+                    Sound.play_sound(name='checkmate', muted=cls.muted)
                     cls.responce = False
                     Graphics.button_list.append(
                         Text(
@@ -389,14 +380,26 @@ class Controls(Chess, Sound):
                             clr=(255, 0, 0),
                             font_size=72)
                     )
+                else:
+                    Graphics.strings.append('Шах черным!')
+                    Sound.play_sound(name='check', muted=cls.muted)
+                    cls.history[-1].append('check')
 
     @classmethod
-    def settings(cls):  # TODO
+    def call_settings(cls, pos):
+        b2 = Graphics.button_list[1]
+        if b2.rect.collidepoint(pos):
+            cls.settings(run_only=True)
+
+    @classmethod
+    def settings(cls, run_only=False):  # TODO
         Chess.show_menu = True
-        menu = pygame.image.load('Stock/menu.jpg')
-        button1 = Button((520, 255), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить подсветку ходов')
-        button2 = Button((520, 325), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить звук')
-        return menu, button1, button2
+        cls.muted = True
+        if not run_only:
+            menu = pygame.image.load('Stock/menu.jpg')
+            button1 = Button((520, 255), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить подсветку ходов')
+            button2 = Button((520, 325), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить звук')
+            return menu, button1, button2
 
 
 class Rules:

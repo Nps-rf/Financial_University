@@ -78,15 +78,12 @@ class Chess:
                 Controls.run_controls()
             else:
                 Controls.maintenance_of_settings()
-                print(cls.show_menu)
             if cls.show_menu:
                 drawings = Controls.settings()
                 cls.screen.blit(drawings[0], (-75, 0))
                 drawings[1].draw(cls.screen)
                 drawings[2].draw(cls.screen)
                 drawings[3].draw(cls.screen)
-            else:
-                print(cls.show_menu)
 
             pygame.display.update()
 
@@ -99,12 +96,14 @@ class Graphics(Chess):
     button_list = list()
     output_error = 670
     strings = []
+    show_moves = True
 
     @classmethod
     def get_button_list(cls):
         cancel: Callable[[], None] = lambda: print('Turn canceled')
+        settings: Callable[[], None] = lambda: print('Settings opened')
         button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Отменить ход')
-        button2 = Button((867, 675), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Настройки')
+        button2 = Button((867, 675), (250, 50), (220, 220, 220), (255, 0, 0), settings, 'Настройки')
 
         cls.button_list.append(button1)
         cls.button_list.append(button2)
@@ -117,7 +116,7 @@ class Graphics(Chess):
         """
         cls._board_()
         cls._pieces_()
-        if len(cls.available_moves) > 0:
+        if len(cls.available_moves) > 0 and cls.show_moves:
             cls.show_available_moves()
 
     @classmethod
@@ -210,6 +209,8 @@ class Graphics(Chess):
 
 
 class Controls(Chess, Sound):
+    _statement_gen_1 = cycle({'Включить', 'Выключить'})
+    _statement_gen_2 = cycle({'Включить', 'Выключить'})
     available = list()
     history = []
     old_piece = '--'
@@ -221,6 +222,8 @@ class Controls(Chess, Sound):
     x = None
     y = None
     muted = False
+    snd_statement = 'Выключить'
+    moves_statement = 'Выключить'
 
     @classmethod
     def run_controls(cls):
@@ -402,15 +405,24 @@ class Controls(Chess, Sound):
     @classmethod
     def settings(cls, run_only=False):  # TODO
         if not run_only:
+            if cls.muted:
+                cls.snd_statement = 'Включить'
+            else:
+                cls.snd_statement = 'Выключить'
+            if not Graphics.show_moves:
+                cls.moves_statement = 'Включить'
+            else:
+                cls.moves_statement = 'Выключить'
             menu = pygame.image.load('Stock/menu.jpg')
             button0 = Button((520, 185), (250, 50), (128, 220, 55), (128, 25, 64), text='Вернуться обратно')
-            button1 = Button((520, 255), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить подсветку ходов')
-            button2 = Button((520, 325), (250, 50), (128, 220, 220), (128, 255, 255), text='Выключить звук')
+            button1 = Button((520, 255), (250, 50), (128, 220, 220), (128, 255, 255),
+                             text=f'{cls.moves_statement} подсветку ходов')
+            button2 = Button((520, 325), (250, 50), (128, 220, 220), (128, 255, 255), text=f'{cls.snd_statement} звук')
             return menu, button1, button2, button0
 
     @classmethod
     def maintenance_of_settings(cls):
-        buttons = [b1, b2, b0] = cls.settings()[1:]
+        [b1, b2, b0] = cls.settings()[1:]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 Chess.running = False
@@ -421,6 +433,10 @@ class Controls(Chess, Sound):
                     Chess.show_menu = False
                 elif b2.rect.collidepoint(pos):
                     cls.muted = not cls.muted
+                    cls.snd_statement = next(cls._statement_gen_1)
+                elif b1.rect.collidepoint(pos):
+                    Graphics.show_moves = not Graphics.show_moves
+                    cls.moves_statement = next(cls._statement_gen_2)
 
 
 class Rules:
@@ -739,4 +755,3 @@ class Rules:
 if __name__ == '__main__':
     CHESS_GAME = Chess()
     CHESS_GAME.run()
-    # Git ate my commits!!!

@@ -1,4 +1,5 @@
 import pygame
+from itertools import cycle
 from typing import Callable
 from Board import Table
 from Build import Build

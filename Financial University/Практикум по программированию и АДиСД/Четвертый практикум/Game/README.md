@@ -41,7 +41,7 @@ ____
 ### Class Chess
 * **Creates an application**
 #### Attributes
-* `pos` :
+* `pos` : **Click position**
 * `screen` : **Game screen**
 * `font` : **Font initialization**
 * `images` : **Pieces images**

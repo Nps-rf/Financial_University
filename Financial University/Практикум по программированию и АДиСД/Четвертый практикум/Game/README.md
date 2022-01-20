@@ -121,10 +121,10 @@ ____
 
 ## Illustrations
 ### Move
-![](https://vk.com/doc43923203_624566353?hash=1a026bebeb90699a49&dl=1b90b588e93a26e5b7&wnd=1&module=im)
+![](https://psv4.userapi.com/c534536/u43923203/docs/d11/5ce302774984/Untitledd.gif?extra=kCTPlEOFhdcgKL0k1Qo1FYss9P35QUddpDoM51VMPG__Zr4Ni5EraQ1LUi7T2hHmJKOdQc-GEhxVcF7Eb7YKj19G0oAm3iKrHIROJs6ME-lBet0oE4lFhaZOQpQ92w9Pn1CI0zBUg5dBSwUoLDVX)
 ### Beat
-![](https://psv4.userapi.com/c534536/u43923203/docs/d45/caf421d98839/fdhgdfh.gif?extra=MX0xt819aYvUBVO-SuvSUFPnGA0WOPBUZEjWLGED12fNkgH3Z6qaukazofKlA8FoD2byQ5QtmJHi7m1Vlx5kL3-6wZcgkCmhfl1B0xjI7GH1Ayrwvau8RxwRAu2ZPWJGEeCcMHtf8cE1e5FImbw)
+![](https://psv4.userapi.com/c534536/u43923203/docs/d45/67ca656be87d/fdhgdfh.gif?extra=oowso8FC6i0UogZKRDSOLRLp7rNtRmjANHr5BYB2zH9pnUvr37EBC_3S3IS7RKohiosq81tTdwOGEGMmF5V_hixUoayKxsbDVC7FCmafwIR21OrUUfdb5Df_j7vwuq68MgJ1GhFTaJ1gbhb48QrY)
 ### Other figures
-![](https://vk.com/doc43923203_624567262?hash=e8716edb709a95788b&dl=a220c321b982a410ac&wnd=1&module=im)
+![](https://psv4.userapi.com/c240331/u43923203/docs/d17/9f58ca37cd6c/dfhgdghf.gif?extra=_ZxC06r_1Oh11DQodgNvYSQtmuaY6ltxfjVDaihz5DkjUUUGyCucMqOEH2ZXlOexnJYyA1hsJKofh2Jo3NsqPtHLaHW6vBiGlXrxa8RW_XwSmWB-0NuYtn8kWJ1_5FeA4ph7ErZIbFHU9--xltFC)
 ### Canceling moves
 ![](https://vk.com/doc43923203_624567497?hash=4a3018d699dd179316&dl=2dbb59912af7a44162&wnd=1&module=im)

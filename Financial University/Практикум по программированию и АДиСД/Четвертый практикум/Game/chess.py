@@ -739,3 +739,4 @@ class Rules:
 if __name__ == '__main__':
     CHESS_GAME = Chess()
     CHESS_GAME.run()
+    # Git ate my commits!!!

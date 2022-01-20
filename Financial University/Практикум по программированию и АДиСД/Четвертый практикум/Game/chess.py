@@ -752,6 +752,11 @@ class Rules:
         return Enemy.isdisjoint(side_available)  # if True -> Mate else check
 
 
+class BOT:
+    def __init__(self):
+        pass
+
+
 if __name__ == '__main__':
     CHESS_GAME = Chess()
     CHESS_GAME.run()

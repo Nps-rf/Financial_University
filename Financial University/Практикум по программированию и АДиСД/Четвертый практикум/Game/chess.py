@@ -252,6 +252,22 @@ class Controls(Chess, Sound):
                 break
 
     @classmethod
+    def _is_king_(cls):
+        if cls.piece[0][1] == 'K':
+            return True
+        return False
+
+    @classmethod
+    def _update_history_(cls):
+        cls.history.append([[cls.piece[1][1], cls.piece[1][0]],  # from
+                            [cls.column, cls.row],  # to
+                            cls.piece[0],  # who moves
+                            Table.field[cls.row][cls.column],  # from-old
+                            cls.current_player.letter,  # Who moved
+                            'beat' if Table.field[cls.row][cls.column][0] == cls.current_player.opposite
+                            else 'move'])  # move status
+
+    @classmethod
     def _piece_chose_(cls):
         if Table.field[cls.row][cls.column] != '--' \
                 and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
@@ -263,7 +279,7 @@ class Controls(Chess, Sound):
     def _call_sg_(cls, movements):
         if cls.x or cls.y is not None:
             cls.available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
-            if cls.piece[0][1] == 'K':
+            if cls._is_king_() :
                 cls.prevent_wrong_move(movements)
 
             if Table.field[cls.row][cls.column][0] != cls.current_player.opposite \
@@ -273,6 +289,10 @@ class Controls(Chess, Sound):
                 Sound.play_sound(name=Table.field[cls.row][cls.column][1], muted=cls.muted)  # playing sound
                 Graphics.available_moves.append([cls.x, cls.y])
                 Graphics.available_moves += cls.available  # show available moves
+
+    @classmethod
+    def _switch_player_(cls):
+        cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
 
     @classmethod
     def _look4click_(cls):
@@ -312,42 +332,36 @@ class Controls(Chess, Sound):
                 cls._call_sg_(movements)  # SG -> Sound&Graphics
 
                 if cls.chosen:  # figure chosen and can move
-                    if cls.piece[0][1] == 'K':
+                    if cls._is_king_() :  # is piece a king
                         # check for king and remove unavailable moves
                         cls.prevent_wrong_move(movements)
                     print('Squares you can move -> ', *cls.available)
                     # movement of piece
                     if [cls.column, cls.row] in cls.available and cls.current_player.letter == cls.piece[0][0]:
 
-                        if Table.field[cls.row][cls.column][0] == cls.current_player.opposite:
+                        if Table.field[cls.row][cls.column][0] == cls.current_player.opposite:  # if you beat piece
                             Sound.play_sound(name='beat', muted=cls.muted)
                             Graphics.strings.append(Graphics.info_gainer(Table.field[cls.row][cls.column]))
 
-                        elif cls.piece[0][1] == 'N':
+                        elif cls.piece[0][1] == 'N':  # Knight move sound
                             Sound.play_sound(name='Knight_move', muted=cls.muted)
 
-                        elif Table.field[cls.row][cls.column] == '--':
+                        elif Table.field[cls.row][cls.column] == '--':  # Classic move sound
                             Sound.play_sound(name='move', muted=cls.muted)
 
                         cls.old_piece = Table.field[cls.row][cls.column] \
                             if Table.field[cls.row][cls.column] == '--' else '--'
 
-                        cls.history.append([[cls.piece[1][1], cls.piece[1][0]],  # from
-                                            [cls.column, cls.row],  # to
-                                            cls.piece[0],  # who moves
-                                            Table.field[cls.row][cls.column],  # from-old
-                                            cls.current_player.letter,  # Who moved
-                                            'beat' if Table.field[cls.row][cls.column][0] ==
-                                            cls.current_player.opposite else 'move'])  # move status
+                        cls._update_history_()
 
                         Table.field[cls.row][cls.column] = cls.piece[0]
 
                         Table.field[cls.piece[1][0]][cls.piece[1][1]] = cls.old_piece
                         ############################################################################################
-                        cls._init_mate(movements)
+                        cls._init_mate_(movements)
                         ############################################################################################
                         cls.chosen = False
-                        cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
+                        cls._switch_player_()
                         Graphics.available_moves.clear()
                         ############################################################################################
 
@@ -360,7 +374,7 @@ class Controls(Chess, Sound):
                 del cls.available[cls.available.index(move)]
 
     @classmethod
-    def _init_mate(cls, movements):
+    def _init_mate_(cls, movements):
         for move in Rules.basic_check(cls.column, cls.row, movements, cls.current_player):
             if move == 'wK':
                 if Rules.naive_mate(cls.available, movements, cls.current_player):

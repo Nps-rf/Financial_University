@@ -2,7 +2,7 @@ from init import *
 
 
 class Player:
-    def __init__(self, letter='w', opposite='b', name='White'):
+    def __init__(self, letter='w', opposite='b', name='White') -> None:
         # self.score = 0  TODO
         self.name = name
         self.letter = letter
@@ -762,7 +762,8 @@ class Rules:
             for y in range(8):
                 if Table.field[y][x][0] == player.letter:
                     side_available.extend(movements[Table.field[y][x][1]](x, y, player))
-        Controls.switch_player()
+        if opposite_side:
+            Controls.switch_player()
         return side_available
 
     @staticmethod

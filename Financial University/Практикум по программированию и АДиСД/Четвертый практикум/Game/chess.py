@@ -306,7 +306,7 @@ class Controls(Chess, Sound):
         Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
 
     @classmethod
-    def _switch_player_(cls) -> None:
+    def switch_player(cls) -> None:
         cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
 
     @classmethod
@@ -376,7 +376,7 @@ class Controls(Chess, Sound):
                         cls._move_piece_()
                         cls._init_mate_(movements)
                         cls.chosen = False
-                        cls._switch_player_()
+                        cls.switch_player()
                         Graphics.available_moves.clear()
 
                     cls._console_(coordinate=True)
@@ -391,7 +391,7 @@ class Controls(Chess, Sound):
     def _init_mate_(cls, movements) -> None:
         for move in Rules.basic_check(cls.column, cls.row, movements, cls.current_player):
             if move == 'wK':
-                if Rules.naive_mate(cls.available, movements, cls.current_player):
+                if Rules.naive_mate((cls.row, cls.column), movements, cls.current_player):
                     Graphics.strings.append('Шах и мат белым!')
                     Sound.play_sound(name='checkmate', muted=cls.muted)
                     cls.responce = False
@@ -407,7 +407,7 @@ class Controls(Chess, Sound):
                     Sound.play_sound(name='check', muted=cls.muted)
                     cls.history[-1].append('check')
             elif move == 'bK':
-                if Rules.naive_mate(cls.available, movements, cls.current_player):
+                if Rules.naive_mate((cls.row, cls.column), movements, cls.current_player):
                     Graphics.strings.append('Шах и мат черным!')
                     Sound.play_sound(name='checkmate', muted=cls.muted)
                     cls.responce = False
@@ -643,7 +643,7 @@ class Rules:
         return available
 
     @staticmethod
-    def rook(p_x, p_y, player, only_beat=False)-> Available_moves:
+    def rook(p_x, p_y, player, only_beat=False) -> Available_moves:
         """
         :param only_beat:
         :param player:
@@ -699,7 +699,7 @@ class Rules:
         return available
 
     @staticmethod
-    def king(p_x, p_y, player, only_beat=False)-> Available_moves:
+    def king(p_x, p_y, player, only_beat=False) -> Available_moves:
         """
         :param only_beat:
         :param player:
@@ -753,16 +753,16 @@ class Rules:
         return available
 
     @staticmethod
-    def side_available(movements, player, opposite_side=False)-> Available_moves:
+    def side_available(movements, player, opposite_side=False) -> Available_moves:
         side_available = []
         if opposite_side:
-            side = player.opposite
-        else:
-            side = player.letter
+            Controls.switch_player()
+            player = Controls.current_player
         for x in range(8):
             for y in range(8):
-                if Table.field[y][x][0] == side:
+                if Table.field[y][x][0] == player.letter:
                     side_available.extend(movements[Table.field[y][x][1]](x, y, player))
+        Controls.switch_player()
         return side_available
 
     @staticmethod
@@ -775,12 +775,14 @@ class Rules:
     @staticmethod
     def naive_mate(enemy: 'Available turns of enemy piece', movements, player) -> bool:
         # I must find exact way, which allows enemy beat king
-        Enemy = set(map(lambda elem: tuple(elem), enemy))
-        side_available = set(map(tuple, Rules.side_available(movements, player)))
-        return Enemy.isdisjoint(side_available)  # if True -> Mate else check
+        print(enemy)
+        side_available = set(map(tuple, Rules.side_available(movements, player, opposite_side=True)))
+        print(side_available)
+        print(enemy in side_available)
+        return enemy not in side_available  # if False -> Mate else check
 
 
-class BOT:
+class BOT:  # TODO
     def __init__(self):
         pass
 

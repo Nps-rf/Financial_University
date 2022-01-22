@@ -41,7 +41,7 @@ class Chess:
     show_menu = False
 
     @classmethod
-    def _prepare_(cls):
+    def _prepare_(cls) -> None:
         """
         Function that prepares an application for launch
         """
@@ -62,7 +62,7 @@ class Chess:
         pygame.display.set_caption('Chess')
 
     @classmethod
-    def run(cls):
+    def run(cls) -> None:
         """
         The main function for launching the application
         :return: pygame application
@@ -99,7 +99,7 @@ class Graphics(Chess):
     show_moves = True
 
     @classmethod
-    def get_button_list(cls):
+    def get_button_list(cls) -> Buttons:
         cancel: Callable[[], None] = lambda: print('Turn canceled')
         settings: Callable[[], None] = lambda: print('Settings opened')
         button1 = Button((867, 45), (250, 50), (220, 220, 220), (255, 0, 0), cancel, 'Отменить ход')
@@ -120,7 +120,7 @@ class Graphics(Chess):
             cls.show_available_moves()
 
     @classmethod
-    def _board_(cls):
+    def _board_(cls) -> None:
         colors = [pygame.Color('white'), pygame.Color('dark gray')]
         for row in range(cls.DIMENSIONS):
             for col in range(cls.DIMENSIONS):
@@ -136,7 +136,7 @@ class Graphics(Chess):
                                 )
 
     @classmethod
-    def _pieces_(cls):
+    def _pieces_(cls) -> None:
         """
         Put a pieces on board
         """
@@ -155,7 +155,7 @@ class Graphics(Chess):
                                     )
 
     @classmethod
-    def show_available_moves(cls):
+    def show_available_moves(cls) -> None:
         color = (32, 64, 128, 128)
         available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
         pygame.draw.rect(
@@ -184,7 +184,7 @@ class Graphics(Chess):
 
     # noinspection PyArgumentList
     @staticmethod
-    def info_gainer(piece):
+    def info_gainer(piece) -> Action_Info:
         pieces = {
             'K': 'Король',
             'Q': 'Ферзь',
@@ -221,18 +221,18 @@ class Controls(Chess, Sound):
     snd_statement, moves_statement = 'Выключить', 'Выключить'
 
     @classmethod
-    def run_controls(cls):
+    def run_controls(cls) -> None:
         cls._look4click_()
 
     @classmethod
-    def _console_(cls, available=False, coordinate=False):
+    def _console_(cls, available=False, coordinate=False) -> print:
         if available:
             print('\033[1m\033[32mSquares you can move -> ', *cls.available, end='\n\033[0m')
         if coordinate:
             print(f'\033[1m\033[34mx = {cls.column}, y = {cls.row}', end='\n\033[0m')
 
     @classmethod
-    def _return_move_(cls, pos):
+    def _return_move_(cls, pos) -> None:
         b1 = Graphics.button_list[0]
         if b1.rect.collidepoint(pos):
             for number, turn in enumerate(cls.history[::-1]):
@@ -258,17 +258,17 @@ class Controls(Chess, Sound):
                 break
 
     @classmethod
-    def _is_king_(cls):
+    def _is_king_(cls) -> bool:
         if cls.piece[0][1] == 'K':
             return True
         return False
 
     @classmethod
-    def _is_knight_(cls):
+    def _is_knight_(cls) -> bool:
         return cls.piece[0][1] == 'N'
 
     @classmethod
-    def _update_history_(cls):
+    def _update_history_(cls) -> None:
         cls.history.append([[cls.piece[1][1], cls.piece[1][0]],  # from
                             [cls.column, cls.row],  # to
                             cls.piece[0],  # who moves
@@ -278,7 +278,7 @@ class Controls(Chess, Sound):
                             else 'move'])  # move status
 
     @classmethod
-    def _piece_chose_(cls):
+    def _piece_chose_(cls) -> None:
         if Table.field[cls.row][cls.column] != '--' \
                 and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
             cls.chosen = True
@@ -286,7 +286,7 @@ class Controls(Chess, Sound):
             cls.piece = (Table.field[cls.row][cls.column], coordinates)
 
     @classmethod
-    def _call_sg_(cls, movements):
+    def _call_sg_(cls, movements) -> None:
         if cls.x or cls.y is not None:
             cls.available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
             if cls._is_king_():
@@ -301,28 +301,28 @@ class Controls(Chess, Sound):
                 Graphics.available_moves += cls.available  # show available moves
 
     @classmethod
-    def _move_piece_(cls):
+    def _move_piece_(cls) -> None:
         Table.field[cls.row][cls.column] = cls.piece[0]
         Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
 
     @classmethod
-    def _switch_player_(cls):
+    def _switch_player_(cls) -> None:
         cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
 
     @classmethod
-    def _is_available_(cls):
+    def _is_available_(cls) -> bool:
         return [cls.column, cls.row] in cls.available and cls.current_player.letter == cls.piece[0][0]
 
     @classmethod
-    def _is_beat_(cls):
+    def _is_beat_(cls) -> bool:
         return Table.field[cls.row][cls.column][0] == cls.current_player.opposite
 
     @classmethod
-    def _is_move_(cls):
+    def _is_move_(cls) -> bool:
         return Table.field[cls.row][cls.column] == '--'
 
     @classmethod
-    def _look4click_(cls):
+    def _look4click_(cls) -> None:
         """
         Checks whether the user clicked on the cross (or other place)
         """
@@ -382,13 +382,13 @@ class Controls(Chess, Sound):
                     cls._console_(coordinate=True)
 
     @classmethod
-    def prevent_wrong_move(cls, movements):
+    def prevent_wrong_move(cls, movements) -> None:
         for move in Rules.side_available(movements, cls.current_player, opposite_side=True):
             while move in cls.available:
                 del cls.available[cls.available.index(move)]
 
     @classmethod
-    def _init_mate_(cls, movements):
+    def _init_mate_(cls, movements) -> None:
         for move in Rules.basic_check(cls.column, cls.row, movements, cls.current_player):
             if move == 'wK':
                 if Rules.naive_mate(cls.available, movements, cls.current_player):
@@ -424,14 +424,14 @@ class Controls(Chess, Sound):
                     cls.history[-1].append('check')
 
     @classmethod
-    def call_settings(cls, pos):
+    def call_settings(cls, pos) -> None:
         b2 = Graphics.button_list[1]
         if b2.rect.collidepoint(pos):
             Chess.show_menu = True
             cls.settings(run_only=True)
 
     @classmethod
-    def settings(cls, run_only=False):  # TODO
+    def settings(cls, run_only=False) -> (Menu, Buttons):
         if not run_only:
             if cls.muted:
                 cls.snd_statement = 'Включить'
@@ -449,7 +449,7 @@ class Controls(Chess, Sound):
             return menu, button1, button2, button0
 
     @classmethod
-    def maintenance_of_settings(cls):
+    def maintenance_of_settings(cls) -> None:
         [b1, b2, b0] = cls.settings()[1:]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -472,7 +472,7 @@ class Rules:
     Class responsible of pieces moving rules
     """
     @staticmethod
-    def pawn(p_x, p_y, *_, only_beat=False):
+    def pawn(p_x, p_y, *_, only_beat=False) -> Available_moves:
         """
         :param only_beat:
         :param p_x: Horizontal coordinate of piece
@@ -533,7 +533,7 @@ class Rules:
         return available
 
     @staticmethod
-    def knight(p_x, p_y, player, only_beat=False):
+    def knight(p_x, p_y, player, only_beat=False) -> Available_moves:
         """
         :param only_beat:
         :param player:
@@ -595,7 +595,7 @@ class Rules:
         return available
 
     @staticmethod
-    def bishop(p_x, p_y, player, only_beat=False):
+    def bishop(p_x, p_y, player, only_beat=False) -> Available_moves:
         """
         :param only_beat:
         :param player:
@@ -606,7 +606,7 @@ class Rules:
         available = []
         # beat = []
 
-        def solve_side(upper=True, left=True):
+        def solve_side(upper=True, left=True) -> Available_moves:
             no_way = False
             for x, y in zip(range(1, 8 + 1), range(1, 8 + 1)):
                 if not upper:
@@ -643,7 +643,7 @@ class Rules:
         return available
 
     @staticmethod
-    def rook(p_x, p_y, player, only_beat=False):
+    def rook(p_x, p_y, player, only_beat=False)-> Available_moves:
         """
         :param only_beat:
         :param player:
@@ -654,7 +654,7 @@ class Rules:
         available = []
         # beat = []
 
-        def solve_side(vertical=False, invert=False):
+        def solve_side(vertical=False, invert=False) -> None:
             no_way = False
             for x in range(1, 8):
                 y = x if vertical else 0
@@ -685,7 +685,7 @@ class Rules:
         return available
 
     @staticmethod
-    def queen(p_x, p_y, player, only_beat=False):
+    def queen(p_x, p_y, player, only_beat=False) -> Available_moves:
         """
         :param only_beat:
         :param player:
@@ -699,7 +699,7 @@ class Rules:
         return available
 
     @staticmethod
-    def king(p_x, p_y, player, only_beat=False):
+    def king(p_x, p_y, player, only_beat=False)-> Available_moves:
         """
         :param only_beat:
         :param player:
@@ -753,7 +753,7 @@ class Rules:
         return available
 
     @staticmethod
-    def side_available(movements, player, opposite_side=False):
+    def side_available(movements, player, opposite_side=False)-> Available_moves:
         side_available = []
         if opposite_side:
             side = player.opposite
@@ -762,19 +762,19 @@ class Rules:
         for x in range(8):
             for y in range(8):
                 if Table.field[y][x][0] == side:
-                    side_available.extend(movements[Table.field[y][x][1]](x, y, player, only_beat=True))
+                    side_available.extend(movements[Table.field[y][x][1]](x, y, player))
         return side_available
 
     @staticmethod
-    def basic_check(p_x, p_y, movements, player):
+    def basic_check(p_x, p_y, movements, player) -> Available_moves:
         available = []
         for turn in movements[Table.field[p_y][p_x][1]](p_x, p_y, player):
             available.append(Table.field[turn[1]][turn[0]])
         return available
 
     @staticmethod
-    def naive_mate(enemy: 'Available turns of enemy piece', movements, player):
-        # I must find exact way, which allows enemy beat my king
+    def naive_mate(enemy: 'Available turns of enemy piece', movements, player) -> bool:
+        # I must find exact way, which allows enemy beat king
         Enemy = set(map(lambda elem: tuple(elem), enemy))
         side_available = set(map(tuple, Rules.side_available(movements, player)))
         return Enemy.isdisjoint(side_available)  # if True -> Mate else check

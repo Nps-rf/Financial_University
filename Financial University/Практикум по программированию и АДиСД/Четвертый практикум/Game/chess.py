@@ -386,7 +386,6 @@ class Controls(Chess, Sound):
         for move in Rules.side_available(movements, cls.current_player, opposite_side=True, only_beat=True):
             while move in cls.available:
                 del cls.available[cls.available.index(move)]
-        print(Rules.side_available(movements, cls.current_player, opposite_side=True, only_beat=True))
 
     @classmethod
     def _init_mate_(cls, movements) -> None:
@@ -473,8 +472,9 @@ class Rules:
     Class responsible of pieces moving rules
     """
     @staticmethod
-    def pawn(p_x, p_y, *_, only_beat=False) -> Available_moves:
+    def pawn(p_x, p_y, *_, only_beat=False, all_allowed=False) -> Available_moves:
         """
+        :param all_allowed:
         :param only_beat:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
@@ -541,8 +541,9 @@ class Rules:
         return available if not only_beat else beat
 
     @staticmethod
-    def knight(p_x, p_y, player, only_beat=False) -> Available_moves:
+    def knight(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
         """
+        :param all_allowed:
         :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
@@ -617,8 +618,9 @@ class Rules:
         return available if not only_beat else beat
 
     @staticmethod
-    def bishop(p_x, p_y, player, only_beat=False) -> Available_moves:
+    def bishop(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
         """
+        :param all_allowed:
         :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
@@ -628,7 +630,7 @@ class Rules:
         available = []
         beat = []
 
-        def solve_side(beat, upper=True, left=True) -> Available_moves:
+        def solve_side(beat, all_allowed=False, upper=True, left=True) -> Available_moves:
             no_way = False
             a_local = []
             for x, y in zip(range(1, 8 + 1), range(1, 8 + 1)):
@@ -670,8 +672,9 @@ class Rules:
         return available if not only_beat else beat
 
     @staticmethod
-    def rook(p_x, p_y, player, only_beat=False) -> Available_moves:
+    def rook(p_x, p_y, player, only_beat=False, all_allowed=True) -> Available_moves:
         """
+        :param all_allowed:
         :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
@@ -717,8 +720,9 @@ class Rules:
         return available if not only_beat else beat
 
     @staticmethod
-    def queen(p_x, p_y, player, only_beat=False) -> Available_moves:
+    def queen(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
         """
+        :param all_allowed:
         :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
@@ -735,8 +739,9 @@ class Rules:
         return available if not only_beat else beat
 
     @staticmethod
-    def king(p_x, p_y, player, only_beat=False) -> Available_moves:
+    def king(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
         """
+        :param all_allowed:
         :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
@@ -837,21 +842,25 @@ class Rules:
                     return [x, y]
 
     @staticmethod
-    def naive_mate(enemy: 'Available turns of enemy piece', movements, player) -> bool:
+    def naive_mate(enemy, movements, player) -> bool:
         # I must find exact way, which allows enemy beat king
         beat_way = set(map(tuple, movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0],
                                                                                 player, only_beat=True)))
         side_available = set(map(tuple, Rules.side_available(movements, player, opposite_side=True)))
+        another_side = set(map(tuple, Rules.side_available(movements, player, opposite_side=False)))
         king = Rules.find_king(side=player.opposite)
-        king_available = Rules.king(king[1], king[0], player)
+        Controls.available = Rules.king(king[1], king[0], player)
+        Controls.prevent_wrong_move(movements)
+        king_available = Controls.available
+        print('sidee', *side_available)
+        if len(king_available) == 0 and enemy[::-1] not in side_available:
+            return True
         if len(king_available) > 0:
             for king_move in king_available:
-                if tuple(king_move) not in beat_way:
+                if tuple(king_move) not in beat_way and tuple(king_move) not in another_side:
                     return False
-        else:
-            return True
 
-        return enemy not in side_available and beat_way.isdisjoint(side_available)  # if True -> Mate else check
+        return enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)  # if True -> Mate else check
 
 
 class BOT:  # TODO

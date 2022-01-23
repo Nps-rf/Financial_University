@@ -7,6 +7,9 @@ ____
 ![Pygame version](https://img.shields.io/badge/Pygame-2.0.1-blueviolet)
 ![Project status](https://img.shields.io/badge/Status-WIP-red)
 
+## Before use
+* `pip install pygame==2.0.1`
+
 ## About
 * **This is an implementation of fourth workshop**
 * **Based on [pygame](https://www.pygame.org/)**

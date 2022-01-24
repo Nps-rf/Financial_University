@@ -25,20 +25,31 @@ class Chess:
         ◈ N -> Knight (Конь)
         ◈ P -> Pawn (Пешка)
     """
-    pos = None
-    screen = pygame.display
-    font = pygame.font.Font
-    images = Build.load_images()
-    running = True
-    responce = True
+    __instance = None
+
+    __pos = None
+    _font = pygame.font.Font
+    _images = Build.load_images()
+    _screen = pygame.display
+    _DIMENSIONS = 8
+    _running = True
+    _responce = True
     WHITE = Player()
     BLACK = Player(letter='b', opposite='w', name='Black')
     output = pygame.font.Font.render
     resolution = (WIDTH, HEIGHT) = (720, 720)
-    DIMENSIONS = 8
-    SQUARE_SIZE = WIDTH // DIMENSIONS
-    expand = 12  # The error for the screen resolution (so that the figures do not move out)
+    SQUARE_SIZE = WIDTH // _DIMENSIONS
     show_menu = False
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+    @classmethod
+    def __del__(cls):
+        cls.__instance = None
 
     @classmethod
     def _prepare_(cls) -> None:
@@ -47,10 +58,10 @@ class Chess:
         """
         pygame.mixer.pre_init(44100, -16, 1, 512)
         pygame.init()
-        cls.screen = pygame.display.set_mode((cls.resolution[0] + (cls.resolution[0] // 3 + 50), cls.resolution[1]))
-        cls.screen.fill('white')
+        cls._screen = pygame.display.set_mode((cls.resolution[0] + (cls.resolution[0] // 3 + 50), cls.resolution[1]))
+        cls._screen.fill('white')
         pygame.draw.rect(
-            cls.screen,
+            cls._screen,
             pygame.Color('dark grey'),
             pygame.Rect(
                 5,  # Horizontal coordinate
@@ -58,7 +69,7 @@ class Chess:
                 cls.resolution[0],  # Size of square
                 cls.resolution[0])  # Size of square
         )
-        cls.font = pygame.font.Font(None, 24)
+        cls._font = pygame.font.Font(None, 24)
         pygame.display.set_caption('Chess')
 
     @classmethod
@@ -67,23 +78,23 @@ class Chess:
         The main function for launching the application
         :return: pygame application
         """
-        while cls.running:
+        while cls._running:
             cls._prepare_()
             Sound.init()
             Graphics.board_graphics()
             Graphics.print_info()
             for b in Graphics.get_button_list():
-                b.draw(cls.screen)
+                b.draw(cls._screen)
             if not cls.show_menu:
                 Controls.run_controls()
             else:
                 Controls.maintenance_of_settings()
             if cls.show_menu:
                 drawings = Controls.settings()
-                cls.screen.blit(drawings[0], (-75, 0))
-                drawings[1].draw(cls.screen)
-                drawings[2].draw(cls.screen)
-                drawings[3].draw(cls.screen)
+                cls._screen.blit(drawings[0], (-75, 0))
+                drawings[1].draw(cls._screen)
+                drawings[2].draw(cls._screen)
+                drawings[3].draw(cls._screen)
 
             pygame.display.update()
 
@@ -97,6 +108,7 @@ class Graphics(Chess):
     output_error = 670
     strings = []
     show_moves = True
+    __expand = 12  # The error for the screen resolution (so that the figures do not move out)
 
     @classmethod
     def get_button_list(cls) -> Buttons:
@@ -122,11 +134,11 @@ class Graphics(Chess):
     @classmethod
     def _board_(cls) -> None:
         colors = [pygame.Color('white'), pygame.Color('dark gray')]
-        for row in range(cls.DIMENSIONS):
-            for col in range(cls.DIMENSIONS):
+        for row in range(cls._DIMENSIONS):
+            for col in range(cls._DIMENSIONS):
                 color = colors[((row + col) % 2)]  # Implementation Color Switching
                 pygame.draw.rect(
-                    super().screen,
+                    super()._screen,
                     color,
                     pygame.Rect(
                         col * cls.SQUARE_SIZE,  # Horizontal coordinate
@@ -141,15 +153,15 @@ class Graphics(Chess):
         Put a pieces on board
         """
         board = Table.field
-        for row in range(cls.DIMENSIONS):
-            for col in range(cls.DIMENSIONS):
+        for row in range(cls._DIMENSIONS):
+            for col in range(cls._DIMENSIONS):
                 piece = board[row][col]
                 if piece != '--':  # if not empty square
-                    super().screen.blit(
-                        cls.images[piece],  # Picture of piece
+                    super()._screen.blit(
+                        cls._images[piece],  # Picture of piece
                         pygame.Rect(
-                            col * cls.SQUARE_SIZE + super().expand,  # Horizontal coordinate
-                            row * cls.SQUARE_SIZE + super().expand,  # Vertical coordinate
+                            col * cls.SQUARE_SIZE + cls.__expand,  # Horizontal coordinate
+                            row * cls.SQUARE_SIZE + cls.__expand,  # Vertical coordinate
                             cls.SQUARE_SIZE,  # Size of square
                             cls.SQUARE_SIZE)  # Size of square
                                     )
@@ -167,7 +179,7 @@ class Graphics(Chess):
                 cls.SQUARE_SIZE,  # Size of square
                 cls.SQUARE_SIZE)  # Size of square
         )
-        super().screen.blit(available_move, dest=(0, 0))
+        super()._screen.blit(available_move, dest=(0, 0))
         for square in cls.available_moves[1::]:
             color = (0, 150, 0, 120) if Table.field[square[1]][square[0]] == '--' else (150, 0, 0, 120)
             available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
@@ -180,7 +192,7 @@ class Graphics(Chess):
                     cls.SQUARE_SIZE,  # Size of square
                     cls.SQUARE_SIZE)  # Size of square
             )
-            super().screen.blit(available_move, dest=(0, 0))
+            super()._screen.blit(available_move, dest=(0, 0))
 
     # noinspection PyArgumentList
     @staticmethod
@@ -203,9 +215,9 @@ class Graphics(Chess):
         for string in cls.strings:
             error -= 35
             # noinspection PyArgumentList
-            cls.output = cls.font.render(string, 1, pygame.Color('red'))
-            cls.pos = cls.output.get_rect(center=(super().resolution[0] + 140, super().resolution[1] - error))
-            cls.screen.blit(cls.output, cls.pos)
+            cls.output = cls._font.render(string, 1, pygame.Color('red'))
+            cls.__pos = cls.output.get_rect(center=(super().resolution[0] + 140, super().resolution[1] - error))
+            cls._screen.blit(cls.output, cls.__pos)
 
 
 class Controls(Chess, Sound):
@@ -290,7 +302,7 @@ class Controls(Chess, Sound):
         if cls.x or cls.y is not None:
             cls.available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
             if cls._is_king_():
-                cls.prevent_wrong_move(movements)
+                cls.prevent_wrong_move(cls.available, cls.current_player, movements)
 
             if Table.field[cls.row][cls.column][0] != cls.current_player.opposite \
                     and Table.field[cls.row][cls.column] != '--':
@@ -328,9 +340,9 @@ class Controls(Chess, Sound):
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                Chess.running = False
+                Chess._running = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and cls.responce and event.button == 1:
+            elif event.type == pygame.MOUSEBUTTONDOWN and cls._responce and event.button == 1:
                 # move return section section
                 pos = pygame.mouse.get_pos()
                 cls._return_move_(pos=pos)
@@ -338,12 +350,12 @@ class Controls(Chess, Sound):
                 if event.pos is None:
                     return None
                 # move&beat section
-                if event.pos[0] // (cls.resolution[0] // cls.DIMENSIONS) > 7 or \
-                        event.pos[1] // (cls.resolution[0] // cls.DIMENSIONS) > 7:
+                if event.pos[0] // (cls.resolution[0] // cls._DIMENSIONS) > 7 or \
+                        event.pos[1] // (cls.resolution[0] // cls._DIMENSIONS) > 7:
                     break
                 else:
-                    cls.column = event.pos[0] // (cls.resolution[0] // cls.DIMENSIONS)
-                    cls.row = event.pos[1] // (cls.resolution[0] // cls.DIMENSIONS)
+                    cls.column = event.pos[0] // (cls.resolution[0] // cls._DIMENSIONS)
+                    cls.row = event.pos[1] // (cls.resolution[0] // cls._DIMENSIONS)
                 movements = {
                     'p': Rules.pawn,
                     'N': Rules.knight,
@@ -361,7 +373,7 @@ class Controls(Chess, Sound):
                 if cls.chosen:  # figure chosen and can move
                     if cls._is_king_():  # is piece a king
                         # check for king and remove unavailable moves
-                        cls.prevent_wrong_move(movements)
+                        cls.prevent_wrong_move(cls.available, cls.current_player, movements)
                     cls._console_(available=True)
                     # movement of piece
                     if cls._is_available_():
@@ -381,11 +393,11 @@ class Controls(Chess, Sound):
 
                     cls._console_(coordinate=True)
 
-    @classmethod
-    def prevent_wrong_move(cls, movements) -> None:
-        for move in Rules.side_available(movements, cls.current_player, opposite_side=True, only_beat=True):
-            while move in cls.available:
-                del cls.available[cls.available.index(move)]
+    @staticmethod
+    def prevent_wrong_move(moves, player, movements) -> None:
+        for move in Rules.side_available(movements, player, opposite_side=True, only_beat=True):
+            while move in moves:
+                del moves[moves.index(move)]
 
     @classmethod
     def _init_mate_(cls, movements) -> None:
@@ -394,7 +406,7 @@ class Controls(Chess, Sound):
                 if Rules.naive_mate((cls.row, cls.column), movements, cls.current_player, ):
                     Graphics.strings.append('Шах и мат белым!')
                     Sound.play_sound(name='checkmate', muted=cls.muted)
-                    cls.responce = False
+                    cls._responce = False
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат белым!',
@@ -410,7 +422,7 @@ class Controls(Chess, Sound):
                 if Rules.naive_mate((cls.row, cls.column), movements, cls.current_player):
                     Graphics.strings.append('Шах и мат черным!')
                     Sound.play_sound(name='checkmate', muted=cls.muted)
-                    cls.responce = False
+                    cls._responce = False
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат черным!',
@@ -453,7 +465,7 @@ class Controls(Chess, Sound):
         [b1, b2, b0] = cls.settings()[1:]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                Chess.running = False
+                Chess._running = False
 
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 pos = pygame.mouse.get_pos()
@@ -849,10 +861,9 @@ class Rules:
         side_available = set(map(tuple, Rules.side_available(movements, player, opposite_side=True)))
         another_side = set(map(tuple, Rules.side_available(movements, player, opposite_side=False)))
         king = Rules.find_king(side=player.opposite)
-        Controls.available = Rules.king(king[1], king[0], player)
-        Controls.prevent_wrong_move(movements)
-        king_available = Controls.available
-        print('sidee', *side_available)
+        king_available = Rules.king(king[1], king[0], player)
+        print(enemy, enemy[::-1] not in side_available, '\n', len(king_available), king_available)
+        print('side', *side_available)
         if len(king_available) == 0 and enemy[::-1] not in side_available:
             return True
         if len(king_available) > 0:
@@ -864,6 +875,20 @@ class Rules:
 
 
 class BOT:  # TODO
+    __instance = None
+
+    def __call__(self, *args, **kwargs):
+        pass
+
+    def __new__(cls, *args, **kwargs):
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
+
+        return cls.__instance
+
+    def __del__(self):
+        BOT.__instance = None
+
     def __init__(self):
         pass
 

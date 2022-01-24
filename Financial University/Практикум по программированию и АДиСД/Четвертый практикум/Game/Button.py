@@ -31,19 +31,19 @@ class Button:
         self.txt_rect = self.txt_surf.get_rect(center=[wh // 2 for wh in self.size])
 
     def draw(self, screen):
-        self.mouseover()
+        self.__mouseover()
 
         self.surf.fill(self.cursor_color)
         self.surf.blit(self.txt_surf, self.txt_rect)
         screen.blit(self.surf, self.rect)
 
-    def mouseover(self):
+    def __mouseover(self):
         import pygame
         self.cursor_color = self.color
         pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(pos):
             self.cursor_color = self.change_color
 
-    def call_back(self, *args):
+    def __call_back(self, *args):
         if self.func:
             return self.func(*args)

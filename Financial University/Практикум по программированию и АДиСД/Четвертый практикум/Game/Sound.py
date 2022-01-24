@@ -2,7 +2,7 @@ class Sound:
     """
     Responsible for the sound operation in the program
     """
-
+    __instance = None
     checkmate = None
     Knight_move = None
     check = None
@@ -15,10 +15,16 @@ class Sound:
     Knight = None
     Pawn = None
 
-    @classmethod
-    def init(cls):
-        from pygame.mixer import init, Sound
+    def __new__(cls, *args, **kwargs):
+        from pygame.mixer import init
+        if cls.__instance is None:
+            cls.__instance = super().__new__(cls)
         init()
+        return cls.__instance
+
+    @classmethod
+    def __load__(cls):
+        from pygame.mixer import Sound
         cls.move_sound = Sound('Sound/move of piece.ogg')
         cls.beat_sound = Sound('Sound/peace beaten.ogg')
         cls.Knight_move = Sound('Sound/Knight movement.ogg')
@@ -31,6 +37,10 @@ class Sound:
         cls.King = Sound('Sound/King.ogg')
         cls.check = Sound('Sound/Check.ogg')
         cls.checkmate = Sound('Sound/Check Mate.ogg')
+
+    @classmethod
+    def init(cls):
+        cls.__load__()
 
     @classmethod
     def play_sound(cls, name, muted):

@@ -52,6 +52,13 @@ class Chess:
         cls.__instance = None
 
     @classmethod
+    def __getattribute__(cls, item):
+        if item == 'output':
+            raise TypeError('Access denied')
+        else:
+            return object.__getattribute__(cls, item)
+
+    @classmethod
     def _prepare_(cls) -> None:
         """
         Function that prepares an application for launch
@@ -900,5 +907,5 @@ class BOT:  # TODO
 
 
 if __name__ == '__main__':
-    CHESS_GAME = Chess()
+    CHESS_GAME = Chess
     CHESS_GAME.run()

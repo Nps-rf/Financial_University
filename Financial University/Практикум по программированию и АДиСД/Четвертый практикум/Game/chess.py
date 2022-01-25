@@ -41,7 +41,7 @@ class Chess:
             return object.__getattribute__(cls, item)
 
     @classmethod
-    def _prepare_(cls) -> None:
+    def __prepare(cls) -> None:
         """
         Function that prepares an application for launch
         """
@@ -56,7 +56,7 @@ class Chess:
         :return: pygame application
         """
         while cls._running:
-            cls._prepare_()
+            cls.__prepare()
             Sound.init()
             Graphics.board_graphics()
             Graphics.print_info()
@@ -228,8 +228,20 @@ class Graphics:
             cls.__pos = cls.__output.get_rect(center=(cls.resolution[0] + 140, cls.resolution[1] - error))
             cls._screen.blit(cls.__output, cls.__pos)
 
+    @classmethod
+    def check_pos(cls, event):
+        x = (event.pos[0] // (cls.resolution[0] // cls._DIMENSIONS)) > 7
+        y = event.pos[1] // (cls.resolution[0] // cls._DIMENSIONS) > 7
+        return x | y
 
-class Controls(Graphics, Sound):
+    @classmethod
+    def get_square(cls, event) -> tuple:
+        column = event.pos[0] // (cls.resolution[0] // cls._DIMENSIONS)
+        row = event.pos[1] // (cls.resolution[0] // cls._DIMENSIONS)
+        return column, row
+
+
+class Controls:
     WHITE = Player()
     BLACK = Player(letter='b', opposite='w', name='Black')
     _statement_gen_1, _statement_gen_2 = cycle({'Включить', 'Выключить'}), cycle({'Включить', 'Выключить'})
@@ -357,16 +369,14 @@ class Controls(Graphics, Sound):
                 # move return section section
                 pos = pygame.mouse.get_pos()
                 cls.__return_move(pos=pos)
-                cls.call_settings(pos=pos)
+                cls._call_settings(pos=pos)
                 if event.pos is None:
                     return None
                 # move&beat section
-                if event.pos[0] // (cls.resolution[0] // cls._DIMENSIONS) > 7 or \
-                        event.pos[1] // (cls.resolution[0] // cls._DIMENSIONS) > 7:
+                if Graphics.check_pos(event):
                     break
                 else:
-                    cls.column = event.pos[0] // (cls.resolution[0] // cls._DIMENSIONS)
-                    cls.row = event.pos[1] // (cls.resolution[0] // cls._DIMENSIONS)
+                    cls.column, cls.row = Graphics.get_square(event)
                 movements = {
                     'p': Rules.pawn,
                     'N': Rules.knight,
@@ -447,7 +457,7 @@ class Controls(Graphics, Sound):
                     cls.history[-1].append('check')
 
     @classmethod
-    def call_settings(cls, pos) -> None:
+    def _call_settings(cls, pos) -> None:
         b2 = Graphics.button_list[1]
         if b2.rect.collidepoint(pos):
             Chess.show_menu = True
@@ -883,31 +893,6 @@ class Rules:
                     return False
 
         return enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)  # if True -> Mate else check
-
-
-# class BOT:  # TODO
-#     __instance = None
-#
-#     def __call__(self, *args, **kwargs):
-#         pass
-#
-#     def __new__(cls, *args, **kwargs):
-#         if cls.__instance is None:
-#             cls.__instance = super().__new__(cls)
-#
-#         return cls.__instance
-#
-#     def __del__(self):
-#         BOT.__instance = None
-#
-#     def __init__(self):
-#         pass
-#
-#     def read_game(self):
-#         pass
-#
-#     def play_game(self):
-#         pass
 
 
 if __name__ == '__main__':

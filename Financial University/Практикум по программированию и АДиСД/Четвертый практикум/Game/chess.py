@@ -2,11 +2,17 @@ from init import *
 
 
 class Player:
-    def __init__(self, letter='w', opposite='b', name='White') -> None:
+    def __init__(self, letter: str = 'w', opposite: str = 'b', name: str = 'White') -> None:
         # self.score = 0  TODO
         self.name = name
         self.letter = letter
         self.opposite = opposite
+
+    def __repr__(self):
+        return f'{self.__class__}: {self.name}'
+
+    def __str__(self):
+        return self.name
 
 
 class Chess:
@@ -95,7 +101,7 @@ class Chess:
             if not cls.show_menu:
                 Controls.run_controls()
             else:
-                Controls.maintenance_of_settings()
+                Controls.___maintenance_of_settings__()
             if cls.show_menu:
                 drawings = Controls.settings()
                 cls._screen.blit(drawings[0], (-75, 0))
@@ -244,14 +250,14 @@ class Controls(Chess, Sound):
         cls._look4click_()
 
     @classmethod
-    def _console_(cls, available=False, coordinate=False) -> print:
+    def __console(cls, available=False, coordinate=False) -> print:
         if available:
             print('\033[1m\033[32mSquares you can move -> ', *cls.available, end='\n\033[0m')
         if coordinate:
             print(f'\033[1m\033[34mx = {cls.column}, y = {cls.row}', end='\n\033[0m')
 
     @classmethod
-    def _return_move_(cls, pos) -> None:
+    def __return_move(cls, pos) -> None:
         b1 = Graphics.button_list[0]
         if b1.rect.collidepoint(pos):
             for number, turn in enumerate(cls.history[::-1]):
@@ -277,13 +283,13 @@ class Controls(Chess, Sound):
                 break
 
     @classmethod
-    def _is_king_(cls) -> bool:
+    def __is_king(cls) -> bool:
         if cls.piece[0][1] == 'K':
             return True
         return False
 
     @classmethod
-    def _is_knight_(cls) -> bool:
+    def __is_knight(cls) -> bool:
         return cls.piece[0][1] == 'N'
 
     @classmethod
@@ -308,8 +314,8 @@ class Controls(Chess, Sound):
     def _call_sg_(cls, movements) -> None:
         if cls.x or cls.y is not None:
             cls.available = movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
-            if cls._is_king_():
-                cls.prevent_wrong_move(cls.available, cls.current_player, movements)
+            if cls.__is_king():
+                cls.__prevent_wrong_move(cls.available, cls.current_player, movements)
 
             if Table.field[cls.row][cls.column][0] != cls.current_player.opposite \
                     and Table.field[cls.row][cls.column] != '--':
@@ -352,7 +358,7 @@ class Controls(Chess, Sound):
             elif event.type == pygame.MOUSEBUTTONDOWN and cls._responce and event.button == 1:
                 # move return section section
                 pos = pygame.mouse.get_pos()
-                cls._return_move_(pos=pos)
+                cls.__return_move(pos=pos)
                 cls.call_settings(pos=pos)
                 if event.pos is None:
                     return None
@@ -378,16 +384,16 @@ class Controls(Chess, Sound):
                 cls._call_sg_(movements)  # SG -> Sound&Graphics
 
                 if cls.chosen:  # figure chosen and can move
-                    if cls._is_king_():  # is piece a king
+                    if cls.__is_king():  # is piece a king
                         # check for king and remove unavailable moves
-                        cls.prevent_wrong_move(cls.available, cls.current_player, movements)
-                    cls._console_(available=True)
+                        cls.__prevent_wrong_move(cls.available, cls.current_player, movements)
+                    cls.__console(available=True)
                     # movement of piece
                     if cls._is_available_():
                         if cls._is_beat_():  # if you beat piece
                             Sound.play_sound(name='beat', muted=cls.muted)
                             Graphics.strings.append(Graphics.info_gainer(Table.field[cls.row][cls.column]))
-                        elif cls._is_knight_():  # Knight move sound
+                        elif cls.__is_knight():  # Knight move sound
                             Sound.play_sound(name='Knight_move', muted=cls.muted)
                         elif cls._is_move_():  # Classic move sound
                             Sound.play_sound(name='move', muted=cls.muted)
@@ -398,10 +404,10 @@ class Controls(Chess, Sound):
                         cls.switch_player()
                         Graphics.available_moves.clear()
 
-                    cls._console_(coordinate=True)
+                    cls.__console(coordinate=True)
 
     @staticmethod
-    def prevent_wrong_move(moves, player, movements) -> None:
+    def __prevent_wrong_move(moves, player, movements) -> None:
         for move in Rules.side_available(movements, player, opposite_side=True, only_beat=True):
             while move in moves:
                 del moves[moves.index(move)]
@@ -450,7 +456,7 @@ class Controls(Chess, Sound):
             cls.settings(run_only=True)
 
     @classmethod
-    def settings(cls, run_only=False) -> (Menu, Buttons):
+    def _settings(cls, run_only=False) -> (Menu, Buttons):
         if not run_only:
             if cls.muted:
                 cls.snd_statement = 'Включить'
@@ -468,7 +474,7 @@ class Controls(Chess, Sound):
             return menu, button1, button2, button0
 
     @classmethod
-    def maintenance_of_settings(cls) -> None:
+    def ___maintenance_of_settings__(cls) -> None:
         [b1, b2, b0] = cls.settings()[1:]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -649,7 +655,7 @@ class Rules:
         available = []
         beat = []
 
-        def solve_side(beat, all_allowed=False, upper=True, left=True) -> Available_moves:
+        def solve_side(beat, upper=True, left=True) -> Available_moves:
             no_way = False
             a_local = []
             for x, y in zip(range(1, 8 + 1), range(1, 8 + 1)):
@@ -881,29 +887,29 @@ class Rules:
         return enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)  # if True -> Mate else check
 
 
-class BOT:  # TODO
-    __instance = None
-
-    def __call__(self, *args, **kwargs):
-        pass
-
-    def __new__(cls, *args, **kwargs):
-        if cls.__instance is None:
-            cls.__instance = super().__new__(cls)
-
-        return cls.__instance
-
-    def __del__(self):
-        BOT.__instance = None
-
-    def __init__(self):
-        pass
-
-    def read_game(self):
-        pass
-
-    def play_game(self):
-        pass
+# class BOT:  # TODO
+#     __instance = None
+#
+#     def __call__(self, *args, **kwargs):
+#         pass
+#
+#     def __new__(cls, *args, **kwargs):
+#         if cls.__instance is None:
+#             cls.__instance = super().__new__(cls)
+#
+#         return cls.__instance
+#
+#     def __del__(self):
+#         BOT.__instance = None
+#
+#     def __init__(self):
+#         pass
+#
+#     def read_game(self):
+#         pass
+#
+#     def play_game(self):
+#         pass
 
 
 if __name__ == '__main__':

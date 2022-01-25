@@ -6,3 +6,4 @@ from Build import Build
 from Button import Button
 from Text import Text
 from Sound import Sound
+from Player import Player

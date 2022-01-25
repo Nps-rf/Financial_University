@@ -1,20 +1,6 @@
 from init import *
 
 
-class Player:
-    def __init__(self, letter: str = 'w', opposite: str = 'b', name: str = 'White') -> None:
-        # self.score = 0  TODO
-        self.name = name
-        self.letter = letter
-        self.opposite = opposite
-
-    def __repr__(self):
-        return f'{self.__class__}: {self.name}'
-
-    def __str__(self):
-        return self.name
-
-
 class Chess:
     """
     Creates an application
@@ -33,18 +19,8 @@ class Chess:
     """
     __instance = None
 
-    __pos = None
-    _font = pygame.font.Font
-    _images = Build.load_images()
-    _screen = pygame.display
-    _DIMENSIONS = 8
     _running = True
     _responce = True
-    WHITE = Player()
-    BLACK = Player(letter='b', opposite='w', name='Black')
-    output = pygame.font.Font.render
-    resolution = (WIDTH, HEIGHT) = (720, 720)
-    SQUARE_SIZE = WIDTH // _DIMENSIONS
     show_menu = False
 
     def __new__(cls, *args, **kwargs):
@@ -60,7 +36,7 @@ class Chess:
     @classmethod
     def __getattribute__(cls, item):
         if item == 'output':
-            raise TypeError('Access denied')
+            raise ValueError('Access denied')
         else:
             return object.__getattribute__(cls, item)
 
@@ -71,6 +47,52 @@ class Chess:
         """
         pygame.mixer.pre_init(44100, -16, 1, 512)
         pygame.init()
+        Graphics.init()
+
+    @classmethod
+    def run(cls) -> None:
+        """
+        The main function for launching the application
+        :return: pygame application
+        """
+        while cls._running:
+            cls._prepare_()
+            Sound.init()
+            Graphics.board_graphics()
+            Graphics.print_info()
+            for b in Graphics.get_button_list():
+                Graphics.draw_button(b)
+            if not cls.show_menu:
+                Controls.run_controls()
+            else:
+                Controls.___maintenance_of_settings__()
+            if cls.show_menu:
+                Graphics.draw_menu()
+
+            pygame.display.update()
+
+
+class Graphics:
+    """
+    The class responsible for the graphical component of the application
+    """
+    __pos = None
+    __output = pygame.font.Font.render
+    _font = pygame.font.Font
+    _images = Build.load_images()
+    _screen = pygame.display
+    _DIMENSIONS = 8
+    resolution = (WIDTH, HEIGHT) = (720, 720)
+    SQUARE_SIZE = WIDTH // _DIMENSIONS
+    available_moves = list()
+    button_list = list()
+    output_error = 670
+    strings = []
+    show_moves = True
+    __expand = 12  # The error for the screen resolution (so that the figures do not move out)
+
+    @classmethod
+    def init(cls):
         cls._screen = pygame.display.set_mode((cls.resolution[0] + (cls.resolution[0] // 3 + 50), cls.resolution[1]))
         cls._screen.fill('white')
         pygame.draw.rect(
@@ -86,44 +108,6 @@ class Chess:
         pygame.display.set_caption('Chess')
 
     @classmethod
-    def run(cls) -> None:
-        """
-        The main function for launching the application
-        :return: pygame application
-        """
-        while cls._running:
-            cls._prepare_()
-            Sound.init()
-            Graphics.board_graphics()
-            Graphics.print_info()
-            for b in Graphics.get_button_list():
-                b.draw(cls._screen)
-            if not cls.show_menu:
-                Controls.run_controls()
-            else:
-                Controls.___maintenance_of_settings__()
-            if cls.show_menu:
-                drawings = Controls.settings()
-                cls._screen.blit(drawings[0], (-75, 0))
-                drawings[1].draw(cls._screen)
-                drawings[2].draw(cls._screen)
-                drawings[3].draw(cls._screen)
-
-            pygame.display.update()
-
-
-class Graphics(Chess):
-    """
-    The class responsible for the graphical component of the application
-    """
-    available_moves = list()
-    button_list = list()
-    output_error = 670
-    strings = []
-    show_moves = True
-    __expand = 12  # The error for the screen resolution (so that the figures do not move out)
-
-    @classmethod
     def get_button_list(cls) -> Buttons:
         cancel: Callable[[], None] = lambda: print('Turn canceled')
         settings: Callable[[], None] = lambda: print('Settings opened')
@@ -133,6 +117,18 @@ class Graphics(Chess):
         cls.button_list.append(button1)
         cls.button_list.append(button2)
         return cls.button_list
+
+    @classmethod
+    def draw_button(cls, b):
+        b.draw(cls._screen)
+
+    @classmethod
+    def draw_menu(cls):
+        drawings = Controls.settings()
+        cls._screen.blit(drawings[0], (-75, 0))
+        drawings[1].draw(cls._screen)
+        drawings[2].draw(cls._screen)
+        drawings[3].draw(cls._screen)
 
     @classmethod
     def board_graphics(cls):  # whole process in couple
@@ -151,7 +147,7 @@ class Graphics(Chess):
             for col in range(cls._DIMENSIONS):
                 color = colors[((row + col) % 2)]  # Implementation Color Switching
                 pygame.draw.rect(
-                    super()._screen,
+                    cls._screen,
                     color,
                     pygame.Rect(
                         col * cls.SQUARE_SIZE,  # Horizontal coordinate
@@ -170,7 +166,7 @@ class Graphics(Chess):
             for col in range(cls._DIMENSIONS):
                 piece = board[row][col]
                 if piece != '--':  # if not empty square
-                    super()._screen.blit(
+                    cls._screen.blit(
                         cls._images[piece],  # Picture of piece
                         pygame.Rect(
                             col * cls.SQUARE_SIZE + cls.__expand,  # Horizontal coordinate
@@ -192,7 +188,7 @@ class Graphics(Chess):
                 cls.SQUARE_SIZE,  # Size of square
                 cls.SQUARE_SIZE)  # Size of square
         )
-        super()._screen.blit(available_move, dest=(0, 0))
+        cls._screen.blit(available_move, dest=(0, 0))
         for square in cls.available_moves[1::]:
             color = (0, 150, 0, 120) if Table.field[square[1]][square[0]] == '--' else (150, 0, 0, 120)
             available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
@@ -205,7 +201,7 @@ class Graphics(Chess):
                     cls.SQUARE_SIZE,  # Size of square
                     cls.SQUARE_SIZE)  # Size of square
             )
-            super()._screen.blit(available_move, dest=(0, 0))
+            cls._screen.blit(available_move, dest=(0, 0))
 
     # noinspection PyArgumentList
     @staticmethod
@@ -228,17 +224,19 @@ class Graphics(Chess):
         for string in cls.strings:
             error -= 35
             # noinspection PyArgumentList
-            cls.output = cls._font.render(string, 1, pygame.Color('red'))
-            cls.__pos = cls.output.get_rect(center=(super().resolution[0] + 140, super().resolution[1] - error))
-            cls._screen.blit(cls.output, cls.__pos)
+            cls.__output = cls._font.render(string, 1, pygame.Color('red'))
+            cls.__pos = cls.__output.get_rect(center=(cls.resolution[0] + 140, cls.resolution[1] - error))
+            cls._screen.blit(cls.__output, cls.__pos)
 
 
-class Controls(Chess, Sound):
+class Controls(Graphics, Sound):
+    WHITE = Player()
+    BLACK = Player(letter='b', opposite='w', name='Black')
     _statement_gen_1, _statement_gen_2 = cycle({'Включить', 'Выключить'}), cycle({'Включить', 'Выключить'})
     available = list()
     history = list()
     row, column = None, None
-    current_player = Chess.WHITE
+    current_player = WHITE
     chosen = False
     piece = ('--', [-1, -1])
     x, y = None, None
@@ -247,7 +245,7 @@ class Controls(Chess, Sound):
 
     @classmethod
     def run_controls(cls) -> None:
-        cls._look4click_()
+        cls.__look4click()
 
     @classmethod
     def __console(cls, available=False, coordinate=False) -> print:
@@ -267,7 +265,7 @@ class Controls(Chess, Sound):
                 Table.field[turn[1][1]][turn[1][0]] = turn[3]
                 Sound.play_sound(name='move', muted=cls.muted)
                 ########################################################################################
-                cls.current_player = super().BLACK if turn[4] == 'b' else super().WHITE
+                cls.current_player = cls.BLACK if turn[4] == 'b' else cls.WHITE
                 cls.chosen = True
                 Graphics.available_moves.clear()
                 cls.available.clear()
@@ -332,7 +330,7 @@ class Controls(Chess, Sound):
 
     @classmethod
     def switch_player(cls) -> None:
-        cls.current_player = super().BLACK if cls.current_player.letter == 'w' else super().WHITE
+        cls.current_player = cls.BLACK if cls.current_player.letter == 'w' else cls.WHITE
 
     @classmethod
     def _is_available_(cls) -> bool:
@@ -347,7 +345,7 @@ class Controls(Chess, Sound):
         return Table.field[cls.row][cls.column] == '--'
 
     @classmethod
-    def _look4click_(cls) -> None:
+    def __look4click(cls) -> None:
         """
         Checks whether the user clicked on the cross (or other place)
         """
@@ -355,7 +353,7 @@ class Controls(Chess, Sound):
             if event.type == pygame.QUIT:
                 Chess._running = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and cls._responce and event.button == 1:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 # move return section section
                 pos = pygame.mouse.get_pos()
                 cls.__return_move(pos=pos)
@@ -456,7 +454,7 @@ class Controls(Chess, Sound):
             cls.settings(run_only=True)
 
     @classmethod
-    def _settings(cls, run_only=False) -> (Menu, Buttons):
+    def settings(cls, run_only=False) -> (Menu, Buttons):
         if not run_only:
             if cls.muted:
                 cls.snd_statement = 'Включить'

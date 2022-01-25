@@ -433,7 +433,7 @@ class Controls:
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат белым!',
-                            position=(Chess.resolution[0] // 2 - 222, Chess.resolution[0] // 2 - 75),
+                            position=(Graphics.resolution[0] // 2 - 222, Graphics.resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
                             font_size=64)
                     )
@@ -449,7 +449,7 @@ class Controls:
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат черным!',
-                            position=(Chess.resolution[0] // 2 - 222, Chess.resolution[0] // 2 - 75),
+                            position=(Graphics.resolution[0] // 2 - 222, Graphics.resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
                             font_size=64)
                     )

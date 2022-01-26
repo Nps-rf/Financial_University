@@ -34,13 +34,6 @@ class Chess:
         cls.__instance = None
 
     @classmethod
-    def __getattribute__(cls, item):
-        if item == 'output':
-            raise ValueError('Access denied')
-        else:
-            return object.__getattribute__(cls, item)
-
-    @classmethod
     def __prepare(cls) -> None:
         """
         Function that prepares an application for launch
@@ -78,22 +71,31 @@ class Graphics:
     """
     __pos = None
     __output = pygame.font.Font.render
+    __output_error = 670
+    __expand = 12  # The error for the screen resolution (so that the figures do not move out)
+    __DIMENSIONS = 8
+    __resolution = (WIDTH, HEIGHT) = (720, 720)
+    __SQUARE_SIZE = WIDTH // __DIMENSIONS
+
     _font = pygame.font.Font
     _images = Build.load_images()
     _screen = pygame.display
-    _DIMENSIONS = 8
-    resolution = (WIDTH, HEIGHT) = (720, 720)
-    SQUARE_SIZE = WIDTH // _DIMENSIONS
+
     available_moves = list()
     button_list = list()
-    output_error = 670
     strings = []
     show_moves = True
-    __expand = 12  # The error for the screen resolution (so that the figures do not move out)
+
+    @classmethod
+    def __getattribute__(cls, item):
+        if item == 'SQUARE_SIZE':
+            raise ValueError('Access denied')
+        else:
+            return object.__getattribute__(cls, item)
 
     @classmethod
     def init(cls):
-        cls._screen = pygame.display.set_mode((cls.resolution[0] + (cls.resolution[0] // 3 + 50), cls.resolution[1]))
+        cls._screen = pygame.display.set_mode((cls.__resolution[0] + (cls.__resolution[0] // 3 + 50), cls.__resolution[1]))
         cls._screen.fill('white')
         pygame.draw.rect(
             cls._screen,
@@ -101,8 +103,8 @@ class Graphics:
             pygame.Rect(
                 5,  # Horizontal coordinate
                 0,  # Vertical coordinate
-                cls.resolution[0],  # Size of square
-                cls.resolution[0])  # Size of square
+                cls.__resolution[0],  # Size of square
+                cls.__resolution[0])  # Size of square
         )
         cls._font = pygame.font.Font(None, 24)
         pygame.display.set_caption('Chess')
@@ -143,17 +145,17 @@ class Graphics:
     @classmethod
     def _board_(cls) -> None:
         colors = [pygame.Color('white'), pygame.Color('dark gray')]
-        for row in range(cls._DIMENSIONS):
-            for col in range(cls._DIMENSIONS):
+        for row in range(cls.__DIMENSIONS):
+            for col in range(cls.__DIMENSIONS):
                 color = colors[((row + col) % 2)]  # Implementation Color Switching
                 pygame.draw.rect(
                     cls._screen,
                     color,
                     pygame.Rect(
-                        col * cls.SQUARE_SIZE,  # Horizontal coordinate
-                        row * cls.SQUARE_SIZE,  # Vertical coordinate
-                        cls.SQUARE_SIZE,  # Size of square
-                        cls.SQUARE_SIZE)  # Size of square
+                        col * cls.__SQUARE_SIZE,  # Horizontal coordinate
+                        row * cls.__SQUARE_SIZE,  # Vertical coordinate
+                        cls.__SQUARE_SIZE,  # Size of square
+                        cls.__SQUARE_SIZE)  # Size of square
                                 )
 
     @classmethod
@@ -162,44 +164,44 @@ class Graphics:
         Put a pieces on board
         """
         board = Table.field
-        for row in range(cls._DIMENSIONS):
-            for col in range(cls._DIMENSIONS):
+        for row in range(cls.__DIMENSIONS):
+            for col in range(cls.__DIMENSIONS):
                 piece = board[row][col]
                 if piece != '--':  # if not empty square
                     cls._screen.blit(
                         cls._images[piece],  # Picture of piece
                         pygame.Rect(
-                            col * cls.SQUARE_SIZE + cls.__expand,  # Horizontal coordinate
-                            row * cls.SQUARE_SIZE + cls.__expand,  # Vertical coordinate
-                            cls.SQUARE_SIZE,  # Size of square
-                            cls.SQUARE_SIZE)  # Size of square
+                            col * cls.__SQUARE_SIZE + cls.__expand,  # Horizontal coordinate
+                            row * cls.__SQUARE_SIZE + cls.__expand,  # Vertical coordinate
+                            cls.__SQUARE_SIZE,  # Size of square
+                            cls.__SQUARE_SIZE)  # Size of square
                                     )
 
     @classmethod
     def show_available_moves(cls) -> None:
         color = (32, 64, 128, 128)
-        available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
+        available_move = pygame.Surface((cls.__resolution[0], cls.__resolution[0]), pygame.SRCALPHA)
         pygame.draw.rect(
             available_move,  # Square
             color,
             pygame.Rect(
-                cls.available_moves[0][0] * cls.SQUARE_SIZE,  # Horizontal coordinate
-                cls.available_moves[0][1] * cls.SQUARE_SIZE,  # Vertical coordinate
-                cls.SQUARE_SIZE,  # Size of square
-                cls.SQUARE_SIZE)  # Size of square
+                cls.available_moves[0][0] * cls.__SQUARE_SIZE,  # Horizontal coordinate
+                cls.available_moves[0][1] * cls.__SQUARE_SIZE,  # Vertical coordinate
+                cls.__SQUARE_SIZE,  # Size of square
+                cls.__SQUARE_SIZE)  # Size of square
         )
         cls._screen.blit(available_move, dest=(0, 0))
         for square in cls.available_moves[1::]:
             color = (0, 150, 0, 120) if Table.field[square[1]][square[0]] == '--' else (150, 0, 0, 120)
-            available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
+            available_move = pygame.Surface((cls.__resolution[0], cls.__resolution[0]), pygame.SRCALPHA)
             pygame.draw.rect(
                 available_move,  # Square
                 color,
                 pygame.Rect(
-                    square[0] * cls.SQUARE_SIZE,  # Horizontal coordinate
-                    square[1] * cls.SQUARE_SIZE,  # Vertical coordinate
-                    cls.SQUARE_SIZE,  # Size of square
-                    cls.SQUARE_SIZE)  # Size of square
+                    square[0] * cls.__SQUARE_SIZE,  # Horizontal coordinate
+                    square[1] * cls.__SQUARE_SIZE,  # Vertical coordinate
+                    cls.__SQUARE_SIZE,  # Size of square
+                    cls.__SQUARE_SIZE)  # Size of square
             )
             cls._screen.blit(available_move, dest=(0, 0))
 
@@ -220,28 +222,30 @@ class Graphics:
 
     @classmethod
     def print_info(cls):
-        error = cls.output_error
+        error = cls.__output_error
         for string in cls.strings:
             error -= 35
             # noinspection PyArgumentList
             cls.__output = cls._font.render(string, 1, pygame.Color('red'))
-            cls.__pos = cls.__output.get_rect(center=(cls.resolution[0] + 140, cls.resolution[1] - error))
+            cls.__pos = cls.__output.get_rect(center=(cls.__resolution[0] + 140, cls.__resolution[1] - error))
             cls._screen.blit(cls.__output, cls.__pos)
 
     @classmethod
     def check_pos(cls, event):
-        x = (event.pos[0] // (cls.resolution[0] // cls._DIMENSIONS)) > 7
-        y = event.pos[1] // (cls.resolution[0] // cls._DIMENSIONS) > 7
+        x = (event.pos[0] // (cls.__resolution[0] // cls.__DIMENSIONS)) > 7
+        y = event.pos[1] // (cls.__resolution[0] // cls.__DIMENSIONS) > 7
         return x | y
 
     @classmethod
     def get_square(cls, event) -> tuple:
-        column = event.pos[0] // (cls.resolution[0] // cls._DIMENSIONS)
-        row = event.pos[1] // (cls.resolution[0] // cls._DIMENSIONS)
+        column = event.pos[0] // (cls.__resolution[0] // cls.__DIMENSIONS)
+        row = event.pos[1] // (cls.__resolution[0] // cls.__DIMENSIONS)
         return column, row
 
 
 class Controls:
+    __responce = True
+
     WHITE = Player()
     BLACK = Player(letter='b', opposite='w', name='Black')
     _statement_gen_1, _statement_gen_2 = cycle({'Включить', 'Выключить'}), cycle({'Включить', 'Выключить'})
@@ -366,7 +370,7 @@ class Controls:
             if event.type == pygame.QUIT:
                 Chess._running = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and cls.__responce:
                 # move return section section
                 pos = pygame.mouse.get_pos()
                 cls.__return_move(pos=pos)
@@ -429,11 +433,11 @@ class Controls:
                 if Rules.naive_mate((cls.row, cls.column), cls.current_player):
                     Graphics.strings.append('Шах и мат белым!')
                     Sound.play_sound(name='checkmate', muted=cls.muted)
-                    cls._responce = False
+                    cls.__responce = False
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат белым!',
-                            position=(Graphics.resolution[0] // 2 - 222, Graphics.resolution[0] // 2 - 75),
+                            position=(Graphics.__resolution[0] // 2 - 222, Graphics.__resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
                             font_size=64)
                     )
@@ -445,11 +449,11 @@ class Controls:
                 if Rules.naive_mate((cls.row, cls.column), cls.current_player):
                     Graphics.strings.append('Шах и мат черным!')
                     Sound.play_sound(name='checkmate', muted=cls.muted)
-                    cls._responce = False
+                    cls.__responce = False
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат черным!',
-                            position=(Graphics.resolution[0] // 2 - 222, Graphics.resolution[0] // 2 - 75),
+                            position=(Graphics.__resolution[0] // 2 - 222, Graphics.__resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
                             font_size=64)
                     )

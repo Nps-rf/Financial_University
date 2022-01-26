@@ -1,3 +1,6 @@
+from pygame.mixer import init
+
+
 class Sound:
     """
     Responsible for the sound operation in the program
@@ -16,10 +19,8 @@ class Sound:
     Pawn = None
 
     def __new__(cls, *args, **kwargs):
-        from pygame.mixer import init
         if cls.__instance is None:
             cls.__instance = super().__new__(cls)
-        init()
         return cls.__instance
 
     @classmethod
@@ -40,6 +41,7 @@ class Sound:
 
     @classmethod
     def init(cls):
+        init()
         cls.__load__()
 
     @classmethod

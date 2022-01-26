@@ -1,4 +1,12 @@
-from init import *
+import pygame
+from Misc.__types__ import *
+from Misc.Button import Button
+from Misc.Text import Text
+from itertools import cycle
+from Board import Table
+from Misc.Build import Build
+from Sound import Sound
+from Player import Player
 
 
 class Chess:
@@ -95,7 +103,8 @@ class Graphics:
 
     @classmethod
     def init(cls):
-        cls._screen = pygame.display.set_mode((cls.__resolution[0] + (cls.__resolution[0] // 3 + 50), cls.__resolution[1]))
+        cls._screen = pygame.display.set_mode((cls.__resolution[0] + (cls.__resolution[0] // 3 + 50),
+                                               cls.__resolution[1]))
         cls._screen.fill('white')
         pygame.draw.rect(
             cls._screen,

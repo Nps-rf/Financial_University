@@ -82,13 +82,13 @@ class Graphics:
     __output_error = 670
     __expand = 12  # The error for the screen resolution (so that the figures do not move out)
     __DIMENSIONS = 8
-    __resolution = (WIDTH, HEIGHT) = (720, 720)
-    __SQUARE_SIZE = WIDTH // __DIMENSIONS
 
     _font = pygame.font.Font
     _images = Build.load_images()
     _screen = pygame.display
 
+    resolution = (WIDTH, HEIGHT) = (720, 720)
+    SQUARE_SIZE = WIDTH // __DIMENSIONS
     available_moves = list()
     button_list = list()
     strings = []
@@ -103,8 +103,8 @@ class Graphics:
 
     @classmethod
     def init(cls):
-        cls._screen = pygame.display.set_mode((cls.__resolution[0] + (cls.__resolution[0] // 3 + 50),
-                                               cls.__resolution[1]))
+        cls._screen = pygame.display.set_mode((cls.resolution[0] + (cls.resolution[0] // 3 + 50),
+                                               cls.resolution[1]))
         cls._screen.fill('white')
         pygame.draw.rect(
             cls._screen,
@@ -112,8 +112,8 @@ class Graphics:
             pygame.Rect(
                 5,  # Horizontal coordinate
                 0,  # Vertical coordinate
-                cls.__resolution[0],  # Size of square
-                cls.__resolution[0])  # Size of square
+                cls.resolution[0],  # Size of square
+                cls.resolution[0])  # Size of square
         )
         cls._font = pygame.font.Font(None, 24)
         pygame.display.set_caption('Chess')
@@ -161,10 +161,10 @@ class Graphics:
                     cls._screen,
                     color,
                     pygame.Rect(
-                        col * cls.__SQUARE_SIZE,  # Horizontal coordinate
-                        row * cls.__SQUARE_SIZE,  # Vertical coordinate
-                        cls.__SQUARE_SIZE,  # Size of square
-                        cls.__SQUARE_SIZE)  # Size of square
+                        col * cls.SQUARE_SIZE,  # Horizontal coordinate
+                        row * cls.SQUARE_SIZE,  # Vertical coordinate
+                        cls.SQUARE_SIZE,  # Size of square
+                        cls.SQUARE_SIZE)  # Size of square
                                 )
 
     @classmethod
@@ -180,37 +180,37 @@ class Graphics:
                     cls._screen.blit(
                         cls._images[piece],  # Picture of piece
                         pygame.Rect(
-                            col * cls.__SQUARE_SIZE + cls.__expand,  # Horizontal coordinate
-                            row * cls.__SQUARE_SIZE + cls.__expand,  # Vertical coordinate
-                            cls.__SQUARE_SIZE,  # Size of square
-                            cls.__SQUARE_SIZE)  # Size of square
+                            col * cls.SQUARE_SIZE + cls.__expand,  # Horizontal coordinate
+                            row * cls.SQUARE_SIZE + cls.__expand,  # Vertical coordinate
+                            cls.SQUARE_SIZE,  # Size of square
+                            cls.SQUARE_SIZE)  # Size of square
                                     )
 
     @classmethod
     def show_available_moves(cls) -> None:
         color = (32, 64, 128, 128)
-        available_move = pygame.Surface((cls.__resolution[0], cls.__resolution[0]), pygame.SRCALPHA)
+        available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
         pygame.draw.rect(
             available_move,  # Square
             color,
             pygame.Rect(
-                cls.available_moves[0][0] * cls.__SQUARE_SIZE,  # Horizontal coordinate
-                cls.available_moves[0][1] * cls.__SQUARE_SIZE,  # Vertical coordinate
-                cls.__SQUARE_SIZE,  # Size of square
-                cls.__SQUARE_SIZE)  # Size of square
+                cls.available_moves[0][0] * cls.SQUARE_SIZE,  # Horizontal coordinate
+                cls.available_moves[0][1] * cls.SQUARE_SIZE,  # Vertical coordinate
+                cls.SQUARE_SIZE,  # Size of square
+                cls.SQUARE_SIZE)  # Size of square
         )
         cls._screen.blit(available_move, dest=(0, 0))
         for square in cls.available_moves[1::]:
             color = (0, 150, 0, 120) if Table.field[square[1]][square[0]] == '--' else (150, 0, 0, 120)
-            available_move = pygame.Surface((cls.__resolution[0], cls.__resolution[0]), pygame.SRCALPHA)
+            available_move = pygame.Surface((cls.resolution[0], cls.resolution[0]), pygame.SRCALPHA)
             pygame.draw.rect(
                 available_move,  # Square
                 color,
                 pygame.Rect(
-                    square[0] * cls.__SQUARE_SIZE,  # Horizontal coordinate
-                    square[1] * cls.__SQUARE_SIZE,  # Vertical coordinate
-                    cls.__SQUARE_SIZE,  # Size of square
-                    cls.__SQUARE_SIZE)  # Size of square
+                    square[0] * cls.SQUARE_SIZE,  # Horizontal coordinate
+                    square[1] * cls.SQUARE_SIZE,  # Vertical coordinate
+                    cls.SQUARE_SIZE,  # Size of square
+                    cls.SQUARE_SIZE)  # Size of square
             )
             cls._screen.blit(available_move, dest=(0, 0))
 
@@ -236,19 +236,19 @@ class Graphics:
             error -= 35
             # noinspection PyArgumentList
             cls.__output = cls._font.render(string, 1, pygame.Color('red'))
-            cls.__pos = cls.__output.get_rect(center=(cls.__resolution[0] + 140, cls.__resolution[1] - error))
+            cls.__pos = cls.__output.get_rect(center=(cls.resolution[0] + 140, cls.resolution[1] - error))
             cls._screen.blit(cls.__output, cls.__pos)
 
     @classmethod
     def check_pos(cls, event):
-        x = (event.pos[0] // (cls.__resolution[0] // cls.__DIMENSIONS)) > 7
-        y = event.pos[1] // (cls.__resolution[0] // cls.__DIMENSIONS) > 7
+        x = (event.pos[0] // (cls.resolution[0] // cls.__DIMENSIONS)) > 7
+        y = event.pos[1] // (cls.resolution[0] // cls.__DIMENSIONS) > 7
         return x | y
 
     @classmethod
     def get_square(cls, event) -> tuple:
-        column = event.pos[0] // (cls.__resolution[0] // cls.__DIMENSIONS)
-        row = event.pos[1] // (cls.__resolution[0] // cls.__DIMENSIONS)
+        column = event.pos[0] // (cls.resolution[0] // cls.__DIMENSIONS)
+        row = event.pos[1] // (cls.resolution[0] // cls.__DIMENSIONS)
         return column, row
 
 
@@ -290,20 +290,20 @@ class Controls:
                 Table.field[y_return][x_return] = turn[2]
                 Table.field[turn[1][1]][turn[1][0]] = turn[3]
                 Sound.play_sound(name='move', muted=cls.muted)
-                ########################################################################################
+
                 cls.current_player = cls.BLACK if turn[4] == 'b' else cls.WHITE
                 cls.chosen = True
                 Graphics.available_moves.clear()
                 cls.available.clear()
                 cls.x, cls.y = None, None
                 del cls.history[-1]
-                ########################################################################################
+
                 if turn[5] == 'beat':
                     del Graphics.strings[-1]
-                ########################################################################################
+
                 if 'check' in turn:
                     del Graphics.strings[-1]
-                ########################################################################################
+
                 break
 
     @classmethod
@@ -339,7 +339,7 @@ class Controls:
         if cls.x is not None or cls.y is not None:
             cls.available = cls.movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
             if cls.__is_king():
-                cls.__prevent_wrong_move(cls.available, cls.current_player)
+                cls.prevent_wrong_move(cls.available, cls.current_player)
 
             if Table.field[cls.row][cls.column][0] != cls.current_player.opposite \
                     and Table.field[cls.row][cls.column] != '--':
@@ -379,7 +379,7 @@ class Controls:
             if event.type == pygame.QUIT:
                 Chess._running = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and cls.__responce:
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # and cls.__responce
                 # move return section section
                 pos = pygame.mouse.get_pos()
                 cls.__return_move(pos=pos)
@@ -408,7 +408,7 @@ class Controls:
                 if cls.chosen:  # figure chosen and can move
                     if cls.__is_king():  # is piece a king
                         # check for king and remove unavailable moves
-                        cls.__prevent_wrong_move(cls.available, cls.current_player)
+                        cls.prevent_wrong_move(cls.available, cls.current_player)
                     cls.__console(available=True)
                     # movement of piece
                     if cls._is_available_():
@@ -430,7 +430,7 @@ class Controls:
                     cls.__console(coordinate=True)
 
     @staticmethod
-    def __prevent_wrong_move(moves, player) -> None:
+    def prevent_wrong_move(moves, player) -> None:
         for move in Rules.side_available(player, opposite_side=True, all_allowed=True, only_beat=True):
             while move in moves:
                 del moves[moves.index(move)]
@@ -446,7 +446,7 @@ class Controls:
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат белым!',
-                            position=(Graphics.__resolution[0] // 2 - 222, Graphics.__resolution[0] // 2 - 75),
+                            position=(Graphics.resolution[0] // 2 - 222, Graphics.resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
                             font_size=64)
                     )
@@ -462,7 +462,7 @@ class Controls:
                     Graphics.button_list.append(
                         Text(
                             msg='Шах и мат черным!',
-                            position=(Graphics.__resolution[0] // 2 - 222, Graphics.__resolution[0] // 2 - 75),
+                            position=(Graphics.resolution[0] // 2 - 222, Graphics.resolution[0] // 2 - 75),
                             clr=(255, 0, 0),
                             font_size=64)
                     )
@@ -615,7 +615,7 @@ class Rules:
 
         # leftward
         try:
-            if all_allowed and not Rules.under_attack(p_x - 2, p_y - 1):
+            if all_allowed:
                 all_way.append([p_x - 2, p_y - 1])
             if table[p_y - 1][p_x - 2][0] != player.letter and (p_x - 2 >= 0 and p_y - 1 >= 0):
                 available.append([p_x - 2, p_y - 1])
@@ -624,7 +624,7 @@ class Rules:
         except IndexError:
             pass
         try:
-            if all_allowed and not Rules.under_attack(p_x - 2, p_y + 1):
+            if all_allowed:
                 all_way.append([p_x - 2, p_y + 1])
             if table[p_y + 1][p_x - 2][0] != player.letter and (p_x - 2 >= 0 and p_y + 1 < 8):
                 available.append([p_x - 2, p_y + 1])
@@ -634,7 +634,7 @@ class Rules:
             pass
         # above
         try:
-            if all_allowed and not Rules.under_attack(p_x - 1, p_y - 2):
+            if all_allowed:
                 all_way.append([p_x - 1, p_y - 2])
             if table[p_y - 2][p_x - 1][0] != player.letter and (p_x - 1 >= 0 and p_y - 2 >= 0):
                 available.append([p_x - 1, p_y - 2])
@@ -643,7 +643,7 @@ class Rules:
         except IndexError:
             pass
         try:
-            if all_allowed and not Rules.under_attack(p_x + 1, p_y - 2):
+            if all_allowed:
                 all_way.append([p_x + 1, p_y - 2])
             if table[p_y - 2][p_x + 1][0] != player.letter and (p_x + 1 < 8 and p_y - 2 >= 0):
                 available.append([p_x + 1, p_y - 2])
@@ -654,7 +654,7 @@ class Rules:
 
         # on the right
         try:
-            if all_allowed and not Rules.under_attack(p_x + 2, p_y - 1):
+            if all_allowed:
                 all_way.append([p_x + 2, p_y - 1])
             if table[p_y - 1][p_x + 2][0] != player.letter and (p_x + 2 < 8 and p_y - 1 >= 0):
                 available.append([p_x + 2, p_y - 1])
@@ -663,7 +663,7 @@ class Rules:
         except IndexError:
             pass
         try:
-            if all_allowed and not Rules.under_attack(p_x + 2, p_y + 1):
+            if all_allowed:
                 all_way.append([p_x + 2, p_y + 1])
             if table[p_y + 1][p_x + 2][0] != player.letter and (p_x + 2 < 8 and p_y + 1 < 8):
                 available.append([p_x + 2, p_y + 1])
@@ -673,7 +673,7 @@ class Rules:
             pass
         # below
         try:
-            if all_allowed and not Rules.under_attack(p_x - 1, p_y + 2):
+            if all_allowed:
                 all_way.append([p_x - 1, p_y + 2])
             if table[p_y + 2][p_x - 1][0] != player.letter and (p_x - 1 >= 0 and p_y + 2 < 8):
                 available.append([p_x - 1, p_y + 2])
@@ -682,7 +682,7 @@ class Rules:
         except IndexError:
             pass
         try:
-            if all_allowed and not Rules.under_attack(p_x + 1, p_y + 2):
+            if all_allowed:
                 all_way.append([p_x + 1, p_y + 2])
             if table[p_y + 2][p_x + 1][0] != player.letter and (p_x + 1 < 8 and p_y + 2 < 8):
                 available.append([p_x + 1, p_y + 2])
@@ -995,13 +995,47 @@ class Rules:
             return [x, y] in available
 
     @staticmethod
+    def can_escape(moves):
+        Flag = True
+        for move in moves:
+            if Rules.under_attack(move[0], move[1]):
+                Flag = False
+            else:
+                Flag = True
+                break
+        if len(moves) > 0:
+            return Flag
+        else:
+            return False
+
+    @staticmethod
     def naive_mate(enemy, player) -> bool:
         # I must find exact way, which allows enemy beat king
+        switched = False
+        if player.letter == 'w':
+            switched = True
+            Controls.switch_player()
+            player_king = Controls.current_player
+        else:
+            player_king = Controls.current_player
+        king_pos = Rules.__find_king(player_king.letter)
+        Controls.available = Controls.movements['K'](king_pos[0], king_pos[1], player_king)
+        Controls.prevent_wrong_move(Controls.available, player_king)
+        # print('available', *Controls.available)
+        # print(player_king.letter, king_pos)
+        if switched:
+            Controls.switch_player()
+
         beat_way = set(map(tuple, Controls.movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0], player,
                                                                                          only_beat=True)))
         side_available = set(map(tuple, Rules.side_available(player, opposite_side=True)))
 
-        return enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)  # if True -> Mate else check
+        # print(f'Can escape -> {Rules.can_escape(Controls.available)}')
+        # print(f'Moves = {len(Controls.available)}')
+        return (enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)
+                and len(Controls.available) == 0) or \
+               (enemy[::-1] not in side_available and not Rules.can_escape(Controls.available))
+        # if True -> Mate else check
 
 
 if __name__ == '__main__':

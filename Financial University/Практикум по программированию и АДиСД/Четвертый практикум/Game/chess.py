@@ -61,6 +61,7 @@ class Chess:
             Sound.init()
             Graphics.board_graphics()
             Graphics.print_info()
+            Graphics.turn_owner(Controls.current_player)
             for b in Graphics.get_button_list():
                 Graphics.draw_button(b)
             if not cls.show_menu:
@@ -185,6 +186,13 @@ class Graphics:
                             cls.SQUARE_SIZE,  # Size of square
                             cls.SQUARE_SIZE)  # Size of square
                                     )
+
+    @classmethod
+    def turn_owner(cls, side):
+        # noinspection PyArgumentList
+        text = cls._font.render(Controls.current_player.name, 1, pygame.Color('purple'))
+        pos = text.get_rect(center=(cls.resolution[0] + 140, cls.resolution[1] - 706))
+        cls._screen.blit(text, pos)
 
     @classmethod
     def show_available_moves(cls) -> None:
@@ -379,7 +387,7 @@ class Controls:
             if event.type == pygame.QUIT:
                 Chess._running = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # and cls.__responce
+            elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1 and cls.__responce:
                 # move return section section
                 pos = pygame.mouse.get_pos()
                 cls.__return_move(pos=pos)

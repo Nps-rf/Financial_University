@@ -5,7 +5,7 @@ from Misc.Text import Text
 from itertools import cycle
 from Board import Table
 from Misc.Build import Build
-from Sound import Sound
+from SoundSystem import Sound
 from Player import Player
 
 
@@ -978,7 +978,6 @@ class Rules:
                 Controls.switch_player()
             player = Controls.current_player
             available = Rules.side_available(player=player)
-            print('black available', *available)
             if switched:
                 Controls.switch_player()
             return [x, y] in available
@@ -995,7 +994,7 @@ class Rules:
             return [x, y] in available
 
     @staticmethod
-    def can_escape(moves):
+    def __can_escape(moves):
         Flag = True
         for move in moves:
             if Rules.under_attack(move[0], move[1]):
@@ -1011,31 +1010,22 @@ class Rules:
     @staticmethod
     def naive_mate(enemy, player) -> bool:
         # I must find exact way, which allows enemy beat king
-        switched = False
-        if player.letter == 'w':
-            switched = True
-            Controls.switch_player()
-            player_king = Controls.current_player
-        else:
-            player_king = Controls.current_player
+        Controls.switch_player()
+        player_king = Controls.current_player
+        print('king ->', player_king)
         king_pos = Rules.__find_king(player_king.letter)
         Controls.available = Controls.movements['K'](king_pos[0], king_pos[1], player_king)
         Controls.prevent_wrong_move(Controls.available, player_king)
-        # print('available', *Controls.available)
-        # print(player_king.letter, king_pos)
-        if switched:
-            Controls.switch_player()
-
+        Controls.switch_player()
         beat_way = set(map(tuple, Controls.movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0], player,
                                                                                          only_beat=True)))
         side_available = set(map(tuple, Rules.side_available(player, opposite_side=True)))
+        if player_king.letter == 'w':
+            print('white', side_available, '\n', Controls.available, enemy[::-1] not in side_available, )
 
-        # print(f'Can escape -> {Rules.can_escape(Controls.available)}')
-        # print(f'Moves = {len(Controls.available)}')
         return (enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)
                 and len(Controls.available) == 0) or \
-               (enemy[::-1] not in side_available and not Rules.can_escape(Controls.available))
-        # if True -> Mate else check
+               (enemy[::-1] not in side_available and not Rules.__can_escape(Controls.available))
 
 
 if __name__ == '__main__':

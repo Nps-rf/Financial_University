@@ -1,4 +1,7 @@
 import pygame
+import pickle
+import threading
+import socket
 from Misc.__types__ import *
 from Misc.Button import Button
 from Misc.Text import Text
@@ -61,7 +64,7 @@ class Chess:
             Sound.init()
             Graphics.board_graphics()
             Graphics.print_info()
-            Graphics.turn_owner(Controls.current_player)
+            Graphics.turn_owner()
             for b in Graphics.get_button_list():
                 Graphics.draw_button(b)
             if not cls.show_menu:
@@ -188,7 +191,7 @@ class Graphics:
                                     )
 
     @classmethod
-    def turn_owner(cls, side):
+    def turn_owner(cls):
         # noinspection PyArgumentList
         text = cls._font.render(Controls.current_player.name, 1, pygame.Color('purple'))
         pos = text.get_rect(center=(cls.resolution[0] + 140, cls.resolution[1] - 706))
@@ -1028,14 +1031,52 @@ class Rules:
         beat_way = set(map(tuple, Controls.movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0], player,
                                                                                          only_beat=True)))
         side_available = set(map(tuple, Rules.side_available(player, opposite_side=True)))
-        if player_king.letter == 'w':
-            print('white', side_available, '\n', Controls.available, enemy[::-1] not in side_available, )
+        # if player_king.letter == 'w':
+        #     print('white', side_available, '\n', Controls.available, enemy[::-1] not in side_available, )
 
         return (enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)
                 and len(Controls.available) == 0) or \
                (enemy[::-1] not in side_available and not Rules.__can_escape(Controls.available))
 
 
+class Network(object):
+    def __init__(self):
+        self.connection = list()
+        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.__hostname = socket.gethostname()
+        self.IP = socket.gethostbyname(self.__hostname)
+
+    def __bind__(self):
+        self.server_socket.bind((self.IP, '5555'))
+
+    def waiting_for_connections(self):
+        while len(self.connection) < 2:
+            conn, addr = self.server_socket.accept()
+            self.connection.append(conn)
+            print(conn)
+            print(self.connection)
+
+    def receive_information(self):
+        player_1_info = pickle.loads(self.connection[0].recv(1024))
+        player_2_info = pickle.loads(self.connection[1].recv(1024))
+
+        return player_1_info, player_2_info
+
+    def listen(self):
+        self.server_socket.listen()
+
+
 if __name__ == '__main__':
-    CHESS_GAME = Chess
-    CHESS_GAME.run()
+    Net = Network()
+    while 1:
+        Net.waiting_for_connections()
+
+        data_arr = pickle.dumps(Table)
+        print(data_arr)
+        Net.connection[0].send(data_arr)
+        Net.connection[1].send(data_arr)
+
+        player1, player2 = Net.receive_information()
+
+    # CHESS_GAME = Chess
+    # CHESS_GAME.run()

@@ -61,7 +61,7 @@ ____
 * `_prepare_`: **Function that prepares an application for launch**
 * `run`: **The main function for launching the application**
 
-### Class Sound
+### Class SoundSystem
 * **Responsible for the sound operation in the program**
 
 #### Attributes

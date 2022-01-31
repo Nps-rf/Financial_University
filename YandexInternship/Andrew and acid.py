@@ -1,4 +1,4 @@
-n = int(input())  # 1 <= n <= 100 000 | Total amount of tanks
+n = int(input())  # 1 <= n <= 100 000 | Amount of tanks
 Volumes = list(map(int, input().split()))  # Volume of each tank
 answer = 0
 maximal = Volumes[0]

@@ -1067,16 +1067,5 @@ class Network(object):
 
 
 if __name__ == '__main__':
-    Net = Network()
-    while 1:
-        Net.waiting_for_connections()
-
-        data_arr = pickle.dumps(Table)
-        print(data_arr)
-        Net.connection[0].send(data_arr)
-        Net.connection[1].send(data_arr)
-
-        player1, player2 = Net.receive_information()
-
-    # CHESS_GAME = Chess
-    # CHESS_GAME.run()
+    CHESS_GAME = Chess
+    CHESS_GAME.run()

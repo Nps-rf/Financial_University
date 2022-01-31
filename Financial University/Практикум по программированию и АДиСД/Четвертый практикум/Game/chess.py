@@ -1066,6 +1066,6 @@ class Network(object):
         self.server_socket.listen()
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # TESTING
     CHESS_GAME = Chess
     CHESS_GAME.run()

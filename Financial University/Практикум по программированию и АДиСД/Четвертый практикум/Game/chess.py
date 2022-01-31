@@ -1,6 +1,5 @@
 import pygame
 import pickle
-import threading
 import socket
 from Misc.__types__ import *
 from Misc.Button import Button
@@ -1045,6 +1044,7 @@ class Network(object):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.__hostname = socket.gethostname()
         self.IP = socket.gethostbyname(self.__hostname)
+        print(self.IP)
 
     def __bind__(self):
         self.server_socket.bind((self.IP, '5555'))

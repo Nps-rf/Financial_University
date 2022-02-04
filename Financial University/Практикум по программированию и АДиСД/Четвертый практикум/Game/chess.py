@@ -1,6 +1,4 @@
 import pygame
-import pickle
-import socket
 from Misc.__types__ import *
 from Misc.Button import Button
 from Misc.Text import Text
@@ -1036,34 +1034,6 @@ class Rules:
         return (enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)
                 and len(Controls.available) == 0) or \
                (enemy[::-1] not in side_available and not Rules.__can_escape(Controls.available))
-
-
-class Network(object):
-    def __init__(self):
-        self.connection = list()
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__hostname = socket.gethostname()
-        self.IP = socket.gethostbyname(self.__hostname)
-        print(self.IP)
-
-    def __bind__(self):
-        self.server_socket.bind((self.IP, '5555'))
-
-    def waiting_for_connections(self):
-        while len(self.connection) < 2:
-            conn, addr = self.server_socket.accept()
-            self.connection.append(conn)
-            print(conn)
-            print(self.connection)
-
-    def receive_information(self):
-        player_1_info = pickle.loads(self.connection[0].recv(1024))
-        player_2_info = pickle.loads(self.connection[1].recv(1024))
-
-        return player_1_info, player_2_info
-
-    def listen(self):
-        self.server_socket.listen()
 
 
 if __name__ == '__main__':

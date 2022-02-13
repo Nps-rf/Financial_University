@@ -254,7 +254,7 @@ class Util:
         @staticmethod
         def set_values(table: Table, value, column=0):
             """
-
+            Used for setting multiple values in table
             :param table:
             :param value:
             :param column:
@@ -266,7 +266,7 @@ class Util:
         @staticmethod
         def print_table(table: Table):
             """
-            Analog of Pretty Print, but for 'Table'
+            Analog of Pretty Print, but for mine Table-object
             :param table: Table-object, method works with table.fields and table.header
             """
             print('◈', *table.header, '◈', sep='  ')

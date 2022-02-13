@@ -118,7 +118,7 @@ class GeneratorApp(App):
         b1.add_widget(self.special_letters_button)
         return b1
 
-    def update_header_label(self, *args):  # updates Password length Label
+    def update_header_label(self, *args) -> None:  # updates Password length Label
         """
 
         :type args: Garbage

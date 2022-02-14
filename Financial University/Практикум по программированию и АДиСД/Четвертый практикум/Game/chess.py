@@ -282,7 +282,7 @@ class Controls:
         cls.__look4click()
 
     @classmethod
-    def __console(cls, available=False, coordinate=False) -> print:
+    def __console(cls, available=False, coordinate=False) -> None:
         if available:
             print('\033[1m\033[32mSquares you can move -> ', *cls.available, end='\n\033[0m')
         if coordinate:
@@ -431,7 +431,6 @@ class Controls:
                         cls._move_piece_()
                         cls._init_mate_()
                         cls.chosen = False
-                        print('Under attack is', Rules.under_attack(cls.column, cls.row))
                         cls.switch_player()
                         Graphics.available_moves.clear()
 
@@ -1020,7 +1019,6 @@ class Rules:
         # I must find exact way, which allows enemy beat king
         Controls.switch_player()
         player_king = Controls.current_player
-        print('king ->', player_king)
         king_pos = Rules.__find_king(player_king.letter)
         Controls.available = Controls.movements['K'](king_pos[0], king_pos[1], player_king)
         Controls.prevent_wrong_move(Controls.available, player_king)
@@ -1028,8 +1026,6 @@ class Rules:
         beat_way = set(map(tuple, Controls.movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0], player,
                                                                                          only_beat=True)))
         side_available = set(map(tuple, Rules.side_available(player, opposite_side=True)))
-        # if player_king.letter == 'w':
-        #     print('white', side_available, '\n', Controls.available, enemy[::-1] not in side_available, )
 
         return (enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)
                 and len(Controls.available) == 0) or \

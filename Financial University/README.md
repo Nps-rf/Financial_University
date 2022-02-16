@@ -12,7 +12,7 @@
 ### Усложненные курсы
 * [<img align="left" width="24px" src="https://stepik.org/media/cache/images/courses/512/cover/eb1565502f1f11a0a2d248656ba5ae7c.jpg"/>][Python: основы и применение] [`Python: основы и применение`](https://stepik.org/course/512)
 ### Если нет личной жизни
-* [<img align="left" width="24px" src="https://stepik.org/media/cache/images/courses/3356/cover/5a65ad56b3a9257f9d8ba67c7886cde2.png"/>][Практикум по математике и Python] [`Практикум по математике и Python`](https://stepik.org/course/58852)
+* [<img align="left" width="24px" src="https://stepik.org/media/cache/images/courses/3356/cover/5a65ad56b3a9257f9d8ba67c7886cde2.png"/>][Практикум по математике и Python] [`Практикум по математике и Python`](https://stepik.org/course/3356)
 
 
 ## Практический минимум
@@ -37,7 +37,7 @@
 [Программирование на Python]: https://stepik.org/course/67
 [Адаптивный тренажер Python]: https://stepik.org/course/431
 [Python: основы и применение]: https://stepik.org/course/512
-[Практикум по математике и Python]: https://stepik.org/course/58852
+[Практикум по математике и Python]: https://stepik.org/course/3356
 [Алгоритмы: теория и практика. Структуры данных]: https://stepik.org/course/1547
 [Алгоритмы и структуры данных CSC]: https://youtube.com/playlist?list=PLlb7e2G7aSpTZN_zRrbpVJUvB-pTuM_VL
 [Практический минимум CSC]: https://youtube.com/playlist?list=PLlb7e2G7aSpT5DX9rQKnmZMK0DG7dWrUc

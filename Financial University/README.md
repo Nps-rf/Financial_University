@@ -14,11 +14,11 @@
 ### Если нет личной жизни
 * [<img align="left" width="24px" src="https://stepik.org/media/cache/images/courses/3356/cover/5a65ad56b3a9257f9d8ba67c7886cde2.png"/>][Практикум по математике и Python] [`Практикум по математике и Python`](https://stepik.org/course/58852)
 
-----
 
 ## Практический минимум
 ### А тут нет легких курсов
 * [<img align="left" width="24px" src="https://cdn3.iconfinder.com/data/icons/tango-icon-library/48/face-monkey-256.png"/>][Практический минимум CSC] [`Практический минимум CSC`](https://youtube.com/playlist?list=PLlb7e2G7aSpT5DX9rQKnmZMK0DG7dWrUc)
+
 
 ## Алгоритмы и структуры данных в языке Python
 ### Простые в освоении

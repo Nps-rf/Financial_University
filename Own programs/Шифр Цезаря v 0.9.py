@@ -18,7 +18,7 @@ def decoder(new_string, sdvig, string, alpha_low, alpha_high, control_ords, cont
     return new_string
 
 
-def no_name() :
+def caesar() :
     print('Что нужно сделать:', '1 - кодировать', '2 - декодировать', '3 - декодировать перебором', sep='\n')
     way = input()
     print('Выберите язык текста для работы:', '1 - английский', '2 - русский', sep='\n')
@@ -81,5 +81,5 @@ def no_name() :
 
 
 ############
-no_name()  #
+caesar()  #
 ############

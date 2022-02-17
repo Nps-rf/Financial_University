@@ -18,7 +18,8 @@
 ## Практический минимум
 ### А тут нет легких курсов
 * [<img align="left" width="24px" src="https://cdn3.iconfinder.com/data/icons/tango-icon-library/48/face-monkey-256.png"/>][Практический минимум CSC] [`Практический минимум CSC`](https://youtube.com/playlist?list=PLlb7e2G7aSpT5DX9rQKnmZMK0DG7dWrUc)
-
+### Основы Git
+* [<img align="left" width="24px" src="https://cdn3.iconfinder.com/data/icons/social-media-2169/24/social_media_social_media_logo_git-256.png"/>][Основы Git] [`Основы Git`](https://stepik.org/course/3145)
 
 ## Алгоритмы и структуры данных в языке Python
 ### Простые в освоении
@@ -53,3 +54,4 @@
 [Программирование Python CSC]: https://www.youtube.com/playlist?list=PLlb7e2G7aSpQmGnhrxlqI4iMXNv4R7khy
 [Погружение в Python]: https://www.coursera.org/learn/diving-in-python
 [Введение в машинное обучение]: https://www.coursera.org/learn/vvedenie-mashinnoe-obuchenie
+[Основы Git]: https://stepik.org/course/3145

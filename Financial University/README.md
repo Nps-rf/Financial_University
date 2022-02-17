@@ -27,10 +27,19 @@
 ### Усложненные курсы
 * [<img align="left" width="24px" src="https://yt3.ggpht.com/BDdqOhKpJJgGXy5HVSz0rFJK5C4HFALG2P0TPzOqw7Mob0SClmfxHUN20ueeXNWJA8wIPczpLg=s88-c-k-c0x00ffffff-no-rj"/>][Алгоритмы и структуры данных CSC] [`Алгоритмы и структуры данных CSC`](https://youtube.com/playlist?list=PLlb7e2G7aSpTZN_zRrbpVJUvB-pTuM_VL)
 
+## Продвинутые знания
+### Сложный курс
+* [<img align="left" width="24px" src="https://miro.medium.com/max/1200/1*WlYOcvNkNpOLeLhhOfw2GQ.png"/>][Погружение в Python] [`Погружение в Python`](https://www.coursera.org/learn/diving-in-python)
+
+### Машинное обучение
+* [<img align="left" width="28px" height='22px' src="https://www.vippng.com/png/full/271-2710011_deploy-model-ai-machine-learning-icon-free.png"/>][Введение в машинное обучение] [`Введение в машинное обучение`](https://www.coursera.org/learn/vvedenie-mashinnoe-obuchenie)
+
 ----
 
 ### Да, я готов не двигаться 20 часов
 * [<img align="left" width="24px" src="https://www.jing.fm/clipimg/full/60-605984_demon-png-download-png-image-with-transparent-background.png"/>][Программирование Python CSC] [`Программирование Python CSC`](https://www.youtube.com/playlist?list=PLlb7e2G7aSpQmGnhrxlqI4iMXNv4R7khy)
+
+
 
 [Поколение Python курс для начинающих]: https://stepik.org/course/58852
 [Поколение Python курс для продвинутых]: https://stepik.org/course/68343
@@ -42,3 +51,5 @@
 [Алгоритмы и структуры данных CSC]: https://youtube.com/playlist?list=PLlb7e2G7aSpTZN_zRrbpVJUvB-pTuM_VL
 [Практический минимум CSC]: https://youtube.com/playlist?list=PLlb7e2G7aSpT5DX9rQKnmZMK0DG7dWrUc
 [Программирование Python CSC]: https://www.youtube.com/playlist?list=PLlb7e2G7aSpQmGnhrxlqI4iMXNv4R7khy
+[Погружение в Python]: https://www.coursera.org/learn/diving-in-python
+[Введение в машинное обучение]: https://www.coursera.org/learn/vvedenie-mashinnoe-obuchenie

@@ -438,7 +438,7 @@ class Controls:
 
     @staticmethod
     def prevent_wrong_move(moves, player) -> None:
-        for move in Rules.side_available(player, opposite_side=True, all_allowed=True, only_beat=True):
+        for move in Rules.side_available(player, opposite_side=True, all_allowed=True):
             while move in moves:
                 del moves[moves.index(move)]
 
@@ -606,10 +606,9 @@ class Rules:
         return available if not only_beat else beat
 
     @staticmethod
-    def knight(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
+    def knight(p_x, p_y, player, all_allowed=False) -> Available_moves:
         """
         :param all_allowed:
-        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
@@ -617,7 +616,6 @@ class Rules:
         """
         table = Table.field
         available = []
-        beat = []
         all_way = []
 
         # leftward
@@ -626,8 +624,6 @@ class Rules:
                 all_way.append([p_x - 2, p_y - 1])
             if table[p_y - 1][p_x - 2][0] != player.letter and (p_x - 2 >= 0 and p_y - 1 >= 0):
                 available.append([p_x - 2, p_y - 1])
-                if table[p_y - 1][p_x - 2][0] == player.opposite and table[p_y - 1][p_x - 2][1] == 'K':
-                    beat.append([p_x - 2, p_y - 1])
         except IndexError:
             pass
         try:
@@ -635,8 +631,6 @@ class Rules:
                 all_way.append([p_x - 2, p_y + 1])
             if table[p_y + 1][p_x - 2][0] != player.letter and (p_x - 2 >= 0 and p_y + 1 < 8):
                 available.append([p_x - 2, p_y + 1])
-                if table[p_y + 1][p_x - 2][0] == player.opposite and table[p_y + 1][p_x - 2][1] == 'K':
-                    beat.append([p_x - 2, p_y + 1])
         except IndexError:
             pass
         # above
@@ -645,8 +639,6 @@ class Rules:
                 all_way.append([p_x - 1, p_y - 2])
             if table[p_y - 2][p_x - 1][0] != player.letter and (p_x - 1 >= 0 and p_y - 2 >= 0):
                 available.append([p_x - 1, p_y - 2])
-                if table[p_y - 2][p_x - 1][0] == player.opposite and table[p_y - 2][p_x - 1][1] == 'K':
-                    beat.append([p_x - 1, p_y - 2])
         except IndexError:
             pass
         try:
@@ -654,8 +646,6 @@ class Rules:
                 all_way.append([p_x + 1, p_y - 2])
             if table[p_y - 2][p_x + 1][0] != player.letter and (p_x + 1 < 8 and p_y - 2 >= 0):
                 available.append([p_x + 1, p_y - 2])
-                if table[p_y - 2][p_x + 1][0] == player.opposite and table[p_y - 2][p_x + 1][1] == 'K':
-                    beat.append([p_x + 1, p_y - 2])
         except IndexError:
             pass
 
@@ -665,8 +655,6 @@ class Rules:
                 all_way.append([p_x + 2, p_y - 1])
             if table[p_y - 1][p_x + 2][0] != player.letter and (p_x + 2 < 8 and p_y - 1 >= 0):
                 available.append([p_x + 2, p_y - 1])
-                if table[p_y - 1][p_x + 2][0] == player.opposite and table[p_y - 1][p_x + 2][1] == 'K':
-                    beat.append([p_x + 2, p_y - 1])
         except IndexError:
             pass
         try:
@@ -674,8 +662,6 @@ class Rules:
                 all_way.append([p_x + 2, p_y + 1])
             if table[p_y + 1][p_x + 2][0] != player.letter and (p_x + 2 < 8 and p_y + 1 < 8):
                 available.append([p_x + 2, p_y + 1])
-                if table[p_y + 1][p_x + 2][0] == player.opposite and table[p_y + 1][p_x + 2][1] == 'K':
-                    beat.append([p_x + 2, p_y + 1])
         except IndexError:
             pass
         # below
@@ -684,8 +670,6 @@ class Rules:
                 all_way.append([p_x - 1, p_y + 2])
             if table[p_y + 2][p_x - 1][0] != player.letter and (p_x - 1 >= 0 and p_y + 2 < 8):
                 available.append([p_x - 1, p_y + 2])
-                if table[p_y + 2][p_x - 1][0] == player.opposite and table[p_y + 2][p_x - 1][1] == 'K':
-                    beat.append([p_x - 1, p_y + 2])
         except IndexError:
             pass
         try:
@@ -693,30 +677,26 @@ class Rules:
                 all_way.append([p_x + 1, p_y + 2])
             if table[p_y + 2][p_x + 1][0] != player.letter and (p_x + 1 < 8 and p_y + 2 < 8):
                 available.append([p_x + 1, p_y + 2])
-                if table[p_y + 2][p_x + 1][0] == player.opposite and table[p_y + 2][p_x + 1][1] == 'K':
-                    beat.append([p_x + 1, p_y + 2])
         except IndexError:
             pass
         if all_allowed:
             return all_way
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
-    def bishop(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
+    def bishop(p_x, p_y, player, all_allowed=False) -> Available_moves:
         """
         :param all_allowed:
-        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
         available = []
-        beat = []
         all_way = []
 
-        def solve_side(beat, upper=True, left=True, all_allowed=False) -> Available_moves:
-            local_all_allowed = all_allowed
+        def solve_side(upper=True, left=True, allowed=False) -> Available_moves:
+            local_all_allowed = allowed
             no_way = False
             a_local = []
             for x, y in zip(range(1, 8 + 1), range(1, 8 + 1)):
@@ -733,12 +713,10 @@ class Rules:
                                     and Table.field[p_y - y][p_x - x][0] != player.opposite:
                                 local_all_allowed = False
                             all_way.append([p_x - x, p_y - y])
-                        if Table.field[p_y - y][p_x - x][0] == player.opposite and not all_allowed:
+                        if Table.field[p_y - y][p_x - x][0] == player.opposite:
                             available.append([p_x - x, p_y - y])
                             a_local.append([p_x - x, p_y - y])
                             no_way = True
-                            if only_beat and Table.field[p_y - y][p_x - x][1] == 'K':
-                                beat += a_local
                             break
                         if Table.field[p_y - y][p_x - x][0] != player.letter:
                             available.append([p_x - x, p_y - y])
@@ -749,37 +727,35 @@ class Rules:
                     except IndexError:
                         pass
         # upper left
-        solve_side(beat=beat, all_allowed=all_allowed)
+        solve_side(allowed=all_allowed)
 
         # lower left
-        solve_side(upper=False, beat=beat, all_allowed=all_allowed)
+        solve_side(upper=False, allowed=all_allowed)
 
         # upper right
-        solve_side(left=False, beat=beat, all_allowed=all_allowed)
+        solve_side(left=False, allowed=all_allowed)
 
         # lower right
-        solve_side(left=False, upper=False, beat=beat, all_allowed=all_allowed)
+        solve_side(upper=False, left=False, allowed=all_allowed)
 
         if all_allowed:
             return all_way
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
-    def rook(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
+    def rook(p_x, p_y, player, all_allowed=False) -> Available_moves:
         """
         :param all_allowed:
-        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
         available = []
-        beat = []
         all_way = []
 
-        def solve_side(beat, vertical=False, invert=False, all_allowed=False) -> None:
-            local_all_allowed = all_allowed
+        def solve_side(vertical=False, invert=False, allowed=False) -> None:
+            local_all_allowed = allowed
             no_way = False
             a_local = []
             for x in range(1, 8):
@@ -799,12 +775,10 @@ class Rules:
                         if Table.field[p_y - y][p_x - x][0] == player.letter:
                             no_way = True
                             break
-                        if Table.field[p_y - y][p_x - x][0] == player.opposite and not all_allowed:
+                        if Table.field[p_y - y][p_x - x][0] == player.opposite and not allowed:
                             available.append([p_x - x, p_y - y])
                             a_local.append([p_x - x, p_y - y])
                             no_way = True
-                            if Table.field[p_y - y][p_x - x][1] == 'K':
-                                beat += a_local
                             break
                         if Table.field[p_y - y][p_x - x][0] != player.letter:
                             available.append([p_x - x, p_y - y])
@@ -812,61 +786,51 @@ class Rules:
                     except IndexError:
                         pass
 
-        solve_side(beat=beat, all_allowed=all_allowed)
-        solve_side(invert=True, beat=beat, all_allowed=all_allowed)
-        solve_side(vertical=True, beat=beat, all_allowed=all_allowed)
-        solve_side(vertical=True, invert=True, beat=beat, all_allowed=all_allowed)
+        solve_side(allowed=all_allowed)
+        solve_side(invert=True, allowed=all_allowed)
+        solve_side(vertical=True, allowed=all_allowed)
+        solve_side(vertical=True, invert=True, allowed=all_allowed)
 
         if all_allowed:
             return all_way
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
-    def queen(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
+    def queen(p_x, p_y, player, all_allowed=False) -> Available_moves:
         """
         :param all_allowed:
-        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
-        beat = []
         all_way = []
         available = Rules.rook(p_x, p_y, player)
-        if only_beat:
-            beat = Rules.rook(p_x, p_y, player, only_beat=only_beat)
         if all_allowed:
             all_way = Rules.rook(p_x, p_y, player, all_allowed=all_allowed)
         available += Rules.bishop(p_x, p_y, player)
-        if only_beat:
-            beat += Rules.bishop(p_x, p_y, player, only_beat=only_beat)
         if all_allowed:
             all_way += Rules.bishop(p_x, p_y, player, all_allowed=all_allowed)
         if all_allowed:
             return all_way
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
-    def king(p_x, p_y, player, only_beat=False, all_allowed=False) -> Available_moves:
+    def king(p_x, p_y, player, all_allowed=False) -> Available_moves:
         """
         :param all_allowed:
-        :param only_beat:
         :param player:
         :param p_x: Horizontal coordinate of piece
         :param p_y: Vertical coordinate of piece
         :return: coordinates available
         """
         available = []
-        beat = []
         all_way = []
         try:
             if all_allowed:
                 all_way.append([p_x, p_y - 1])
             if Table.field[p_y - 1][p_x][0] != player.letter and (0 <= p_y - 1 < 8 and 0 <= p_x < 8):
                 available.append([p_x, p_y - 1])
-                if only_beat and Table.field[p_y - 1][p_x][1] == 'K' and (0 <= p_y - 1 < 8 and 0 <= p_x < 8):
-                    beat.append([p_x, p_y - 1])
 
         except IndexError:
             pass
@@ -875,8 +839,6 @@ class Rules:
                 all_way.append([p_x, p_y + 1])
             if Table.field[p_y + 1][p_x][0] != player.letter and (0 <= p_y + 1 < 8 and 0 <= p_x < 8):
                 available.append([p_x, p_y + 1])
-                if only_beat and Table.field[p_y + 1][p_x][1] == 'K' and (0 <= p_y + 1 < 8 and 0 <= p_x < 8):
-                    beat.append([p_x, p_y + 1])
         except IndexError:
             pass
         try:
@@ -884,8 +846,6 @@ class Rules:
                 all_way.append([p_x - 1, p_y])
             if Table.field[p_y][p_x - 1][0] != player.letter and (0 <= p_y < 8 and 0 <= p_x - 1 < 8):
                 available.append([p_x - 1, p_y])
-                if only_beat and Table.field[p_y][p_x - 1][1] == 'K' and (0 <= p_y < 8 and 0 <= p_x - 1 < 8):
-                    beat.append([p_x - 1, p_y])
         except IndexError:
             pass
         try:
@@ -893,8 +853,6 @@ class Rules:
                 all_way.append([p_x + 1, p_y])
             if Table.field[p_y][p_x + 1][0] != player.letter and (0 <= p_y < 8 and 0 <= p_x + 1 < 8):
                 available.append([p_x + 1, p_y])
-                if only_beat and Table.field[p_y][p_x + 1][1] == 'K' and (0 <= p_y < 8 and 0 <= p_x + 1 < 8):
-                    beat.append([p_x + 1, p_y])
         except IndexError:
             pass
         try:
@@ -902,8 +860,6 @@ class Rules:
                 all_way.append([p_x - 1, p_y - 1])
             if Table.field[p_y - 1][p_x - 1][0] != player.letter and (0 <= p_y - 1 < 8 and 0 <= p_x - 1 < 8):
                 available.append([p_x - 1, p_y - 1])
-                if only_beat and Table.field[p_y - 1][p_x - 1][1] == 'K' and (0 <= p_y - 1 < 8 and 0 <= p_x - 1 < 8):
-                    beat.append([p_x - 1, p_y - 1])
         except IndexError:
             pass
         try:
@@ -911,8 +867,6 @@ class Rules:
                 all_way.append([p_x + 1, p_y - 1])
             if Table.field[p_y - 1][p_x + 1][0] != player.letter and (0 <= p_y - 1 < 8 and 0 <= p_x + 1 < 8):
                 available.append([p_x + 1, p_y - 1])
-                if only_beat and Table.field[p_y - 1][p_x + 1][1] == 'K' and (0 <= p_y - 1 < 8 and 0 <= p_x + 1 < 8):
-                    beat.append([p_x + 1, p_y - 1])
         except IndexError:
             pass
         try:
@@ -920,8 +874,6 @@ class Rules:
                 all_way.append([p_x + 1, p_y + 1])
             if Table.field[p_y + 1][p_x + 1][0] != player.letter and (0 <= p_y + 1 < 8 and 0 <= p_x + 1 < 8):
                 available.append([p_x + 1, p_y + 1])
-                if only_beat and Table.field[p_y + 1][p_x + 1][1] == 'K' and (0 <= p_y + 1 < 8 and 0 <= p_x + 1 < 8):
-                    beat.append([p_x + 1, p_y + 1])
         except IndexError:
             pass
         try:
@@ -929,16 +881,14 @@ class Rules:
                 all_way.append([p_x - 1, p_y + 1])
             if Table.field[p_y + 1][p_x - 1][0] != player.letter and (0 <= p_y + 1 < 8 and 0 <= p_x - 1 < 8):
                 available.append([p_x - 1, p_y + 1])
-                if only_beat and Table.field[p_y + 1][p_x - 1][1] == 'K' and (0 <= p_y + 1 < 8 and 0 <= p_x - 1 < 8):
-                    beat.append([p_x - 1, p_y + 1])
         except IndexError:
             pass
         if all_allowed:
             return all_way
-        return available if not only_beat else beat
+        return available
 
     @staticmethod
-    def side_available(player, opposite_side=False, only_beat=False, all_allowed=False) -> Available_moves:
+    def side_available(player, opposite_side=False, all_allowed=False) -> Available_moves:
         movements = Controls.movements
         side_available = []
         if opposite_side:
@@ -948,7 +898,7 @@ class Rules:
             for y in range(8):
                 if Table.field[y][x][0] == player.letter:
                     if Table.field[y][x][1] == 'p':
-                        side_available.extend(movements[Table.field[y][x][1]](x, y, player, only_beat=only_beat))
+                        side_available.extend(movements[Table.field[y][x][1]](x, y, player, only_beat=True))
                     elif all_allowed:
                         side_available.extend(movements[Table.field[y][x][1]](x, y, player, all_allowed=all_allowed))
                     else:
@@ -1016,15 +966,13 @@ class Rules:
 
     @staticmethod
     def naive_mate(enemy, player) -> bool:
-        # I must find exact way, which allows enemy beat king
         Controls.switch_player()
         player_king = Controls.current_player
         king_pos = Rules.__find_king(player_king.letter)
         Controls.available = Controls.movements['K'](king_pos[0], king_pos[1], player_king)
         Controls.prevent_wrong_move(Controls.available, player_king)
         Controls.switch_player()
-        beat_way = set(map(tuple, Controls.movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0], player,
-                                                                                         only_beat=True)))
+        beat_way = set(map(tuple, Controls.movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0], player,)))
         side_available = set(map(tuple, Rules.side_available(player, opposite_side=True)))
 
         return (enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)

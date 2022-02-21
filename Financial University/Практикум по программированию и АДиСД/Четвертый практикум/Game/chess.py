@@ -136,7 +136,7 @@ class Graphics:
 
     @classmethod
     def draw_menu(cls):
-        drawings = Controls.settings()
+        drawings = Controls.initialize_settings()
         cls._screen.blit(drawings[0], (-75, 0))
         drawings[1].draw(cls._screen)
         drawings[2].draw(cls._screen)
@@ -279,10 +279,22 @@ class Controls:
 
     @classmethod
     def run_controls(cls) -> None:
+        """
+        :return: None
+        Easy-run of controls system
+        """
         cls.__look4click()
 
     @classmethod
     def __console(cls, available=False, coordinate=False) -> None:
+        """
+        :param available:
+        :param coordinate:
+        :return: None
+        Helpful console output with useful information about:
+            1) Available squares for chosen piece
+            2) Your current position
+        """
         if available:
             print('\033[1m\033[32mSquares you can move -> ', *cls.available, end='\n\033[0m')
         if coordinate:
@@ -290,6 +302,11 @@ class Controls:
 
     @classmethod
     def __return_move(cls, pos) -> None:
+        """
+        :param pos:
+        :return: None
+        Method responsible of cancelling last move, when we click cancel-move-button
+        """
         b1 = Graphics.button_list[0]
         if b1.rect.collidepoint(pos):
             for number, turn in enumerate(cls.history[::-1]):
@@ -316,16 +333,29 @@ class Controls:
 
     @classmethod
     def __is_king(cls) -> bool:
+        """
+        :return: bool
+        :rtype: bool
+        """
         if cls.piece[0][1] == 'K':
             return True
         return False
 
     @classmethod
     def __is_knight(cls) -> bool:
+        """
+        :return: bool
+        :rtype: bool
+        """
         return cls.piece[0][1] == 'N'
 
     @classmethod
     def _update_history_(cls) -> None:
+        """
+        :return: None
+        Update all available history.
+        Useful for debug :)
+        """
         cls.history.append([[cls.piece[1][1], cls.piece[1][0]],  # from
                             [cls.column, cls.row],  # to
                             cls.piece[0],  # who moves
@@ -336,6 +366,10 @@ class Controls:
 
     @classmethod
     def _piece_chose_(cls) -> None:
+        """
+        :return: None
+        Responsible for piece-chose
+        """
         if Table.field[cls.row][cls.column] != '--' \
                 and Table.field[cls.row][cls.column][0] != cls.current_player.opposite:
             cls.chosen = True
@@ -344,6 +378,11 @@ class Controls:
 
     @classmethod
     def _call_sg_(cls) -> None:
+        """
+        :return: None
+        sg -> Sound&Graphics
+        Responsible for running Sound and Graphics maintenance
+        """
         if cls.x is not None or cls.y is not None:
             cls.available = cls.movements[cls.piece[0][1]](cls.x, cls.y, cls.current_player)
             if cls.__is_king():
@@ -359,11 +398,19 @@ class Controls:
 
     @classmethod
     def _move_piece_(cls) -> None:
+        """
+        :return: None
+        Used for moving a piece
+        """
         Table.field[cls.row][cls.column] = cls.piece[0]
         Table.field[cls.piece[1][0]][cls.piece[1][1]] = '--'
 
     @classmethod
     def switch_player(cls) -> None:
+        """
+        :return: None
+        Method for switching current player
+        """
         cls.current_player = cls.BLACK if cls.current_player.letter == 'w' else cls.WHITE
 
     @classmethod
@@ -381,7 +428,8 @@ class Controls:
     @classmethod
     def __look4click(cls) -> None:
         """
-        Checks whether the user clicked on the cross (or other place)
+        Checks whether the user clicked on the cross or other place
+        Just a heart of user interaction
         """
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -438,12 +486,22 @@ class Controls:
 
     @staticmethod
     def prevent_wrong_move(moves, player) -> None:
+        """
+        :param moves:
+        :param player:
+        :return: None
+        Used for preventing king's wrong move.
+        """
         for move in Rules.side_available(player, opposite_side=True, all_allowed=True):
             while move in moves:
                 del moves[moves.index(move)]
 
     @classmethod
     def _init_mate_(cls) -> None:
+        """
+        :return: None
+        Runs mate procedure with graphics and sound
+        """
         for move in Rules.basic_check(cls.column, cls.row, cls.current_player):
             if move == 'wK':
                 if Rules.naive_mate((cls.row, cls.column), cls.current_player):
@@ -480,13 +538,23 @@ class Controls:
 
     @classmethod
     def _call_settings(cls, pos) -> None:
+        """
+        :param pos:
+        :return: None
+        Used for calling settings
+        """
         b2 = Graphics.button_list[1]
         if b2.rect.collidepoint(pos):
             Chess.show_menu = True
-            cls.settings(run_only=True)
+            cls.initialize_settings(run_only=True)
 
     @classmethod
-    def settings(cls, run_only=False) -> (Menu, Buttons):
+    def initialize_settings(cls, run_only=False) -> (Menu, Buttons):
+        """
+        :param run_only:
+        :return: (Menu, Buttons)
+        Create buttons and switch their state
+        """
         if not run_only:
             if cls.muted:
                 cls.snd_statement = 'Включить'
@@ -505,7 +573,11 @@ class Controls:
 
     @classmethod
     def ___maintenance_of_settings__(cls) -> None:
-        [b1, b2, b0] = cls.settings()[1:]
+        """
+        :return: None
+        Heart of interaction with buttons
+        """
+        [b1, b2, b0] = cls.initialize_settings()[1:]
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 Chess._running = False
@@ -889,6 +961,13 @@ class Rules:
 
     @staticmethod
     def side_available(player, opposite_side=False, all_allowed=False) -> Available_moves:
+        """
+        :param player:
+        :param opposite_side:
+        :param all_allowed:
+        :return: Available_moves (Array)
+        Show us all turns that available for chosen side
+        """
         movements = Controls.movements
         side_available = []
         if opposite_side:
@@ -909,20 +988,39 @@ class Rules:
 
     @staticmethod
     def basic_check(p_x, p_y, player) -> Available_moves:
+        """
+        :param p_x:
+        :param p_y:
+        :param player:
+        :return: Available_moves (Array)
+        Part of check algorithm, returns all enemy's turns
+        It was bad idea to made this trash...
+        """
         available = []
         for turn in Controls.movements[Table.field[p_y][p_x][1]](p_x, p_y, player):
             available.append(Table.field[turn[1]][turn[0]])
         return available
 
     @staticmethod
-    def __find_king(side='w'):
+    def __find_king(side: str = 'w') -> list:
+        """
+        :param side:
+        :return: list
+        :returns Array of king's current position
+        """
         for x in range(8):
             for y in range(8):
                 if Table.field[y][x] == f'{side}K':
                     return [x, y]
 
     @staticmethod
-    def under_attack(x, y):
+    def under_attack(x, y) -> bool:
+        """
+        :param x:
+        :param y:
+        :return: bool
+        Show, is figure under attack or not
+        """
         piece = Table.field[y][x]
         player = Controls.current_player
         color = piece[0]
@@ -951,7 +1049,13 @@ class Rules:
             return [x, y] in available
 
     @staticmethod
-    def __can_escape(moves):
+    def __can_escape(moves) -> bool:
+        """
+        :param moves:
+        :return: bool
+        Show figure's opportunity to escape from beat
+        Algorithm is linear
+        """
         Flag = True
         for move in moves:
             if Rules.under_attack(move[0], move[1]):
@@ -966,6 +1070,14 @@ class Rules:
 
     @staticmethod
     def naive_mate(enemy, player) -> bool:
+        """
+        :param enemy:
+        :param player:
+        :return: bool
+        Naive algorithm of mate
+        1) Check king's opportunity to escape check
+        2) Check king's opportunity to eat figure that initiated check situation
+        """
         Controls.switch_player()
         player_king = Controls.current_player
         king_pos = Rules.__find_king(player_king.letter)

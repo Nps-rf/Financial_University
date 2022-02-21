@@ -1,3 +1,6 @@
+"""
+Created for better annotations.
+"""
 from typing import NewType, Callable
 Menu = NewType('TypeMenu', str)  # Path to menu file
 Button = NewType('TypeButton', int)  # Number of button

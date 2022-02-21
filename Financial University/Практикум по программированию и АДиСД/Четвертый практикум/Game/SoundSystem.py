@@ -3,7 +3,8 @@ from pygame.mixer import init
 
 class Sound:
     """
-    Responsible for the sound operation in the program
+    Responsible for the sound operation in the game.
+    Used for loading sounds and playing them.
     """
     __instance = None
     checkmate = None

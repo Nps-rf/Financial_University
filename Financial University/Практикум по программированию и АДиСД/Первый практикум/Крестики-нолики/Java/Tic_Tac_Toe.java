@@ -16,6 +16,11 @@ public class Tic_Tac_Toe {
         while (true) run();
     }
 
+    /**
+     * one-time game function
+     * must be used in infinite loop
+     * Tic_Tac_Toe.isWin used to break the loop
+     */
     private static void run() {
         System.out.println("\033[93m" + "Current player: " + current_player + "\033[0m");
         draw_field();
@@ -53,6 +58,9 @@ public class Tic_Tac_Toe {
         return isEqual(array, current_player);
     }
 
+    /**
+     * He-he, sleep... zzz...
+     */
     private static void sleep() {
         try
         {
@@ -76,6 +84,9 @@ public class Tic_Tac_Toe {
         field[x - 1][y - 1] = current;
     }
 
+    /**
+     * Function for drawing the game-field
+     */
     private static void draw_field() {
         System.out.println("  1 2 3");
         for (int row = 0; row < 3; row++) {
@@ -87,6 +98,11 @@ public class Tic_Tac_Toe {
         }
     }
 
+    /**
+     * @param variable current_player's symbol
+     * @return int value
+     * Simplify function
+     */
     static int input(char variable) {
         while (true) {
             try {
@@ -102,6 +118,12 @@ public class Tic_Tac_Toe {
             }
         }
     }
+
+    /**
+     * @param array : array of chars to check
+     * @param equal_TO : The symbol to which all elements of the array must be equal
+     * @return boolean statement, true if all elements equal else -> false
+     */
     private static boolean isEqual(char [] array, char equal_TO){
         for (char state : array){
             if (state != equal_TO){

@@ -49,6 +49,8 @@ class Chess:
         pygame.mixer.pre_init(44100, -16, 1, 512)
         pygame.init()
         Graphics.init()
+        Sound.init()
+        Graphics.board_graphics()
 
     @classmethod
     def run(cls) -> None:
@@ -58,8 +60,6 @@ class Chess:
         """
         while cls._running:
             cls.__prepare()
-            Sound.init()
-            Graphics.board_graphics()
             Graphics.print_info()
             Graphics.turn_owner()
             for b in Graphics.get_button_list():
@@ -768,6 +768,14 @@ class Rules:
         all_way = []
 
         def solve_side(upper=True, left=True, allowed=False) -> Available_moves:
+            """
+            Trash code :/
+            :param upper:
+            :param left:
+            :param allowed:
+            :return: None
+            """
+            met_enemy = False
             local_all_allowed = allowed
             no_way = False
             a_local = []
@@ -786,6 +794,12 @@ class Rules:
                                 local_all_allowed = False
                             all_way.append([p_x - x, p_y - y])
                         if Table.field[p_y - y][p_x - x][0] == player.opposite:
+                            met_enemy = True
+                        if Table.field[p_y - y][p_x - x][0] == player.letter:
+                            no_way = True
+                            break
+                        if Table.field[p_y - y][p_x - x][0] == player.opposite \
+                                and (not local_all_allowed or met_enemy) and Table.field[p_y - y][p_x - x][1] != 'K':
                             available.append([p_x - x, p_y - y])
                             a_local.append([p_x - x, p_y - y])
                             no_way = True
@@ -793,9 +807,6 @@ class Rules:
                         if Table.field[p_y - y][p_x - x][0] != player.letter:
                             available.append([p_x - x, p_y - y])
                             a_local.append([p_x - x, p_y - y])
-                        elif Table.field[p_y - y][p_x - x][0] == player.letter:
-                            no_way = True
-                            break
                     except IndexError:
                         pass
         # upper left
@@ -827,6 +838,7 @@ class Rules:
         all_way = []
 
         def solve_side(vertical=False, invert=False, allowed=False) -> None:
+            met_enemy = False
             local_all_allowed = allowed
             no_way = False
             a_local = []
@@ -844,10 +856,13 @@ class Rules:
                                     and Table.field[p_y - y][p_x - x][0] != player.opposite:
                                 local_all_allowed = False
                             all_way.append([p_x - x, p_y - y])
+                        if Table.field[p_y - y][p_x - x][0] == player.opposite:
+                            met_enemy = True
                         if Table.field[p_y - y][p_x - x][0] == player.letter:
                             no_way = True
                             break
-                        if Table.field[p_y - y][p_x - x][0] == player.opposite and not allowed:
+                        if Table.field[p_y - y][p_x - x][0] == player.opposite \
+                                and (not local_all_allowed or met_enemy) and Table.field[p_y - y][p_x - x][1] != 'K':
                             available.append([p_x - x, p_y - y])
                             a_local.append([p_x - x, p_y - y])
                             no_way = True
@@ -1084,11 +1099,11 @@ class Rules:
         Controls.available = Controls.movements['K'](king_pos[0], king_pos[1], player_king)
         Controls.prevent_wrong_move(Controls.available, player_king)
         Controls.switch_player()
-        beat_way = set(map(tuple, Controls.movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0], player,)))
+        # beat_way = set(map(tuple, Controls.movements[Table.field[enemy[0]][enemy[1]][1]](enemy[1], enemy[0], player,)))
         side_available = set(map(tuple, Rules.side_available(player, opposite_side=True)))
 
-        return (enemy[::-1] not in side_available and beat_way.isdisjoint(side_available)
-                and len(Controls.available) == 0) or \
+        return (enemy[::-1] not in side_available and  # beat_way.isdisjoint(side_available) ###and###
+                len(Controls.available) == 0) or \
                (enemy[::-1] not in side_available and not Rules.__can_escape(Controls.available))
 
 

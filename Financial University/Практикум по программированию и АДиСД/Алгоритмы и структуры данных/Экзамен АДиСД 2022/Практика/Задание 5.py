@@ -18,16 +18,6 @@ class Plane(object):
 
     def check_capacity(self): return 'Overload' if self.passengers_number > self.__max_capacity else 'Normal capacity'
 
-    @staticmethod
-    def check_routes(planes):
-        same_routes = {}
-        for plane in planes:
-            if plane.route not in same_routes.keys():
-                same_routes.setdefault(plane.route, [plane.name])
-            else:
-                same_routes[plane.route].append(plane.name)
-        return same_routes
-
 
 class Airport:
     @staticmethod

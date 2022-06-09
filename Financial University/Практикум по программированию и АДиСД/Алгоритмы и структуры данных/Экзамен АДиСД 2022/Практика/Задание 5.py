@@ -31,17 +31,26 @@ class Plane(object):
 
 class Airport:
     @staticmethod
-    def check_routes(planes):
+    def check_routes(__planes):
         same_routes = {}
-        for plane in planes:
-            if plane.route not in same_routes.keys():
-                same_routes.setdefault(plane.route, [plane.name])
+        for __plane in __planes:
+            if __plane.route not in same_routes.keys():
+                same_routes.setdefault(__plane.route, [__plane.name])
             else:
-                same_routes[plane.route].append(plane.name)
+                same_routes[__plane.route].append(__plane.name)
         return same_routes
+
+    @staticmethod
+    def check_average_load(__planes):
+        avg = 0
+        for __plane in __planes:
+            avg += __plane.passengers_number
+        return avg / len(__planes)
 
 
 Airbus_310 = Plane('Airbus', 136, Route('Moscow', 'Berlin'))
 Boeing_15 = Plane('Boeing', 154, Route('Moscow', 'Saint-Petersburg'))
-IL_96 = Plane('Ilyushin', 154, Route('Moscow', 'Berlin'))
-print(Airport.check_routes((Airbus_310, Boeing_15, IL_96)))
+IL_96 = Plane('Ilyushin', 112, Route('Moscow', 'Berlin'))
+Planes = (Airbus_310, Boeing_15, IL_96)
+print(Airport.check_routes(Planes))
+print(Airport.check_average_load(Planes))

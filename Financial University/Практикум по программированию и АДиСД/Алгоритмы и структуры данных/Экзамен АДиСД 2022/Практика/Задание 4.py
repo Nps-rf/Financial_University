@@ -70,12 +70,11 @@ def middle_pop(item: Stack) -> Stack:
     return item
 
 
-stack = Stack()
-for _ in range(8):
-    stack.add(random.randint(0, 20))
-print(stack)
-new_stack = middle_pop(stack)
-stack.middle_pop()
-print(new_stack, stack)
-
-
+if __name__ == "__main__":
+    stack = Stack()
+    for _ in range(8):
+        stack.add(random.randint(0, 20))
+    print(stack)
+    new_stack = middle_pop(stack)
+    stack.middle_pop()
+    print(new_stack, stack)

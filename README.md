@@ -17,5 +17,13 @@
   * [Дискретная математика](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Остальные%20предметы/Дискретная%20математика)
     * [Диаграммы Эйлера-Венна](https://github.com/Nps-rf/Financial_University/blob/master/1%20курс/Остальные%20предметы/Дискретная%20математика/Диаграммы%20Эйлера-Венна.pdf)
     * [Эссе по математическому моделированию](https://github.com/Nps-rf/Financial_University/blob/master/1%20курс/Остальные%20предметы/Дискретная%20математика/Дискретная%20математика%20Эссе.pdf)
----
-* [Свои работы и начало обучения программированию](https://github.com/Nps-rf/Financial_University/tree/master/Own%20programs)
+
+## 2 курс
+
+* **N\A**
+  * **N\A**
+  * **N\A**
+  * **N\A**
+* **N\A**
+  * **N\A**
+  * **N\A**

@@ -2,20 +2,20 @@
 # ИТиАБД 21-25
 ![](https://tokei.rs/b1/github/Nps-rf/Financial_University?category=code)
 ## 1 курс
-* [`Дорожная карта`](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University#readme)
-* [Алгоритмы и структуры данных в языке Python](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Практикум%20по%20программированию%20и%20АДиСД/Алгоритмы%20и%20структуры%20данных)
+* [`Дорожная карта`](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс#readme)
+* [Алгоритмы и структуры данных в языке Python](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Практикум%20по%20программированию%20и%20АДиСД/Алгоритмы%20и%20структуры%20данных)
 
-* [Практикум по программированию](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Практикум%20по%20программированию%20и%20АДиСД)
-  * [Первый практикум](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Практикум%20по%20программированию%20и%20АДиСД/Первый%20практикум)
-  * [Второй практикум](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Практикум%20по%20программированию%20и%20АДиСД/Второй%20практикум)
-  * [Третий практикум](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Практикум%20по%20программированию%20и%20АДиСД/Третий%20практикум)
-  * [Четвертый практикум](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Практикум%20по%20программированию%20и%20АДиСД/Четвертый%20практикум)
+* [Практикум по программированию](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Практикум%20по%20программированию%20и%20АДиСД)
+  * [Первый практикум](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Практикум%20по%20программированию%20и%20АДиСД/Первый%20практикум)
+  * [Второй практикум](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Практикум%20по%20программированию%20и%20АДиСД/Второй%20практикум)
+  * [Третий практикум](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Практикум%20по%20программированию%20и%20АДиСД/Третий%20практикум)
+  * [Четвертый практикум](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Практикум%20по%20программированию%20и%20АДиСД/Четвертый%20практикум)
 
-* [Остальные дисциплины](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Остальные%20предметы)
-  * [Линейная алгебра](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Остальные%20предметы/Линейная%20алгебра)
-    * [Калькулятор комплексных чисел](https://github.com/Nps-rf/Financial_University/blob/master/Financial%20University/Остальные%20предметы/Линейная%20алгебра/Complex%20Calc.py)
-  * [Дискретная математика](https://github.com/Nps-rf/Financial_University/tree/master/Financial%20University/Остальные%20предметы/Дискретная%20математика)
-    * [Диаграммы Эйлера-Венна](https://github.com/Nps-rf/Financial_University/blob/master/Financial%20University/Остальные%20предметы/Дискретная%20математика/Диаграммы%20Эйлера-Венна.pdf)
-    * [Эссе по математическому моделированию](https://github.com/Nps-rf/Financial_University/blob/master/Financial%20University/Остальные%20предметы/Дискретная%20математика/Дискретная%20математика%20Эссе.pdf)
+* [Остальные дисциплины](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Остальные%20предметы)
+  * [Линейная алгебра](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Остальные%20предметы/Линейная%20алгебра)
+    * [Калькулятор комплексных чисел](https://github.com/Nps-rf/Financial_University/blob/master/1%20курс/Остальные%20предметы/Линейная%20алгебра/Complex%20Calc.py)
+  * [Дискретная математика](https://github.com/Nps-rf/Financial_University/tree/master/1%20курс/Остальные%20предметы/Дискретная%20математика)
+    * [Диаграммы Эйлера-Венна](https://github.com/Nps-rf/Financial_University/blob/master/1%20курс/Остальные%20предметы/Дискретная%20математика/Диаграммы%20Эйлера-Венна.pdf)
+    * [Эссе по математическому моделированию](https://github.com/Nps-rf/Financial_University/blob/master/1%20курс/Остальные%20предметы/Дискретная%20математика/Дискретная%20математика%20Эссе.pdf)
 ---
 * [Свои работы и начало обучения программированию](https://github.com/Nps-rf/Financial_University/tree/master/Own%20programs)

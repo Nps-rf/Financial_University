@@ -55,3 +55,6 @@
 [Погружение в Python]: https://www.coursera.org/learn/diving-in-python
 [Введение в машинное обучение]: https://www.coursera.org/learn/vvedenie-mashinnoe-obuchenie
 [Основы Git]: https://stepik.org/course/3145
+[Погружение в Python]: https://www.coursera.org/learn/diving-in-python
+[Введение в машинное обучение]: https://www.coursera.org/learn/vvedenie-mashinnoe-obuchenie
+[Основы Git]: https://stepik.org/course/3145

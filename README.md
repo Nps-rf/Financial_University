@@ -20,10 +20,8 @@
 
 ## 2 курс
 
-* **N\A**
-  * **N\A**
-  * **N\A**
-  * **N\A**
-* **N\A**
-  * **N\A**
-  * **N\A**
+* [Современные технологии программирования](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП)
+  * [Первый семинар](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП/Семинар_01)
+
+* [Технологии обработки больших данных](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/TOBD_2022/Tasks)
+  * [Лабораторная работа №1](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/TOBD_2022/Tasks/01)

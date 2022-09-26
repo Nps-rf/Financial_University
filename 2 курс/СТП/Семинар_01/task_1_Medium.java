@@ -1,59 +1,27 @@
-import io.github.cdimascio.dotenv.Dotenv;
 import org.postgresql.util.PSQLException;
 import src.Database;
 import src.Logger;
 import src.calculator;
 
+import javax.ejb.Init;
 import java.sql.*;
-import java.util.HashMap;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.UUID;
 
-public class task_1 {
 
-    static HashMap<Integer, Runnable> choices = new HashMap<>(
-            8
-    );
+class task_1_Medium extends Generic{
 
-    final static Scanner __input = new Scanner(System.in);
-    final static Dotenv dotenv = Dotenv.load();
-    static Database db;
-
-    static {
-        try {
-            db = new Database(
-                    dotenv.get("URL"),
-                    dotenv.get("PORT"),
-                    dotenv.get("DATABASE"),
-                    true,
-                    false,
-                    dotenv.get("USER"),
-                    dotenv.get("PASSWORD")
-            );
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
+    @Init
     private static void __main(){
         choices.put(1, () -> { try {SHOW_TABLES();} catch (SQLException e) {e.printStackTrace();}});
         choices.put(2, () -> { try {CREATE_TABLE();} catch (SQLException e) {e.printStackTrace();}});
-        choices.put(3, task_1::calculate);
+        choices.put(3, task_1_Medium::calculate);
         choices.put(4, () -> { try {calculate_SQL();} catch (SQLException e) {e.printStackTrace();}});
-        choices.put(5, task_1::extended_calculator);
-        choices.put(6, task_1::extended_calculator);
+        choices.put(5, task_1_Medium::extended_calculator);
+        choices.put(6, task_1_Medium::extended_calculator);
     }
-
-
-    private static Object input(){return __input.nextLine();}
-
-    private static Object input(String follow){
-        Logger.water(follow);
-        return __input.nextLine();
-    }
-
-    public static void main(String[] args) throws SQLException {
+    @SuppressWarnings("all")
+    public static void main(String[] args) {
         __main(); // HASH-MAP INIT
         while (true)
             try {
@@ -73,11 +41,12 @@ public class task_1 {
         }
     }
 
+    @SuppressWarnings("all")
     public static void SHOW_TABLES() throws SQLException {
         final ResultSet rs = db.execute("SELECT tablename FROM pg_catalog.pg_tables WHERE schemaname='public'");
         Database.Utils.print_result(rs);
     }
-
+    @SuppressWarnings("all")
     public static void CREATE_TABLE() throws SQLException {
         try {
         final String tablename = (String) input("Введите название базы данных");
@@ -107,6 +76,8 @@ public class task_1 {
     public static void calculate() {
         Logger.success(Objects.requireNonNull(calculator.calc((String) input("Введите ваше выражение:\nВНИМАНИЕ! Поддерживается только два аргумента операции "))).toString());
     }
+
+    @SuppressWarnings("all")
     public static void extended_calculator(){
         Logger.success("Выберите тип данных:");
         Logger.water("\t1) Integer");
@@ -169,7 +140,6 @@ public class task_1 {
         preparedStatement.executeUpdate();
         Logger.success("Успешно!");
     }
-
 
 }
 

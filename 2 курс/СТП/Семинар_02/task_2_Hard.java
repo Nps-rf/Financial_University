@@ -1,5 +1,6 @@
 import org.postgresql.util.PSQLException;
 import src.Database;
+import src.Generic;
 import src.Logger;
 
 import javax.ejb.Init;
@@ -7,7 +8,7 @@ import java.sql.*;
 import java.util.UUID;
 
 
-class task_2_Hard extends Generic{
+class task_2_Hard extends Generic {
 
     @Init
     private static void __main(){

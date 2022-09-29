@@ -1,5 +1,6 @@
 import org.postgresql.util.PSQLException;
 import src.Database;
+import src.Generic;
 import src.Logger;
 import src.calculator;
 
@@ -9,7 +10,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 
-class task_1_Medium extends Generic{
+class task_1_Medium extends Generic {
 
     @Init
     private static void __main(){

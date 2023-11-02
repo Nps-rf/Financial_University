@@ -1,0 +1,28 @@
+{
+  "name": "fa-web-tasks",
+  "version": "1.0.0",
+  "private": false,
+  "author": "Nps-rf",
+  "license": "MIT",
+  "maintainers": [
+    "divine.nikolai@gmail.com"
+  ],
+  "dependencies": {
+    "animate.css": "^4.1.1",
+    "bootstrap": "^5.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "react-syntax-highlighter": "^15.5.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app"
+    ]
+  }
+}

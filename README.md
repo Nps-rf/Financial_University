@@ -23,11 +23,20 @@
 * [Современные технологии программирования](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП)
   * [Первый семинар](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП/Семинар_01)
   * [Второй семинар](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП/Семинар_02)
+  * [Третий семинар](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП/Семинар_03)
+  * [Четвертый семинар](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП/Семинар_04)
+  * [Пятый семинар](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП/Семинар_05)
+  * [Шестой семинар](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/СТП/Семинар_06)
+  * [Зачет](https://github.com/Nps-rf/Financial_University/blob/master/2%20курс/СТП/Зачет/Ticket_01.java)
 
 * [Технологии обработки больших данных](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/TOBD_2022/Tasks)
   * [Лабораторная работа №1](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/TOBD_2022/Tasks/01)
+  * [Лабораторная работа №5](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/TOBD_2022/Tasks/05%20data_visualisation)
+  * [Лабораторная работа №6](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/TOBD_2022/Tasks/06%20string)
  
 * [Сетевые системы и приложения](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/ОСИП/)
+  * [Эхо-сервер](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/ОСИП/Эхо-сервер)
+  * [Многопоточный сервер](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/ОСИП/Многопоточный%20сервер/components)
   * [Файловый менеджер на древнерусском](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/ОСИП/Файловый%20Менеджер%20И%20Точка)
  
  ## 3 курс

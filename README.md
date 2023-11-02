@@ -29,3 +29,7 @@
  
 * [Сетевые системы и приложения](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/ОСИП/)
   * [Файловый менеджер на древнерусском](https://github.com/Nps-rf/Financial_University/tree/master/2%20курс/ОСИП/Файловый%20Менеджер%20И%20Точка)
+ 
+ ## 3 курс
+
+ * [Веб-разработка](https://github.com/Nps-rf/Financial_University/tree/master/3%20курс/Веб-разработка)

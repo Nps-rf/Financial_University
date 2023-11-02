@@ -2,10 +2,10 @@
   "name": "fa-web-tasks",
   "version": "1.0.0",
   "private": false,
-  "author": "Nps-rf",
   "license": "MIT",
   "maintainers": [
-    "divine.nikolai@gmail.com"
+    "213720@edu.fa.ru",
+    "213722@edu.fa.ru"
   ],
   "dependencies": {
     "animate.css": "^4.1.1",

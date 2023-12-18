@@ -42,3 +42,4 @@
  ## 3 курс
 
  * [Веб-разработка](https://github.com/Nps-rf/Financial_University/tree/master/3%20курс/Веб-разработка)
+ * [Обработка текстов на естественных языках](https://github.com/Nps-rf/Financial_University/tree/master/3%20курс/Обработка%20текстов%20на%20естественных%20языках)
